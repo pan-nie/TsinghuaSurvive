@@ -11,6 +11,8 @@
 > `npm run check:deploy-ready` 因此把它降级为警告而不是拒绝部署（判断标准是「缺了会不会有线上静默坏掉的东西」）。
 >
 > 最后更新：2026-10-12
+>
+> 分支与 PR：`migrate/thu-whizzzest` 已推送，草稿 PR <https://github.com/pan-nie/TsinghuaSurvive/pull/6>（草稿状态即「还不能合并」）。
 
 ---
 
@@ -171,6 +173,41 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | 7 | 部署 auth-worker + 改 GitHub OAuth App | 🟡 **Worker 已部署**：`auth.thu.whizzzest.com` 的 DNS 记录与证书已就绪（DoH 实测解析到 172.67.209.47 / 104.21.23.47，直连 200）；白名单验证通过 —— `site_id=thu.whizzzest.com` 放行、陌生域名 → `UNSUPPORTED_DOMAIN`；带完整参数时返回 `MISCONFIGURED_CLIENT`，说明**只差两个 secret**。⏳ 仍需你：① 把 GitHub OAuth App 的 Client ID / Client Secret 交给我（或自行 `wrangler secret put` 写入 `auth-worker/`）② 把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。在此之前后台用**令牌登录** |
 | 8 | 媒体出口真机验证 | ✅ 上传测试对象 → `GET /media/uploads/smoke-test.txt` = 200（`cache-control: immutable`、`etag`、`accept-ranges`）；`Range: bytes=6-10` → 206 + `content-range: bytes 6-10/22`；未知 key → 404；测试对象已删除 |
 | 9 | 旧域名 301 | ⏳ 旧 zone 在**另一个 Cloudflare 登录**（gmail 那个）里，当前 OAuth 会话看不到 → 需要你登录旧账号后，按下面「第 9 步的具体做法」加 Redirect Rule。⚠️ 域名到期后跳转自动失效 |
+
+### 第 4 步的具体做法（CI Token）
+
+1. 控制台 → **My Profile → API Tokens → Create Token → Custom token**，权限：
+   - Account → **Workers Scripts → Edit**（部署 Worker）
+   - Account → **Workers R2 Storage → Edit**（`MEDIA` 绑定要用）
+   - Zone → **Workers Routes → Edit** + Zone → **Zone → Read**（绑定自定义域名）
+   - Account Resources：选账号 W（`67e59aecb10a2a8b4b4d525ff8ddcb56`）；Zone Resources：Include → `whizzzest.com`
+2. 写进仓库 Secrets（两种方式，任选）：
+   ```bash
+   # 方式 A：你自己在网页 Settings → Secrets and variables → Actions 里填
+   # 方式 B：本机 gh 已登录 pan-nie，可以直接写（token 只在本地输入，不要贴进聊天）
+   gh secret set CLOUDFLARE_API_TOKEN   --repo pan-nie/TsinghuaSurvive
+   gh secret set CLOUDFLARE_ACCOUNT_ID  --repo pan-nie/TsinghuaSurvive --body 67e59aecb10a2a8b4b4d525ff8ddcb56
+   ```
+3. 验证：在 PR 上点「Merge」之前，先 `gh workflow run deploy.yml --repo pan-nie/TsinghuaSurvive && gh run watch`；
+   日志里「检查部署凭证」应为 `ready=true`，末尾应看到 `thu.whizzzest.com (custom domain)`。
+   > 若暂时不想建 token：**建议把旧的 `CLOUDFLARE_API_TOKEN` 删掉**（`gh secret delete CLOUDFLARE_API_TOKEN`）——
+   > 这样 main 的 push 会走「缺少 token → 只构建不部署」的正常路径，而不是红一次。
+
+### 第 7 步的具体做法（auth 中转的两个 Secret）
+
+Worker 已经部署好了（域名与证书都在），只差 GitHub OAuth App 的两个值：
+
+```bash
+# 1. 从 GitHub OAuth App 页面取 Client ID，并 Generate a new client secret
+#    同时把 Authorization callback URL 改成 https://auth.thu.whizzzest.com/callback
+#    Homepage URL 改成 https://thu.whizzzest.com/
+# 2. 写入 Secret（值在本地粘贴，不要写进任何文件）
+cd auth-worker
+npx wrangler secret put GITHUB_CLIENT_ID
+npx wrangler secret put GITHUB_CLIENT_SECRET
+# 3. 验证（返回 302 到 github.com/login/oauth/authorize 就对了，不再是 MISCONFIGURED_CLIENT）
+curl -sI "https://auth.thu.whizzzest.com/auth?provider=github&site_id=thu.whizzzest.com" | head -3
+```
 
 ### 第 9 步的具体做法（301 重定向）
 
