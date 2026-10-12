@@ -96,10 +96,12 @@ jobs:
       - name: 媒体出口检查（Worker）
         run: npm run check:media:worker
 
-      # 凭证守卫：没有配 CLOUDFLARE_API_TOKEN 时给出明确提示并跳过部署，
-      # 而不是抛一个看不懂的认证错误；账号 ID 与 site.config.json 不一致时也拒绝部署 ——
-      # 迁移期最容易踩的坑就是「Secrets 还是旧账号的，而配置已经是新账号」，直接部署只会在
-      # 绑定自定义域名时报一个跟根因无关的错。
+      # 凭证守卫（三层），任何一层不过就只构建不部署 —— 迁移期最容易踩的坑就是
+      # 「Secrets 还是旧账号的，而配置已经是新账号」，那样直接部署只会在绑定自定义域名时
+      # 抛一个跟根因无关的错（zone not found / 10000 authentication error）。
+      #   ① 有没有 token
+      #   ② 仓库里的 CLOUDFLARE_ACCOUNT_ID 与 site.config.json 是否一致（快速失败）
+      #   ③ **这个 token 到底能不能看到那个账号** —— 只比 ID 是不够的：ID 可以是对的而 token 是旧账号的
       - name: 检查部署凭证
         id: creds
         env:
@@ -112,6 +114,9 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
           elif [ -n "$CF_ACCOUNT" ] && [ "$CF_ACCOUNT" != "$EXPECTED_ACCOUNT" ]; then
             echo "::error title=账号不匹配::CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT，而 site.config.json 期望 $EXPECTED_ACCOUNT。请先更新仓库 Secrets（见 MIGRATION.md §7），本次不部署。"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          elif ! curl -sS -H "Authorization: Bearer $CF_TOKEN" https://api.cloudflare.com/client/v4/accounts | grep -q "$EXPECTED_ACCOUNT"; then
+            echo "::error title=Token 看不到目标账号::CLOUDFLARE_API_TOKEN 列不出 site.config.json 期望的账号 ${EXPECTED_ACCOUNT}（典型原因：迁移后没换 Secrets，还是旧账号的 token）。本次不部署。见 MIGRATION.md §7。"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"

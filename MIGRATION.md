@@ -1,10 +1,12 @@
 # 域名迁移方案：tsinghua.nathanpenny.fun → thu.whizzzest.com
 
-> 状态：**主站已在新账号上线（thu.whizzzest.com 实测 200），剩余 3 项需要你的操作**（见 §8 的 ⏳ 行）。
+> 状态：**主站与 auth 中转的基础设施都已上线**（`thu.whizzzest.com` 实测 200、`/api/*` 与 `/media/*` 正常、`auth.thu.whizzzest.com` 证书就位且只差两个 secret），
+> **剩余 4 项都需要你的凭据或控制台操作**（见 §8 的 ⏳ / 🟡 行）。
+>
 > 本文档是执行手册 + 决策记录。迁移完成后，把仍然有效的事实并进 `HANDOVER.md`；
 > 本文档保留为历史记录，并被 `check:domain` 列入旧域名白名单（只有它和 `site.config.json` 可以出现旧域名）。
 >
-> 剩余待办：① R2 API 令牌（后台传图，控制台点一次）② GitHub Secrets 的 CI Token ③ auth-worker（需要 GitHub OAuth App 的 client id/secret）+ 旧域名 301。
+> 剩余待办：① R2 API 令牌（后台传图）② GitHub Secrets 的 CI Token ③ GitHub OAuth App 的 client id/secret（auth 中转）④ 旧域名 301。
 > 唯一还留在仓库里的占位符是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`：它**只影响后台传图**，
 > `npm run check:deploy-ready` 因此把它降级为警告而不是拒绝部署（判断标准是「缺了会不会有线上静默坏掉的东西」）。
 >
@@ -166,9 +168,45 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | 4 | CI 的 API Token → GitHub Secrets | ⏳ 待你操作（OAuth 同样不能创建 API Token）。建好后填 `CLOUDFLARE_API_TOKEN` 与 `CLOUDFLARE_ACCOUNT_ID=67e59aecb10a2a8b4b4d525ff8ddcb56`。**在填之前不要合并 `migrate/thu-whizzzest` 到 main**：仓库里现在还是旧账号的 token，CI 会明确报「账号不匹配」并跳过部署（不会静默部署到错账号） |
 | 5 | 部署主 Worker | ✅ 已部署：369 个文件；绑定 ASK_GATE（DO）/ MEDIA（R2）/ AI / ASSETS；自定义域名 `thu.whizzzest.com` 已创建，证书已签发（HTTPS 200 / 0.72 s） |
 | 6 | 写 3 个 Worker Secret | ✅ `TURNSTILE_SECRET_KEY`（新挂件）、`ADMIN_TOKEN`、`CONFIG_ENC_KEY`（后两个直接用本机 `.secrets/` 里的现成值） |
-| 7 | 部署 auth-worker + 改 GitHub OAuth App | ⏳ **需要你提供 GitHub OAuth App 的 Client ID / Client Secret**（旧账号里的那两个读不出来），并把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。之后跑 `npm run auth:deploy` + 写两个 secret。在此之前后台仍可用**令牌登录**（`auth_methods` 里保留了 token 兜底） |
+| 7 | 部署 auth-worker + 改 GitHub OAuth App | 🟡 **Worker 已部署**：`auth.thu.whizzzest.com` 的 DNS 记录与证书已就绪（DoH 实测解析到 172.67.209.47 / 104.21.23.47，直连 200）；白名单验证通过 —— `site_id=thu.whizzzest.com` 放行、陌生域名 → `UNSUPPORTED_DOMAIN`；带完整参数时返回 `MISCONFIGURED_CLIENT`，说明**只差两个 secret**。⏳ 仍需你：① 把 GitHub OAuth App 的 Client ID / Client Secret 交给我（或自行 `wrangler secret put` 写入 `auth-worker/`）② 把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。在此之前后台用**令牌登录** |
 | 8 | 媒体出口真机验证 | ✅ 上传测试对象 → `GET /media/uploads/smoke-test.txt` = 200（`cache-control: immutable`、`etag`、`accept-ranges`）；`Range: bytes=6-10` → 206 + `content-range: bytes 6-10/22`；未知 key → 404；测试对象已删除 |
-| 9 | 旧域名 301 | ⏳ 旧 zone 在**另一个 Cloudflare 登录**（gmail 那个）里，当前 OAuth 会话看不到 → 需要你登录旧账号，或在控制台自行加 Redirect Rule：`tsinghua.nathanpenny.fun/*` → `https://thu.whizzzest.com/$1`（301）。⚠️ 域名到期后跳转自动失效 |
+| 9 | 旧域名 301 | ⏳ 旧 zone 在**另一个 Cloudflare 登录**（gmail 那个）里，当前 OAuth 会话看不到 → 需要你登录旧账号后，按下面「第 9 步的具体做法」加 Redirect Rule。⚠️ 域名到期后跳转自动失效 |
+
+### 第 9 步的具体做法（301 重定向）
+
+控制台路径：**选中旧 zone `nathanpenny.fun` → Rules → Redirect Rules → Create rule**（旧 zone 必须仍是橙云代理；旧 Worker 的 Custom Domain 正好满足这个前提）。
+
+**规则 1 —— 主站（必做）**
+
+| 字段 | 填什么 |
+|---|---|
+| Rule name | `迁移到 thu.whizzzest.com` |
+| When incoming requests match | Custom filter expression：`(http.host eq "tsinghua.nathanpenny.fun")` |
+| Then → Type | Dynamic redirect |
+| Expression | `concat("https://thu.whizzzest.com", http.request.uri.path)` |
+| Status code | `301` |
+| Preserve query string | ✅ 勾上 |
+
+**规则 2 —— 旧媒体直链（建议做，避免老内容里的图片失效）**
+
+同一条规则里再加一条，或另建一条：
+
+- 匹配：`(http.host eq "media.nathanpenny.fun")`
+- 跳转：`concat("https://thu.whizzzest.com/media", http.request.uri.path)`，301
+
+**验证**
+
+```bash
+# 1. 直接看 301 与 Location（注意：校园网对刚加的记录可能有否定缓存，用 DoH 或 --resolve 旁路）
+curl -sI https://tsinghua.nathanpenny.fun/start/how-to-use/ | head -3
+# 2. 期望：HTTP/2 301，Location: https://thu.whizzzest.com/start/how-to-use/
+# 3. 旧媒体链接也应 301 到 /media/uploads/...
+curl -sI https://media.nathanpenny.fun/uploads/example.webp | head -3
+```
+
+> 为什么走控制台而不是脚本：Redirect Rule 属于 zone 级 ruleset，需要 zone rules 编辑权限，
+> 而 `wrangler login` 的 OAuth scope 里没有它（对照 §8 第 2、4 步那两次 403 的经验，别白试）。
+> 若你愿意给我一个带 `Zone → Config → Edit` 权限的 API Token，我可以改成一条 API 调用自动完成。
 
 ## 9. 验证清单
 

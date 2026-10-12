@@ -34,7 +34,7 @@ flowchart TB
 | 组件 | 名字 | 状态 |
 | --- | --- | --- |
 | 正式站 Worker | `tsinghua-guide` → `thu.whizzzest.com` | ✅ 已上线（2026-10-12 部署，369 个文件；页面 + `/api/*` + `/media/*` 实测 200） |
-| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | ⏳ 待建（需要 GitHub OAuth App 的 client id/secret，见 MIGRATION.md §8 第 7 步；在此之前后台用令牌登录） |
+| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | 🟡 已部署（2026-10-12，DNS 记录与证书就绪、白名单生效、陌生域名被拒）；⏳ 只差 GitHub OAuth App 的 client id/secret 两个 Secret —— 在此之前后台用**令牌登录** |
 | R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ✅ 桶已建、CORS 已配、媒体出口实测 200/206/404（⏳ 仅缺 R2 API 令牌，只影响后台传图） |
 | KV / D1 | —— | 没有，一个都不用 |
 | Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ✅ 随首次 `wrangler deploy` 已创建，见第 10 节 |
@@ -429,10 +429,12 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 
 ### 9.2 OAuth 中转（A）
 
-> **当前状态（⏳ 待建）**：账号 W 上还没建这个 Worker —— 账号 N 时期那份已部署环境随旧域名一起废弃。
-> 卡在同一个前置条件：需要 GitHub OAuth App 的 Client ID / Client Secret（旧账号里的读不出来），
-> 并把 callback 改成 `https://auth.thu.whizzzest.com/callback`。**在此之前后台只能用令牌登录**（`auth_methods` 里保留了 token 兜底）。
-> 重建步骤见 MIGRATION.md §8 第 7 步，以及 [`auth-worker/README.md`](./auth-worker/README.md)（新建 / 重建的完整步骤）。这里只留运维要点：
+> **当前状态（2026-10-12）**：Worker **已部署**，`auth.thu.whizzzest.com` 的 DNS 记录与证书已就绪，
+> 白名单也验证过（`site_id=thu.whizzzest.com` 放行、陌生域名回 `UNSUPPORTED_DOMAIN`）。
+> **只差两个 Secret**：`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` —— 它们需要你从 GitHub OAuth App 页面取
+> （旧 Cloudflare 账号里的那两个读不出来），同时把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、
+> Homepage 改成 `https://thu.whizzzest.com/`。**在写入这两个 Secret 之前，后台只能用令牌登录**（`auth_methods` 保留了 token 兜底）。
+> 完整步骤见 MIGRATION.md §8 第 7 步与 [`auth-worker/README.md`](./auth-worker/README.md)。这里只留运维要点：
 
 - **OAuth App 的 callback 必须一字不差**：`https://auth.thu.whizzzest.com/callback`；换域名时三处要一起改（`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback、`config.yml` 的 `base_url`），`check:admin` 能查前两处，GitHub 那边只能人工确认（本次迁移就是改现有 OAuth App 的 callback + Homepage URL）。
 - 写密钥：`cd auth-worker && npx wrangler secret put GITHUB_CLIENT_ID`（`..._SECRET` 同理），首次才需要 `wrangler deploy`；想先看打包结果：`npm run auth:dry`。
