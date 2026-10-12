@@ -20,6 +20,7 @@ import { writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import { campusLinks } from '../src/data/links.ts';
+import { siteOrigin } from './site-config.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const OUT = join(ROOT, 'src/data/link-status.json');
@@ -45,7 +46,7 @@ async function probe(url: string): Promise<Result> {
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: {
         // 有些站点对空 UA 直接拒绝
-        'user-agent': 'Mozilla/5.0 (compatible; TsinghuaGuideLinkCheck/1.0; +https://tsinghua.nathanpenny.fun)',
+        'user-agent': `Mozilla/5.0 (compatible; TsinghuaGuideLinkCheck/1.0; +${siteOrigin})`,
         accept: 'text/html,application/xhtml+xml,*/*;q=0.8',
       },
     });

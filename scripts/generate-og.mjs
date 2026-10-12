@@ -33,6 +33,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 import sharp from 'sharp';
+import { siteHost } from './site-config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -44,7 +45,8 @@ const BG_TOP = '#660874'; // 清华紫
 const BG_BOTTOM = '#4a0456';
 const ACCENT = '#e8c4f0'; // 浅紫
 
-const FOOTER_URL = 'tsinghua.nathanpenny.fun';
+// 卡片底部那行地址与站点域名同源（site.config.json），换域名时重新跑 `npm run og` 即可
+const FOOTER_URL = siteHost;
 
 /**
  * 字体回退链：优先系统中文字体。

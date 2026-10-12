@@ -22,6 +22,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
+import { mediaHost, siteHost } from './site-config.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const DOCS_DIR = join(ROOT, 'src/content/docs');
@@ -39,8 +40,8 @@ const warn = (message, file, line, hint) => findings.push({ level: 'warn', messa
 
 // ── 允许的图片域名（从后台配置里推导，避免两处漂移）──────────────────────
 
-// 站点自己的域名 + 推荐的 R2 媒体域名（即使 config.yml 里还是占位符，这两个也应当被认）
-const allowedHosts = new Set(['tsinghua.nathanpenny.fun', 'media.nathanpenny.fun']);
+// 站点自己的域名 + 媒体公开地址（两者可能同一个主机名；即使 config.yml 里还是占位符也应当被认）
+const allowedHosts = new Set([siteHost, mediaHost]);
 try {
   const config = parseYaml(readFileSync(CONFIG, 'utf8'));
   const publicUrl = config?.media_libraries?.cloudflare_r2?.public_url;
@@ -233,7 +234,7 @@ function checkImageUrl(url, rel, lineNumber, alt) {
 
   const bad = BAD_HOST_PATTERNS.find((entry) => entry.pattern.test(host));
   if (bad) {
-    error(`图片源 ${host} 不可靠：${bad.why}`, rel, lineNumber, '把图片传到 R2，用 media 域名引用。');
+    error(`图片源 ${host} 不可靠：${bad.why}`, rel, lineNumber, '把图片传到 R2，用站内媒体地址引用。');
     return;
   }
 
@@ -243,7 +244,7 @@ function checkImageUrl(url, rel, lineNumber, alt) {
       `图片来自白名单之外的域名（${host}）：外部图床随时可能失效或加防盗链。`,
       rel,
       lineNumber,
-      '把图片传到 R2，用 media 域名引用；确实要外链的话请在 PR 里说明。',
+      '把图片传到 R2，用站内媒体地址引用；确实要外链的话请在 PR 里说明。',
     );
   }
 

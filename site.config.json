@@ -1,0 +1,64 @@
+{
+  "_comment": [
+    "站点域名的唯一事实来源。改这里，然后跑 `npm run domain:sync`。",
+    "不要在别的文件里手写域名：不能 import 本文件的配置由 sync 写入，能 import 的代码直接读本文件，",
+    "`npm run check:domain` 会在 CI 里校验两者一致，并扫描全仓拒绝 `hostRewrites` 里的旧域名残留。",
+    "换域名时的完整流程见 MIGRATION.md；这里只放事实，不放任何密钥。"
+  ],
+
+  "repo": "https://github.com/pan-nie/TsinghuaSurvive",
+
+  "siteHost": "thu.whizzzest.com",
+  "authHost": "auth.thu.whizzzest.com",
+
+  "_mediaBaseUrl": [
+    "媒体公开地址。这里**故意不写**：省略即自动取 `<siteOrigin>/media`（媒体由主 Worker 从 R2 读）。",
+    "取消独立媒体域名的原因见 MIGRATION.md §4.1：二级子域名的证书不在 Universal SSL 覆盖范围内。"
+  ],
+
+  "_oauthAllowedDomains": [
+    "auth-worker 的 ALLOWED_DOMAINS：允许拿这个 OAuth 中转去换令牌的站点。",
+    "绝不要写成 `*`（那等于任何人都能借用你的中转）。"
+  ],
+  "oauthAllowedDomains": "*.whizzzest.com,localhost",
+
+  "_cloudflare": [
+    "Cloudflare 侧的非秘密标识（Access Key ID 官方明确说可以放在客户端配置里）。",
+    "真正的 Secret Access Key 由每个编辑者第一次打开后台媒体库时在浏览器里输入，不进仓库。",
+    "⚠️ 下面三个 REPLACE_ 值在迁移到账号 W 时替换（步骤见 MIGRATION.md §8 第 2、4 步）。"
+  ],
+  "cloudflare": {
+    "accountId": "67e59aecb10a2a8b4b4d525ff8ddcb56",
+    "zoneId": "158d2b4327671b36ae8b9183a5598daf",
+    "r2Bucket": "tsinghua-guide-media",
+    "r2AccessKeyId": "cc4b0674a8010051a2ed0f9be83d54a7"
+  },
+
+  "_hostRewrites": [
+    "旧域名 → 新域名的替换表。`npm run domain:sync` 会把它应用到所有同步目标文件（含注释与文档），",
+    "`npm run check:domain` 会拒绝任何文件里仍残留左侧这些主机名（白名单只有本文件与 MIGRATION.md）。",
+    "迁移完成后这个表保持非空：它是「以后不许再出现旧域名」的守卫依据。",
+    "值为路径表示该服务已并入主站路径（媒体就是这种）。"
+  ],
+  "hostRewrites": {
+    "tsinghua.nathanpenny.fun": "thu.whizzzest.com",
+    "auth.nathanpenny.fun": "auth.thu.whizzzest.com",
+    "media.nathanpenny.fun": "thu.whizzzest.com/media",
+    "preview.nathanpenny.fun": "thu.whizzzest.com"
+  },
+
+  "_legacyApexDomains": [
+    "旧域名所属的裸域名。完整主机名之外的写法（`*.nathanpenny.fun`、zone 名、裸域）靠它拦住 ——",
+    "只匹配完整主机名时这些写法会溜过守卫。显式列出而不是自动推导后缀，避免把 foo.co.uk 变成 co.uk 误报。"
+  ],
+  "legacyApexDomains": ["nathanpenny.fun"],
+
+  "_legacyIdentifiers": [
+    "旧账号/旧 zone 的标识。域名扫描抓不到它们（C3 时就在 deploy.yml 的注释里漏了一个），",
+    "所以一并列出来让守卫扫。这些值本身不是秘密，但指向一个即将废弃的账号，留着只会误导人。"
+  ],
+  "legacyIdentifiers": [
+    "aa23021279f1ffd6901d7093879554f3",
+    "068decbde572025a27b25b97080e4355"
+  ]
+}

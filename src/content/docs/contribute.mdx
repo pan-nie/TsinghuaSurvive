@@ -29,7 +29,7 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 
 <Steps>
 
-1. 打开[站内后台](https://tsinghua.nathanpenny.fun/admin/)（地址：`tsinghua.nathanpenny.fun/admin/`）。
+1. 打开[站内后台](https://thu.whizzzest.com/admin/)（地址：`thu.whizzzest.com/admin/`）。
 
 2. 点 **Sign in with GitHub** → 在 GitHub 页面点授权，就回到后台了。
 
@@ -65,7 +65,7 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 
 - 上传前浏览器会自动把它转成 **WebP**、长边缩到 2048、**剥掉 EXIF**（手机照片里的定位信息就在 EXIF 里，自动去掉）；
 - 图片存在 Cloudflare R2 上，**不进 Git 仓库**，所以仓库不会因为插图越来越重；
-- 插入到正文里是一行标准 Markdown：`![图片说明](https://media.nathanpenny.fun/uploads/……)`。
+- 插入到正文里是一行标准 Markdown：`![图片说明](https://thu.whizzzest.com/media/uploads/……)`。
 
 三条硬规矩：
 
@@ -83,7 +83,7 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 
 - 直接写 B 站视频的 **BV 号**，或者把整条 `https://www.bilibili.com/video/BV...` 链接粘进方括号里；
 - 想加图注，用竖线隔开：`::bilibili[BV1xx411c7mD | 演示：怎么用这个工具]`；
-- 短的自录视频（无声操作演示）可以先在后台媒体库里上传，再写 `::video[https://media.nathanpenny.fun/uploads/xxx.mp4 | 说明]`；
+- 短的自录视频（无声操作演示）可以先在后台媒体库里上传，再写 `::video[https://thu.whizzzest.com/media/uploads/xxx.mp4 | 说明]`；
 - **长视频、有声音的视频一律放 B 站再嵌入**：境内能看、不占站点的带宽，也不用担心文件太大。
 - 别把 mp4 直接提交进仓库（会让仓库永久变大），也别嵌 YouTube（校园网打不开）。
 

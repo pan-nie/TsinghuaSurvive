@@ -18,11 +18,11 @@ Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret�
 流程：
 
 ```
-后台（tsinghua.nathanpenny.fun/admin/）
-   │ ① 打开弹窗 → auth.nathanpenny.fun/auth
+后台（thu.whizzzest.com/admin/）
+   │ ① 打开弹窗 → auth.thu.whizzzest.com/auth
    ▼
 中转 Worker ──② 302──▶ github.com/login/oauth/authorize   ← 这一步需要代理（境内打不开）
-   │ ③ 用户在 GitHub 点授权 → 回调 auth.nathanpenny.fun/callback
+   │ ③ 用户在 GitHub 点授权 → 回调 auth.thu.whizzzest.com/callback
    │ ④ Worker 用 client_secret 换 access_token（secret 只在 Worker 里，不进浏览器）
    ▼
 后台拿到令牌（存浏览器 localStorage）→ 之后所有读写直接走 api.github.com（校园网实测可达）
@@ -32,10 +32,13 @@ Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret�
 
 ## 一次性部署（需要你自己的 Cloudflare 与 GitHub 账号）
 
-> **当前状态（2026-10-03 复核）**：本站环境上这些步骤**都已经做完** —— Worker 已部署，
-> `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 都已写入（`npx wrangler secret list --config auth-worker/wrangler.jsonc`
-> 可见，`https://auth.nathanpenny.fun/auth` 返回正常登录页）。
-> 下面的步骤留给「换 OAuth App、密钥泄漏、或别人 fork 后重建」。
+> **当前状态（2026-10-12）**：主站已经迁到 `thu.whizzzest.com` 并上线；**但这个 OAuth 中转还没迁完**。
+> 下面的步骤在旧账号 N 上做过一遍（Worker 已部署、`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 都已写入），
+> 而旧账号里的这两个密钥**读不出来**，所以账号 W 侧要先拿到 GitHub OAuth App 的 Client ID / Client Secret
+> （并把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`），
+> 再走下面的步骤重建。**在重建完成之前，后台用「令牌登录」而不是 GitHub 一键登录**。
+> 完整顺序见仓库根目录的 `MIGRATION.md` §8 第 7 步。
+> 下面的步骤同样适用于「换 OAuth App、密钥泄漏、或别人 fork 后重建」。
 
 ### 1. 注册 GitHub OAuth App
 
@@ -44,8 +47,8 @@ Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret�
 | 字段 | 值 |
 | --- | --- |
 | Application name | `清华生存指南内容后台`（随便写） |
-| Homepage URL | `https://tsinghua.nathanpenny.fun/` |
-| Authorization callback URL | `https://auth.nathanpenny.fun/callback` ← **必须是这个** |
+| Homepage URL | `https://thu.whizzzest.com/` |
+| Authorization callback URL | `https://auth.thu.whizzzest.com/callback` ← **必须是这个** |
 
 创建后点 **Generate a new client secret**，记下 **Client ID** 与 **Client Secret**。
 
@@ -58,7 +61,7 @@ npx wrangler secret put GITHUB_CLIENT_SECRET   # 粘贴 Client Secret
 npx wrangler deploy
 ```
 
-`wrangler deploy` 会自动创建 `auth.nathanpenny.fun` 的 DNS 记录与证书（配置在 `wrangler.jsonc` 里）。
+`wrangler deploy` 会自动创建 `auth.thu.whizzzest.com` 的 DNS 记录与证书（配置在 `wrangler.jsonc` 里）。
 
 ### 3. 确认后台配置对得上
 
@@ -69,7 +72,7 @@ backend:
   name: github
   repo: pan-nie/TsinghuaSurvive
   branch: main
-  base_url: https://auth.nathanpenny.fun     # 必须与 wrangler.jsonc 的 routes 一致
+  base_url: https://auth.thu.whizzzest.com     # 必须与 wrangler.jsonc 的 routes 一致
   auth_methods: [oauth, token]
   auth_scope: public_repo
 ```
@@ -78,14 +81,16 @@ backend:
 
 ### 4. 验证
 
-用**代理**打开 <https://tsinghua.nathanpenny.fun/admin/> → 点 **Sign in with GitHub** →
+用**代理**打开 <https://thu.whizzzest.com/admin/> → 点 **Sign in with GitHub** →
 授权 → 应该回到后台并显示全部 13 个集合（12 个目录集合 + 1 个单文件集合）。之后关掉代理，读写依然正常（走 `api.github.com`）。
 
 ## 安全说明
 
 - `GITHUB_CLIENT_SECRET` 只存在于 Cloudflare 的加密环境变量里，**不进 Git、不进浏览器**。
 - `ALLOWED_DOMAINS`（在 `wrangler.jsonc` 的 `vars` 里）是白名单：只有从这些域名打开的页面才能拿到令牌。
-  这就是为什么它写的是 `*.nathanpenny.fun,localhost` 而不是 `*`。
+  这就是为什么它写的是 `*.whizzzest.com,localhost` 而不是 `*`。
+  （这个值的事实来源是仓库根目录 `site.config.json` 的 `oauthAllowedDomains`，由 `npm run domain:sync` 写进 `wrangler.jsonc`；
+  换域名时不要手改这一处，改 SSOT 再同步，`npm run check:domain` 会校验。）
 - OAuth App 的授权范围通过 `auth_scope: public_repo` 收窄到「只读写公开仓库」，
   比默认的 `repo`（含所有私有仓库读写）小得多 —— 本站是公开仓库，够用。
   **注意 schema 只允许 `repo` / `public_repo` 两个值**，写成 `public_repo,user` 这种列表会被直接拒绝

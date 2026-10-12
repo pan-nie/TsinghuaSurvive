@@ -9,8 +9,7 @@
     {
       "allowed": {
         "origins": [
-          "https://tsinghua.nathanpenny.fun",
-          "https://preview.nathanpenny.fun",
+          "https://thu.whizzzest.com",
           "http://localhost:4321"
         ],
         "methods": ["GET", "PUT", "DELETE", "HEAD"],

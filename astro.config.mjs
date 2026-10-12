@@ -4,18 +4,16 @@ import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 import { satteri } from '@astrojs/markdown-satteri';
 import { mediaEmbedPlugin } from './src/utils/media-embed.mjs';
+import { ogImageUrl, repo as REPO, rssUrl, siteOrigin as SITE } from './scripts/site-config.mjs';
 
 /**
- * 站点地址：决定 sitemap、canonical、OG 卡片里的绝对链接。
- * 这是绑定在 Cloudflare Worker 上的自定义域名。
- * ⚠️ 不要把这里改回 *.<账号>.workers.dev —— 该域名在境内被 DNS 污染，主域名不能用它。
+ * 站点地址与仓库地址都来自 `site.config.json`（唯一事实来源）：
+ *   - siteOrigin 决定 sitemap、canonical、OG 卡片里的绝对链接；
+ *   - repo 用于「编辑此页」链接，其他学长学姐可以直接跳去提 PR。
+ *
+ * ⚠️ 换域名改 `site.config.json` 并跑 `npm run domain:sync`，不要在这里写死；
+ *    也不要把站点绑回 *.<账号>.workers.dev —— 该域名在境内被 DNS 污染，不能当正式地址。
  */
-const SITE = 'https://tsinghua.nathanpenny.fun';
-
-/**
- * 仓库地址：用于「编辑此页」链接，其他学长学姐可以直接跳去提 PR。
- */
-const REPO = 'https://github.com/pan-nie/TsinghuaSurvive';
 
 export default defineConfig({
   site: SITE,
@@ -170,7 +168,7 @@ export default defineConfig({
         // 社交分享卡片图（由 scripts/generate-og.py 生成，全站统一一张）
         {
           tag: 'meta',
-          attrs: { property: 'og:image', content: `${SITE}/og.png` },
+          attrs: { property: 'og:image', content: ogImageUrl },
         },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
@@ -179,7 +177,7 @@ export default defineConfig({
           attrs: { property: 'og:image:alt', content: '清华生存指南 —— 来自学长学姐的经验分享' },
         },
         { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
-        { tag: 'meta', attrs: { name: 'twitter:image', content: `${SITE}/og.png` } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: ogImageUrl } },
         // RSS 订阅（阅读器会自动发现）
         {
           tag: 'link',
@@ -187,7 +185,7 @@ export default defineConfig({
             rel: 'alternate',
             type: 'application/rss+xml',
             title: '清华生存指南',
-            href: `${SITE}/rss.xml`,
+            href: rssUrl,
           },
         },
         // 百度/搜狗等中文搜索引擎的收录验证位（拿到验证码后填这里）

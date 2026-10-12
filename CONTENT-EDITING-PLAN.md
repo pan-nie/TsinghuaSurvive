@@ -11,14 +11,14 @@
 | 决定 | 内容 | 关键理由 |
 | --- | --- | --- |
 | **后台形态** | A 方案：Sveltia CMS，静态页在 `public/admin/`，挂在 `/admin/` | 纯前端 SPA，零后端零新资源；Git 原生，复用现有 PR + CI |
-| **媒体存放** | **Cloudflare R2**（桶 `tsinghua-guide-media`，公开域名 `media.nathanpenny.fun`），不进 Git | 仓库永远不因图片变重；`uploads/` 体积上限问题一次性消失 |
-| **登录方式** | **GitHub OAuth**，经自建中转 `auth-worker/`（`auth.nathanpenny.fun`，内联 MIT 的 `sveltia/sveltia-cms-auth`，13KB） | 提案时推荐 PAT，拍板改成「可以开代理，令牌太麻烦」；中转只做「授权码 → 访问令牌」交换 |
+| **媒体存放** | **Cloudflare R2**（桶 `tsinghua-guide-media`，由**主 Worker 在 `https://thu.whizzzest.com/media/*` 从 R2 读出**，不给桶单独配公开域名），不进 Git | 仓库永远不因图片变重；`uploads/` 体积上限问题一次性消失；媒体与站点同源、省一个域名与一张证书（原因见 `MIGRATION.md` §4.1） |
+| **登录方式** | **GitHub OAuth**，经自建中转 `auth-worker/`（`auth.thu.whizzzest.com`，内联 MIT 的 `sveltia/sveltia-cms-auth`，13KB） | 提案时推荐 PAT，拍板改成「可以开代理，令牌太麻烦」；中转只做「授权码 → 访问令牌」交换 |
 | **备用入口** | `auth_methods: [oauth, token]`，令牌保留 | 中转挂掉时仍能进后台；想彻底去掉改成 `[oauth]` |
 | **范围外** | 只有登录那一步需要代理（授权页在 `github.com`）；授权后全部走 `api.github.com`，校园网内完成 | 衡量过的代价：多一个 Worker、仅登录时需代理 |
 
 一个不会 Git 的作者，完成一次改动的路径：
 
-> 打开 `https://tsinghua.nathanpenny.fun/admin/` → 点一次 **Sign in with GitHub** → 选文章 → 改文字 → 拖图（浏览器内压成 WebP 存 R2）→ 写一行 `::bilibili[BV号]` → 保存 → PR → 预览 + CI → 合并上线。
+> 打开 `https://thu.whizzzest.com/admin/` → 点一次 **Sign in with GitHub** → 选文章 → 改文字 → 拖图（浏览器内压成 WebP 存 R2）→ 写一行 `::bilibili[BV号]` → 保存 → PR + 全套 CI → 合并上线。
 
 ## 2. 为什么不是别的方案
 
@@ -32,14 +32,15 @@
 
 ```mermaid
 flowchart TD
-  A["作者浏览器<br/>tsinghua.nathanpenny.fun/admin/"] -->|登录时一次 OAuth 跳转| B["auth-worker<br/>auth.nathanpenny.fun"]
+  A["作者浏览器<br/>thu.whizzzest.com/admin/"] -->|登录时一次 OAuth 跳转| B["auth-worker<br/>auth.thu.whizzzest.com"]
   B -->|"授权码 → 访问令牌"| A
   A -->|"读写内容（直连，校园网可达）"| C["api.github.com"]
-  A -->|"图片/视频上传前浏览器内转 WebP 2048 剥 EXIF"| D["Cloudflare R2<br/>media.nathanpenny.fun"]
-  C --> E["独立分支 + PR"]
-  E --> F["预览 preview.nathanpenny.fun + 全套 CI"]
-  F --> G["维护者合并到 main"]
-  G --> H["deploy.yml 构建 → Cloudflare Worker → 线上"]
+  A -->|"图片/视频上传前浏览器内转 WebP 2048 剥 EXIF"| D["Cloudflare R2<br/>tsinghua-guide-media"]
+  D -->|"主 Worker 在 /media/* 读出"| E["thu.whizzzest.com/media"]
+  C --> F["独立分支 + PR"]
+  F --> G["全套 CI<br/>（PR 预览环境已取消，看效果用本地 npm run dev）"]
+  G --> H["维护者合并到 main"]
+  H --> I["deploy.yml 构建 → Cloudflare Worker → 线上"]
 ```
 
 `publish_mode: editorial_workflow`：**每次保存开一个 PR，不直推 main** —— 后台也存在审稿，这是红线不被绕过的关键开关。
@@ -57,10 +58,10 @@ flowchart TD
 
 ## 5. 还没做的
 
-| 项 | 状态 | 复核证据（2026-10-03） |
+| 项 | 状态 | 复核证据 |
 | --- | --- | --- |
-| **GitHub OAuth App 两个密钥** | ✅ 已完成 | `npx wrangler secret list --config auth-worker/wrangler.jsonc` 能看到 `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`；`https://auth.nathanpenny.fun/auth` 返回正常登录页，不再是 `MISCONFIGURED_CLIENT` |
-| **R2 API 令牌（`access_key_id`）** | ✅ 已完成 | `npm run r2:setup -- --check` 五项全绿（桶、公开域名、CORS、`public_url`、R2 API 令牌）；Secret Access Key 不进任何文件，编辑者首次用媒体库时在浏览器输入一次 |
+| **GitHub OAuth App 两个密钥** | ✅ 旧账号 N 已完成；⏳ 迁移到账号 W 后重建 | 旧环境：`npx wrangler secret list --config auth-worker/wrangler.jsonc` 能看到 `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`；`https://auth.thu.whizzzest.com/auth` 返回正常登录页，不再是 `MISCONFIGURED_CLIENT`（2026-10-03）。重建步骤见 `MIGRATION.md` §8 第 7 步 |
+| **R2 API 令牌（`access_key_id`）** | ✅ 旧账号 N 已完成；⏳ 账号 W 上还没建桶 | 旧环境：`npm run r2:setup -- --check` 通过（桶、CORS、`public_url`、R2 API 令牌）；**媒体并入主站后没有「公开域名」这一项**（脚本报告「公开域名：不需要」，由主 Worker 在 `/media/*` 读 R2）。Secret Access Key 不进任何文件，编辑者首次用媒体库时在浏览器输入一次；新 Access Key ID 目前是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 占位符 |
 | **校园网里复测 unpkg 可达性** | ⬜ **唯一还开着的** | 不通就跑 `npm run admin:vendor` 把编辑器脚本放进仓库。**确证：`public/admin/vendor/` 目前不存在**，说明兜底还没启用过 —— 现在「后台能不能自己加载编辑器」依赖 unpkg 可达，值得找一个校园网环境点一次 `/admin/`。 |
 
 ## 6. 明确不做 + 产品级取舍
@@ -98,7 +99,7 @@ flowchart TD
 | 校园网 `github.com` 网页端不通、`api.github.com` 通 | `README.md` §一（校园网说明） |
 | 本站是纯静态、无 KV/D1 | `wrangler.jsonc`、`HANDOVER.md` §0 |
 | 后台覆盖 12 个目录集合 + 1 个单文件集合，共 47 个内容文件 | `npm run check:admin`（每次 CI 复核这个数字） |
-| 推送 main 自动部署；PR 有独立预览域名 | `.github/workflows/deploy.yml`、`preview.yml` |
+| 推送 main 自动部署；PR 无预览环境（已取消，看效果用本地 `npm run dev`） | `.github/workflows/deploy.yml`；`MIGRATION.md` §1「PR 预览」一行 |
 | 正文相对路径图片会被 Astro 优化成 WebP 并补 `width/height/lazy` | 实测（探针产物 `/_astro/_probe.*.webp`）；路径算错则 `[ImageNotFound]` 构建失败 |
 | 内容加载器出错时构建返回 0 且那页正文变空 | 实测（`[starlight-docs-loader] Error rendering …`，`build exit=0`） |
 | 一个集合只列一种扩展名 | <https://sveltiacms.app/en/docs/collections/entries/formats.md> |

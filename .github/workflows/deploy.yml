@@ -32,6 +32,12 @@ jobs:
       - name: 类型检查
         run: npm run check
 
+      # 域名检查：所有能 import 的代码都从 site.config.json 取域名，不能 import 的配置由
+      # `npm run domain:sync` 写入。这一条确认两边一致，并扫描全仓拒绝旧域名残留 ——
+      # 换域名时最怕的就是「漏改一处」，而漏改的表现全是静默的（canonical 指错、CORS 被拦）。
+      - name: 域名一致性检查
+        run: npm run check:domain
+
       # 内容检查：死链、中文文件名、未来日期、占位符与过期核对日期。
       # 默认模式只把「真错误」当失败，占位符之类的债务只提示，不阻断部署。
       - name: 内容检查
@@ -85,19 +91,42 @@ jobs:
       - name: 媒体产物比对
         run: npm run check:media:dist
 
-      # 凭证守卫：没有配 CLOUDFLARE_API_TOKEN 时给出明确提示并跳过部署，
-      # 而不是抛一个看不懂的认证错误。
+      # 媒体出口（/media/* → R2）的端到端：Range、条件请求、路径穿越、缓存头、桶未绑定。
+      # 全是「页面照开、图片/视频静默坏掉」的失败方式，必须断言。
+      - name: 媒体出口检查（Worker）
+        run: npm run check:media:worker
+
+      # 凭证守卫（三层），任何一层不过就只构建不部署 —— 迁移期最容易踩的坑就是
+      # 「Secrets 还是旧账号的，而配置已经是新账号」，那样直接部署只会在绑定自定义域名时
+      # 抛一个跟根因无关的错（zone not found / 10000 authentication error）。
+      #   ① 有没有 token
+      #   ② 仓库里的 CLOUDFLARE_ACCOUNT_ID 与 site.config.json 是否一致（快速失败）
+      #   ③ **这个 token 到底能不能看到那个账号** —— 只比 ID 是不够的：ID 可以是对的而 token 是旧账号的
       - name: 检查部署凭证
         id: creds
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          EXPECTED_ACCOUNT=$(node -e "console.log(require('./site.config.json').cloudflare.accountId)")
           if [ -z "$CF_TOKEN" ]; then
             echo "::warning title=跳过部署::仓库缺少 CLOUDFLARE_API_TOKEN，本次只构建不部署。配置步骤见 HANDOVER.md。"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          elif [ -n "$CF_ACCOUNT" ] && [ "$CF_ACCOUNT" != "$EXPECTED_ACCOUNT" ]; then
+            echo "::error title=账号不匹配::CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT，而 site.config.json 期望 $EXPECTED_ACCOUNT。请先更新仓库 Secrets（见 MIGRATION.md §7），本次不部署。"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          elif ! curl -sS -H "Authorization: Bearer $CF_TOKEN" https://api.cloudflare.com/client/v4/accounts | grep -q "$EXPECTED_ACCOUNT"; then
+            echo "::error title=Token 看不到目标账号::CLOUDFLARE_API_TOKEN 列不出 site.config.json 期望的账号 ${EXPECTED_ACCOUNT}（典型原因：迁移后没换 Secrets，还是旧账号的 token）。本次不部署。见 MIGRATION.md §7。"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # 占位符闸门：迁移期间 site.config.json / ai.config.yml 里可能还留着 REPLACE_ 占位符。
+      # 带着它们部署，wrangler 会抛一个跟根因无关的错（例如 zone not found），排查成本很高。
+      - name: 部署前占位符检查
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run check:deploy-ready
 
       - name: 部署到 Cloudflare Workers
         if: steps.creds.outputs.ready == 'true'
@@ -107,6 +136,14 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
 
+      # 部署成功后立刻验**线上真实站点**：canonical / robots / sitemap / RSS 的域名、
+      # /api/ai-config 的 sitekey 与仓库配置是否一致、无 token 时是否 fail-closed、
+      # 媒体出口 404、后台 noindex、404 页面与尾斜杠重定向。
+      # 这些全是「部署成功但线上悄悄坏掉」的类型，构建阶段的检查一个都覆盖不到。
+      - name: 线上冒烟检查（部署后）
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run check:live
+
 # 需要的仓库 Secrets（Settings → Secrets and variables → Actions）：
-#   CLOUDFLARE_ACCOUNT_ID  —— aa23021279f1ffd6901d7093879554f3（已配好）
-#   CLOUDFLARE_API_TOKEN   —— 需要在 Cloudflare 控制台手动创建，权限清单见 HANDOVER.md
+#   CLOUDFLARE_ACCOUNT_ID  —— ⚠️ 迁移到新账号后必须换成新账号的 ID（旧值指向即将废弃的账号）
+#   CLOUDFLARE_API_TOKEN   —— 在新账号里创建（权限清单见 HANDOVER.md 第 5 节，zone 只选 whizzzest.com）

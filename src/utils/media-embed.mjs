@@ -6,7 +6,7 @@
  *   ::bilibili[BV1xx411c7mD]                          ← 推荐，只用写 BV 号
  *   ::bilibili[https://www.bilibili.com/video/BV1xx411c7mD]
  *   ::bilibili[BV1xx411c7mD | 演示：怎么用这个工具]      ← 竖线后面是图注
- *   ::video[https://media.nathanpenny.fun/uploads/20260930-ab12cd.mp4]
+ *   ::video[https://thu.whizzzest.com/media/uploads/20260930-ab12cd.mp4]
  *   ::video[https://.../demo.mp4 | 报到当天的路线]
  *
  * 输出一个 16:9 自适应的容器（样式在 src/styles/custom.css 的 .media-embed）。

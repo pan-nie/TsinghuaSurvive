@@ -23,7 +23,10 @@ function sourceDate(id: string): Date | null {
 
 export async function GET(context: APIContext) {
   const docs = await publishedDocs();
-  const site = context.site ?? new URL('https://tsinghua.nathanpenny.fun');
+  // 站点地址由 astro.config.mjs 的 site 注入（来自 site.config.json）；
+  // 这里不写死域名兜底 —— 读文件的模块不能进构建产物，见 Head.astro 里的同类说明。
+  const site = context.site;
+  if (!site) throw new Error('site 未配置：检查 astro.config.mjs 的 site（它来自 site.config.json）');
 
   /** 每篇的「最后更新」日期：人工核对优先，退回到 git 提交时间 */
   const dateOf = (entry: (typeof docs)[number]): Date | undefined =>

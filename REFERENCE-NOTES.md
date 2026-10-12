@@ -239,7 +239,7 @@ gh api graphql -f query='{repository(owner:"pan-nie",name:"TsinghuaSurvive"){has
 - **对读者的公开承诺**：`/start/how-to-use/` 写着「没有评论区，没有账号系统，不收集你的任何信息」，`/start/disclaimer/` 与 HANDOVER 的「已知限制」也都记着 → 加评论得三处一起改。
 - **审核义务**：《互联网跟帖评论服务管理规定》要求跟帖评论服务提供者建立审核制度、做真实身份认证、用户分级与黑名单。而本站红线是「不写对具体老师的指名评价」——评论区会把这条红线从「我们写」变成「读者写、站长兜底」。
 
-将来真要做的话，境内唯一可用形态是**自托管**（Waline / Twikoo 挂 `comment.nathanpenny.fun` 这类自有子域名），
+将来真要做的话，境内唯一可用形态是**自托管**（Waline / Twikoo 挂 `comment.<本站主域名>` 这类自有子域名），
 代价是「零后端」原则作废 + 多一套运维与反垃圾。注意 Twikoo 官方对 Cloudflare Workers 部署只标 ★★☆☆☆（「需命令行，功能有部分限制」）。
 
 </details>
@@ -560,14 +560,19 @@ thuservices（仓库 `thuservices/thuservices`，mkdocs 站点）是**目前唯�
 | 后台配置 | 12 个目录集合 + 1 个单文件集合，覆盖 47 个内容文件 |
 | `check:links` | 60/60 可访问（清华校园网测点，`checkedAt: 2026-10-03`） |
 | `check:e2e` | 课程索引 142 张卡片、链接页 60 张卡片；筛选 / 搜索 / 清除 / 空状态、两个互动工具的 JS 二次渲染样式与规则全通过 |
-| 线上与本地一致 | 线上 sitemap 108 == 本地 108，线上 RSS 45 == 本地 45 |
+| 线上与本地一致 | 线上 sitemap 108 == 本地 108，线上 RSS 45 == 本地 45（**旧域名时期**，2026-10-03） |
+
+> 这一步的检查集后来变长了：`verify` 现在还会跑 `check:domain`（全仓旧域名残留 + 与 `site.config.json` 一致）
+> 与 `check:media:worker`（`/media/*` 出口的 33 项端到端断言）。域名的唯一事实来源是根目录 `site.config.json`，
+> 改写用 `npm run domain:sync` —— 详见 [HANDOVER.md §5.1](./HANDOVER.md) 与 [MIGRATION.md](./MIGRATION.md)。
 
 债务总账（`check:content`，与 OUTLINE.md 的快照一致）：待补作者 44、待核对页面 20、未标注核对日期 44、
 待人工核对链接 0、待补充资料 0、只有书目没有资料索引的课 3、状态未核实的第三方工具 5。
 
-云上资源也顺手核了：**OAuth 中转的两个 secret 已配好**（`wrangler secret list` 可见，最后一次部署就是 2026-09-30 的 secret 变更），
-`https://auth.nathanpenny.fun/auth` 返回正常登录页而不是 `MISCONFIGURED_CLIENT`；
-**R2 全绿** —— `npm run r2:setup -- --check` 五项通过（桶、公开域名、CORS、`public_url`、R2 API 令牌已填入 `access_key_id`）。
+云上资源也顺手核了（**全部属于旧账号 N，迁移到账号 W 后要重建**）：**OAuth 中转的两个 secret 已配好**（`wrangler secret list` 可见，最后一次部署就是 2026-09-30 的 secret 变更），
+`https://auth.thu.whizzzest.com/auth` 返回正常登录页而不是 `MISCONFIGURED_CLIENT`；
+**R2 全绿** —— `npm run r2:setup -- --check` 通过（桶、CORS、`public_url`、R2 API 令牌已填入 `access_key_id`）；
+媒体并入主站后**不再有「公开域名」这一项**（由主 Worker 在 `/media/*` 读 R2，脚本会报告「公开域名：不需要」）。
 
 ### 10.3 性能基线重测
 
