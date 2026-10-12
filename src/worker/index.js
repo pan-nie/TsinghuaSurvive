@@ -1,9 +1,10 @@
 /**
- * 站内 AI 问答的 Worker 入口。
+ * 站内 AI 问答与媒体的 Worker 入口。
  *
- * 这个 Worker 同时承担两件事：
+ * 这个 Worker 同时承担三件事：
  *   1. 托管静态站点（原来那个"纯静态资源"的形态没变，静态请求仍然不经这里，见 wrangler.jsonc 的 run_worker_first）
  *   2. 提供 /api/* —— 问答接口、公开配置、以及后台用的配置接口
+ *   3. 提供 /media/* —— 从 R2 桶读图片与短视频（媒体的独立域名已取消，见 src/worker/media.js）
  *
  * 请求链路（POST /api/ask）：
  *   校验入参 → 限流（不扣额度）→ Turnstile → 检索 → 相关度闸门 → 扣额度 → 生成并流式返回
@@ -18,6 +19,7 @@
 import { loadKnowledge, search, isConfident, buildMessages } from './retrieval.js';
 import { streamCompletion, testCompletion } from './providers.js';
 import { verifyTurnstile, expectedHostnames } from './turnstile.js';
+import { handleMedia } from './media.js';
 
 export { AskGate } from './gate.js';
 
@@ -418,8 +420,22 @@ export default {
       }
     }
 
+    // 媒体：从 R2 桶读（run_worker_first 里包含 /media/*）。
+    // 这里的错误要和「文件不存在」区分开 —— 前者是事故，必须留日志。
+    if (url.pathname.startsWith('/media/')) {
+      try {
+        return await handleMedia(request, env);
+      } catch (error) {
+        console.error(JSON.stringify({ event: 'media_error', path: url.pathname, message: String(error?.message ?? error).slice(0, 300) }));
+        return new Response('媒体读取失败，请稍后再试。', {
+          status: 500,
+          headers: { 'content-type': 'text/plain; charset=utf-8' },
+        });
+      }
+    }
+
     // 其余请求一律走静态资源。正常情况下静态请求根本不会进到这里
-    // （wrangler.jsonc 的 run_worker_first 只把 /api/* 交给 Worker），这里只是兜底。
+    // （wrangler.jsonc 的 run_worker_first 只把 /api/* 与 /media/* 交给 Worker），这里只是兜底。
     return env.ASSETS.fetch(request);
   },
 };

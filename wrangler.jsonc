@@ -5,7 +5,7 @@
   // 现在多了一个 /api/* —— 站内 AI 问答需要有个地方**藏住第三方 API Key**，
   // 也必须有一个服务端来做检索、限流与人机校验，所以引入了 Worker 脚本。
   //
-  // 静态站点的优势没有被牺牲：`run_worker_first` 只把 /api/* 交给 Worker，
+  // 静态站点的优势没有被牺牲：`run_worker_first` 只把 /api/* 与 /media/* 交给 Worker，
   // 其余请求仍是「静态资源优先」，从离用户最近的节点直接返回，不进 Worker，
   // 也就没有冷启动与 CPU 消耗（免费档的 100,000 请求/天只对真正进 Worker 的请求计数）。
   "$schema": "./node_modules/wrangler/config-schema.json",
@@ -22,10 +22,19 @@
     "html_handling": "auto-trailing-slash",
     // Worker 脚本要能读到 dist/ai-index.json 与 dist/ai-corpus.txt（AI 检索索引）
     "binding": "ASSETS",
-    // 只有 /api/* 走 Worker 脚本；页面、图片、Pagefind 索引仍然是纯静态直出。
-    // 这是「加了后端但不拖慢站点」的关键。
-    "run_worker_first": ["/api/*"]
+    // /api/* 走 AI 问答；/media/* 从 R2 读图片与视频（媒体的独立域名已取消，见 src/worker/media.js）。
+    // 页面、字体、Pagefind 索引仍然是纯静态直出 —— 这是「加了后端但不拖慢站点」的关键。
+    "run_worker_first": ["/api/*", "/media/*"]
   },
+
+  // R2 绑定：媒体由本 Worker 在 /media/* 上直接读，不再给桶配公开域名（少一个域名、少一张证书）。
+  // 桶名与 site.config.json 的 cloudflare.r2Bucket 保持一致（`npm run check:domain` 会校验）。
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "tsinghua-guide-media"
+    }
+  ],
 
   // Workers AI 绑定：默认模型走它，**不需要 API Key**，也不需要额外创建任何资源。
   "ai": {
