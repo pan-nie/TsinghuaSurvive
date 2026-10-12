@@ -58,7 +58,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@astrojs/markdown-satteri": "^0.4.2",
-    "@sveltia/cms": "^0.225.0",
+    "@sveltia/cms": "^0.235.0",
     "ajv": "^8.20.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
