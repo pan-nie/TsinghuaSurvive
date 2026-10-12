@@ -60,8 +60,8 @@ flowchart TD
 
 | 项 | 状态 | 复核证据 |
 | --- | --- | --- |
-| **GitHub OAuth App 两个密钥** | ✅ 旧账号 N 已完成；⏳ 迁移到账号 W 后重建 | 旧环境：`npx wrangler secret list --config auth-worker/wrangler.jsonc` 能看到 `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`；`https://auth.thu.whizzzest.com/auth` 返回正常登录页，不再是 `MISCONFIGURED_CLIENT`（2026-10-03）。重建步骤见 `MIGRATION.md` §8 第 7 步 |
-| **R2 API 令牌（`access_key_id`）** | ✅ 旧账号 N 已完成；⏳ 账号 W 上还没建桶 | 旧环境：`npm run r2:setup -- --check` 通过（桶、CORS、`public_url`、R2 API 令牌）；**媒体并入主站后没有「公开域名」这一项**（脚本报告「公开域名：不需要」，由主 Worker 在 `/media/*` 读 R2）。Secret Access Key 不进任何文件，编辑者首次用媒体库时在浏览器输入一次；新 Access Key ID 目前是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 占位符 |
+| **GitHub OAuth App 两个密钥** | ✅ 账号 W 已完成（2026-10-12） | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 已写入账号 W 的 `tsinghua-guide-auth`，OAuth App 的 callback 已改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。线上实测：`GET /auth?provider=github&site_id=thu.whizzzest.com` → **302 跳到 github.com 授权页**（不再是 `MISCONFIGURED_CLIENT`），陌生 `site_id` 拿不到跳转。重建配方见 `MIGRATION.md` §8 第 7 步与 `auth-worker/README.md` |
+| **R2 API 令牌（`access_key_id`）** | ✅ 账号 W 已完成（2026-10-12） | 桶 `tsinghua-guide-media` 已建、`r2/cors.json` 已应用、Access Key ID 已填进 `site.config.json` 并 `domain:sync` 进 CMS 配置（全仓已无 `REPLACE_` 占位符；`check:deploy-ready` 的降级警告也就此消失）。**媒体并入主站后没有「公开域名」这一项**（由主 Worker 在 `/media/*` 读 R2），上传测试对象 → `GET /media/uploads/smoke-test.txt` = 200。Secret Access Key 不进任何文件，编辑者首次用媒体库时在浏览器输入一次 |
 | **校园网里复测 unpkg 可达性** | ⬜ **唯一还开着的** | 不通就跑 `npm run admin:vendor` 把编辑器脚本放进仓库。**确证：`public/admin/vendor/` 目前不存在**，说明兜底还没启用过 —— 现在「后台能不能自己加载编辑器」依赖 unpkg 可达，值得找一个校园网环境点一次 `/admin/`。 |
 
 ## 6. 明确不做 + 产品级取舍

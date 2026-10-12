@@ -32,13 +32,13 @@ Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret�
 
 ## 一次性部署（需要你自己的 Cloudflare 与 GitHub 账号）
 
-> **当前状态（2026-10-12）**：主站已经迁到 `thu.whizzzest.com` 并上线；**但这个 OAuth 中转还没迁完**。
-> 下面的步骤在旧账号 N 上做过一遍（Worker 已部署、`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 都已写入），
-> 而旧账号里的这两个密钥**读不出来**，所以账号 W 侧要先拿到 GitHub OAuth App 的 Client ID / Client Secret
-> （并把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`），
-> 再走下面的步骤重建。**在重建完成之前，后台用「令牌登录」而不是 GitHub 一键登录**。
-> 完整顺序见仓库根目录的 `MIGRATION.md` §8 第 7 步。
-> 下面的步骤同样适用于「换 OAuth App、密钥泄漏、或别人 fork 后重建」。
+> **当前状态（2026-10-12 迁移完成）**：OAuth 中转已随主站迁到账号 W 并接通 ——
+> `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 已写入账号 W 的 `tsinghua-guide-auth`，
+> OAuth App 的 Authorization callback 已改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。
+> 线上实测：`GET /auth?provider=github&site_id=thu.whizzzest.com` → **302 跳到 github.com 授权页**（不再是 `MISCONFIGURED_CLIENT`），
+> 陌生 `site_id` 拿不到跳转（白名单只放 `*.whizzzest.com` 与 `localhost`）。
+> 后台现在用 **Sign in with GitHub** 登录，令牌登录仍保留作备用。完整记录见 `MIGRATION.md` §8 第 7 步。
+> 下面的步骤是**重建配方**，适用于「换 OAuth App、密钥泄漏、或别人 fork 后重建」。
 
 ### 1. 注册 GitHub OAuth App
 

@@ -209,7 +209,8 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 
 ### 第 7 步的具体做法（auth 中转的两个 Secret）
 
-Worker 已经部署好了（域名与证书都在），只差 GitHub OAuth App 的两个值：
+Worker 已经部署好了（域名与证书都在），GitHub OAuth App 的两个值也已写入 —— 本节保留为**重建配方**
+（换 OAuth App、密钥泄漏、或别人 fork 后重建时照做）：
 
 ```bash
 # 1. 从 GitHub OAuth App 页面取 Client ID，并 Generate a new client secret

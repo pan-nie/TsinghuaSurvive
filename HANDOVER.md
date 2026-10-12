@@ -35,7 +35,7 @@ flowchart TB
 | --- | --- | --- |
 | 正式站 Worker | `tsinghua-guide` → `thu.whizzzest.com` | ✅ 已上线（2026-10-12 部署，369 个文件；页面 + `/api/*` + `/media/*` 实测 200） |
 | OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | ✅ 已完成（2026-10-12）：DNS 与证书就绪、`GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` 已写入、callback 已改；`/auth` 实测 **302 跳 GitHub 授权**，陌生域名被白名单拒绝 |
-| R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ✅ 桶已建、CORS 已配、媒体出口实测 200/206/404（⏳ 仅缺 R2 API 令牌，只影响后台传图） |
+| R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ✅ 桶已建、CORS 已配、R2 API 令牌（Access Key ID 已填进 `site.config.json`）、媒体出口实测 200/206/404 |
 | KV / D1 | —— | 没有，一个都不用 |
 | Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ✅ 随首次 `wrangler deploy` 已创建，见第 10 节 |
 | 内容后台 | `/admin/`（Sveltia CMS，纯静态） | ✅ 代码已就绪，随站点部署后生效，见第 9 节 |
@@ -52,9 +52,9 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 **没有用户系统、没有数据库**；唯一的持久化是一个 Durable Object（限流计数 + 加密后的第三方 API Key）。
 
 > ✅ **迁移状态（2026-10-12 实测）**：站点已从旧域名 / 旧 Cloudflare 账号迁到 `thu.whizzzest.com` / 账号 W，
-> **主站已部署上线**（页面 200、问答链路与媒体出口均已实测）。仍标「⏳」的只有四处控制台/仓库设置动作，
-> 见 [MIGRATION.md](./MIGRATION.md) §8：全部完成（R2 API 令牌、CI 部署 Token、OAuth 中转）；
-> 旧域名 301 与 Always Use HTTPS 两项按维护者决定不做，见第 8 节「已知限制」。
+> **主站已部署上线**（页面 200、问答链路与媒体出口均已实测）。账号 W 侧的动作已**全部完成**
+> （R2 API 令牌、CI 部署 Token、OAuth 中转，见 [MIGRATION.md](./MIGRATION.md) §8 第 1–8 步）；
+> 只有两项按维护者决定**不做**：旧域名 301 与 Always Use HTTPS，见第 8 节「已知限制」。
 
 ---
 
@@ -71,7 +71,7 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | Zone ID | `158d2b4327671b36ae8b9183a5598daf` |
 | Zone 的 NS | 以控制台 zone 详情页为准（旧 zone 的 NS 值已作废，不再记录） |
 | Worker（正式） | `tsinghua-guide` → `https://thu.whizzzest.com`（✅ 已部署，Custom Domain 与证书已创建） |
-| Worker（OAuth 中转） | `tsinghua-guide-auth` → `https://auth.thu.whizzzest.com`，代码在 `auth-worker/`，**不随主站 CI 部署**（⏳ 待建，需要 GitHub OAuth App 的 client id/secret） |
+| Worker（OAuth 中转） | `tsinghua-guide-auth` → `https://auth.thu.whizzzest.com`，代码在 `auth-worker/`，**不随主站 CI 部署**（✅ 已建：2026-10-12 部署，两个 Secret 已写入、OAuth App callback 已改，`/auth` 实测 302 跳 GitHub） |
 | R2 桶 | `tsinghua-guide-media` → `https://thu.whizzzest.com/media`（✅ 桶已建、CORS 已配；**由主 Worker 从 R2 读出，桶不需要公开域名**） |
 | Turnstile 挂件 | `tsinghua-guide-ask`（域名 `thu.whizzzest.com` / `localhost` / `127.0.0.1`），sitekey `0x4AAAAAAFUTnXn4vkXwvC5O` |
 | GitHub 仓库 | <https://github.com/pan-nie/TsinghuaSurvive>（public，`main`） |
@@ -100,9 +100,8 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | **站内 AI 问答** | `src/worker/`（运行时，`/api/*`）+ `src/components/AskBox.astro`（见第 10 节） |
 | **媒体出口** | `/media/*` 由 `src/worker/media.js` 从 R2 读（见第 9.3 节） |
 
-仓库 Secrets：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅ —— **2026-10-12 已换成账号 W 的**（旧账号的 token 会因
-「看不到目标账号」被凭证守卫拦下、跳过部署；权限最小集合见第 5 节）。
-⏳ **迁移到账号 W 时两个都要换成新账号的值**（`CLOUDFLARE_ACCOUNT_ID` 换账号 W 的 ID，`CLOUDFLARE_API_TOKEN` 按第 5 节重建），见 MIGRATION.md §8 第 4 步。
+仓库 Secrets：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅ —— **2026-10-12 已换成账号 W 的**（`gh secret list` 可见两者的更新时间；
+旧账号的 token 会因「看不到目标账号」被凭证守卫拦下、跳过部署；权限最小集合与重建步骤见第 5 节、MIGRATION.md §8 第 4 步）。
 
 **Worker 侧的 Secret（不属于仓库 Secrets，用 `wrangler secret put` 写入，见第 10.2 节）**：
 
@@ -296,7 +295,7 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 
 ### 5.2 CI 的 API Token
 
-**状态：账号 N 时期已配好并实测通过；⏳ 迁移到账号 W 时按本节重建。** 本节留给「token 过期 / 被吊销 / 换账号」时用。
+**状态：账号 W 上已重建并实测通过（2026-10-12，`gh secret list` 可见更新时间为当日、`deploy.yml` 全绿）。** 本节留给「token 过期 / 被吊销 / 换账号」时用。
 
 创建这一步**必须人工做** —— wrangler 的 OAuth 凭证没有管理 API Token 的权限（调用返回 `9109 Unauthorized`），无法脚本化。
 
@@ -674,8 +673,8 @@ idf 用的是「正文与标题合并后的 df」——用标题自身的 df 会
 ### 10.6 验证到什么程度了
 
 自动化检查（`npm run check:ai` + `check:ai:worker`）跑的是真实入口函数、真实检索、真实提示词，
-桩掉的只有 AI 绑定与 Durable Object 存储。**下面三项是 2026-10-05 在旧站环境（已废弃）验证过的历史记录**，
-⏳ 账号 W 上的正式站部署完成后，需要用同一套手法在新域名上复测一遍：
+桩掉的只有 AI 绑定与 Durable Object 存储。**下面三项是 2026-10-05 在旧站环境（已废弃）验证过的历史记录**；
+账号 W 上的正式站已于 2026-10-12 部署上线（`/ask/` 实测 200），但这三项**尚未在新域名上复测**，需要时按同一套手法再走一遍：
 
 | 项目 | 怎么验的 | 结果（旧环境，2026-10-05） |
 | --- | --- | --- |
@@ -782,7 +781,7 @@ Workers AI 面板看真实用量，和 10.3 的估算对一下，再决定 `dail
 **上线方式（旧账号 N 环境，2026-10-06）**：提交 `1b0a0c6` → push `main` → `deploy.yml` 自动部署（12 步 CI 全过）。
 线上验证：`/qingxiaoda/` 200、普通文章页侧边栏显示「AI 功能」。
 注意**首页查不到「AI 功能」是正常的**——`template: splash` 不渲染侧边栏。
-⏳ 迁移到账号 W 后，这套「push main → 自动部署」的流程不变，但首次部署前要先按 MIGRATION.md §8 建好资源。
+**账号 W 上同样成立（2026-10-12 实测）**：资源已按 MIGRATION.md §8 建好，「push main → `deploy.yml` 自动部署」照旧生效（当日多次部署全绿），`https://thu.whizzzest.com/qingxiaoda/` 实测 200。
 
 ### 12.2 这一页是纯内容，但有两条硬约束
 
