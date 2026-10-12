@@ -103,7 +103,7 @@
 | **链接** | `check:links` ｜ `verify:links [-- --apply]` ｜ `review:links [-- --open]` ｜ `review:links:apply -- <文件> [--write]` | 实测 → 语义核对 → 人工核对 |
 | **本地自检** | `npm run check:e2e -- --base http://localhost:4321` ｜ `npm run measure:perf -- --base http://127.0.0.1:4322` | 无头 Chrome；**`--base` 写 `localhost`**，`astro preview` 在 macOS 上只绑 IPv6 回环 |
 | **后台与云资源** | `admin:vendor` ｜ `auth:dry` ｜ `auth:deploy` ｜ `r2:setup [-- --check]` | 后台编辑器兜底、OAuth 中转、R2 桶 |
-| **域名与媒体出口** | `npm run domain:sync` ｜ `check:domain` ｜ `check:media:worker` | 域名唯一来源是根目录 `site.config.json`：`domain:sync` 写入、`check:domain` 校验一致并扫旧域名残留、`check:media:worker` 端到端验证 `/media/*` 出口（见 HANDOVER §5） |
+| **域名与媒体出口** | `npm run domain:sync` ｜ `check:domain` ｜ `check:media:worker` ｜ `check:live` | 域名唯一来源是根目录 `site.config.json`：`domain:sync` 写入、`check:domain` 校验一致并扫旧标识残留、`check:media:worker` 端到端验证 `/media/*` 出口、`check:live` 部署后验线上真实站点（见 HANDOVER §5） |
 | **部署** | `npm run deploy` ｜ `deploy:dry` | 平时不用跑：推 `main` 会自动部署 |
 
 > 💡 **受限环境里的两个重定向**（`EPERM ... ~/.npm`、`EPERM ... .wrangler/logs`）：
@@ -171,6 +171,7 @@ flowchart LR
 | `check:markup` | `**加粗**` 紧贴全角标点（`**「图库」**`）导致标记不生效、星号被原样印在页面上；banner 里写 Markdown 加粗；卡片文案漏调 `descHtml()` |
 | `check:feeds` / `check:media:dist` | sitemap 指向不存在的页面、RSS 缺字段、robots 把整站屏蔽；产物里的视频容器与源码对不上 |
 | `check:media:worker` | `/media/*` 出口的 33 项断言：路径穿越、Range（含越界 416）、304、桶未绑定返回 503 而不是 404 |
+| `check:live` | **线上真实站点**的 18 项冒烟：canonical / robots / sitemap / RSS 的域名、`/api/ai-config` 的 sitekey 与仓库配置是否一致、无 token 时 fail-closed、媒体 404、后台 noindex、404 页面与尾斜杠重定向、auth 白名单、http 是否跳 https。部署后自动跑（`deploy.yml`），也可手动 `npm run check:live -- --base <url>` |
 
 > ✅ 错误级检测都做过**注入测试**验证会真的触发，不是写着好看。
 > 💡 来自 fork 的 PR **拿不到 Secrets**、也没有预览环境（预览环境已取消）—— 有意的安全取舍（工作流用 `pull_request`，不用 `pull_request_target`）。

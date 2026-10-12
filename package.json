@@ -23,6 +23,7 @@
     "check:admin": "node scripts/check-admin.mjs",
     "check:domain": "node scripts/domain-check.mjs",
     "check:deploy-ready": "node scripts/check-deploy-ready.mjs",
+    "check:live": "node scripts/check-live.mjs",
     "domain:sync": "node scripts/domain-sync.mjs",
     "check:ai": "node scripts/check-ai-index.mjs",
     "check:ai:worker": "node scripts/check-ai-worker.mjs",

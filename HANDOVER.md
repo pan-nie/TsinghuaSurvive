@@ -279,14 +279,15 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 ### 5.1 域名只存在于一个地方：`site.config.json`
 
 **唯一事实来源是仓库根目录的 `site.config.json`**（`siteHost` / `authHost` / `oauthAllowedDomains` / `cloudflare.*`）。
-不要在别的文件里手写域名 —— 能 import 它的代码直接读；不能 import 的配置文件与文档由脚本写。配套四条命令：
+不要在别的文件里手写域名 —— 能 import 它的代码直接读；不能 import 的配置文件与文档由脚本写。配套五条命令：
 
 | 命令 | 做什么 | 什么时候跑 |
 | --- | --- | --- |
 | `npm run domain:sync` | 把 `site.config.json` 的值写进 `wrangler.jsonc`、`public/admin/config.yml`、`robots.txt`、`r2/cors.json` 与四份文档等 16 个同步文件，**幂等**，打印逐行 diff | 改了 `site.config.json` 之后 |
 | `npm run check:domain` | 校验同步文件与 SSOT 一致，并全仓扫描旧标识残留（`hostRewrites` 的键、`legacyApexDomains` 的裸域、`legacyIdentifiers` 里的旧 Account/Zone ID 一律不允许再出现） | 每次提 PR 前；已并入 `check:all` / `verify`，在 `deploy.yml` 里是独立一步 |
 | `npm run check:media:worker` | `/media/*` 出口的端到端断言（命中、HEAD、404/405/400/503、Range、416、304、静态兜底），已并入 `verify` 与 CI | 改 `src/worker/media.js` 或部署前 |
-| `npm run check:deploy-ready` | 部署闸门：`site.config.json` / `ai.config.yml` 里还有 `REPLACE_` 占位符就**拒绝部署**（否则 wrangler 只会抛一个跟根因无关的错） | `deploy` / `deploy:dry` 与 CI 部署步骤会自动先跑；迁移期它会故意失败 |
+| `npm run check:deploy-ready` | 部署闸门：`site.config.json` / `ai.config.yml` 里还有会**拖坏线上**的 `REPLACE_` 占位符就拒绝部署；只影响后台传图的占位符降级为警告（否则 wrangler 只会抛一个跟根因无关的错） | `deploy` / `deploy:dry` 与 CI 部署步骤会自动先跑 |
+| `npm run check:live` | **线上真实站点**的冒烟检查（18 项）：canonical / robots / sitemap / RSS 的域名、`/api/ai-config` 的 sitekey 与仓库配置是否一致、无 token 时是否 fail-closed、媒体 404、后台 noindex、404 页面与尾斜杠重定向、auth 白名单、http 是否跳 https | 部署后（已接入 `deploy.yml`）、换域名/换挂件后、怀疑线上有静默问题时；`--base <url>` 可指向别的地址 |
 
 **以后换域名的完整动作**：① 改 `site.config.json`（新域名 + 把旧域名加进 `hostRewrites`）→ ② `npm run domain:sync` →
 ③ `npm run og` → ④ `npm run verify`。本次迁移的完整方案与账号侧步骤见 [MIGRATION.md](./MIGRATION.md)。

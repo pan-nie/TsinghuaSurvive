@@ -136,6 +136,14 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
 
+      # 部署成功后立刻验**线上真实站点**：canonical / robots / sitemap / RSS 的域名、
+      # /api/ai-config 的 sitekey 与仓库配置是否一致、无 token 时是否 fail-closed、
+      # 媒体出口 404、后台 noindex、404 页面与尾斜杠重定向。
+      # 这些全是「部署成功但线上悄悄坏掉」的类型，构建阶段的检查一个都覆盖不到。
+      - name: 线上冒烟检查（部署后）
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run check:live
+
 # 需要的仓库 Secrets（Settings → Secrets and variables → Actions）：
 #   CLOUDFLARE_ACCOUNT_ID  —— ⚠️ 迁移到新账号后必须换成新账号的 ID（旧值指向即将废弃的账号）
 #   CLOUDFLARE_API_TOKEN   —— 在新账号里创建（权限清单见 HANDOVER.md 第 5 节，zone 只选 whizzzest.com）

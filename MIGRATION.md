@@ -173,6 +173,7 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | 7 | 部署 auth-worker + 改 GitHub OAuth App | 🟡 **Worker 已部署**：`auth.thu.whizzzest.com` 的 DNS 记录与证书已就绪（DoH 实测解析到 172.67.209.47 / 104.21.23.47，直连 200）；白名单验证通过 —— `site_id=thu.whizzzest.com` 放行、陌生域名 → `UNSUPPORTED_DOMAIN`；带完整参数时返回 `MISCONFIGURED_CLIENT`，说明**只差两个 secret**。⏳ 仍需你：① 把 GitHub OAuth App 的 Client ID / Client Secret 交给我（或自行 `wrangler secret put` 写入 `auth-worker/`）② 把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。在此之前后台用**令牌登录** |
 | 8 | 媒体出口真机验证 | ✅ 上传测试对象 → `GET /media/uploads/smoke-test.txt` = 200（`cache-control: immutable`、`etag`、`accept-ranges`）；`Range: bytes=6-10` → 206 + `content-range: bytes 6-10/22`；未知 key → 404；测试对象已删除 |
 | 9 | 旧域名 301 | ⏳ 旧 zone 在**另一个 Cloudflare 登录**（gmail 那个）里，当前 OAuth 会话看不到 → 需要你登录旧账号后，按下面「第 9 步的具体做法」加 Redirect Rule。⚠️ 域名到期后跳转自动失效 |
+| 10 | 强制 HTTPS（**冒烟检查新发现**） | ⏳ 待你操作：`http://thu.whizzzest.com/` 现在返回 **200**（明文可直接访问）。建议在 zone `whizzzest.com` 上开 **SSL/TLS → Edge Certificates → Always Use HTTPS = On**。⚠️ 这是**区域级**设置，会一并影响该 zone 下其它站点（通常也是它们想要的，所以值得顺手开）。我校验脚本只警告不失败，因为它属于区域决策，不该由本仓库单方面要求 |
 
 ### 第 4 步的具体做法（CI Token）
 
@@ -257,19 +258,18 @@ curl -sI https://media.nathanpenny.fun/uploads/example.webp | head -3
 - [x] 媒体路由的端到端测试（命中 / HEAD / 404/405/400/503 / Range 四形态 / 416 / 304 / 静态兜底）
 - [x] 部署闸门行为正确：填值前拒绝部署并列出占位符，填值后放行（仅 R2 Access Key ID 降级为警告）
 
-**线上**（2026-10-12 实测）
+**线上** —— 已经脚本化：`npm run check:live`（已接入 `deploy.yml`，每次部署后自动跑）
 
-- [x] `/` = 200（0.72 s）、`/ask/` = 200
-- [x] `/robots.txt` 的 Sitemap、`/sitemap-0.xml`、`/rss.xml` 全部是新域名
-- [x] 文章页 `canonical` 与 `og:url` 都是新域名
-- [x] `/api/ai-config` 200，`turnstileMode: enforce`，sitekey 是新挂件的
-- [x] `/api/ask` 无 token → 403 `challenge_failed`（证明 Turnstile secret 已生效、闸门在把关）
-- [x] R2 → `/media/*`：200 + `cache-control: immutable` + `etag`；Range → 206 + 正确 `content-range`；未知 key → 404
-- [ ] Pagefind 站内搜索可用（静态索引，建议你在浏览器里点一次确认）
-- [ ] `/ask/` 走**真实挂件**拿到回答（需要人点一下；无头环境过不了挑战）
-- [ ] 后台 `https://thu.whizzzest.com/admin/` 登录（OAuth 中转待部署；令牌登录可用）
-- [ ] 后台上传图片（等 R2 API 令牌）
-- [ ] 微信内置浏览器打开主域名正常
+2026-10-12 实测：**16/18 通过，2 条提醒**（`npm run check:live` 的实际输出）
+
+- [x] 首页 200；`canonical` 指向本站；`robots.txt` 的 Sitemap、`sitemap-index.xml`、`rss.xml` 域名全是新域名
+- [x] `/api/ai-config` 可达，且 **sitekey / 模式 / 开关与仓库 `ai.config.yml` 一致**（换挂件忘了同步就会红）
+- [x] `/api/ask` 无 token → 403 `challenge_failed`（fail-closed；若返回 503 说明缺 `TURNSTILE_SECRET_KEY`）
+- [x] 媒体出口：不存在的 key → 404；`/og.png`、`/pagefind/pagefind.js` 可达；后台带 `x-robots-tag: noindex`
+- [x] 未知路径 → 404；缺尾斜杠 → 307 跳到带斜杠
+- [~] auth 中转：本机 DNS 未命中（校园网对新建记录的否定缓存，DoH 已证实记录存在）→ 在 CI（GitHub runner）上会真验；配置缺失只警告、白名单坏了才失败
+- [~] **http 未强制跳 https** ⚠️ 这是真实待办，见 §8 第 10 步
+- [ ] 人眼确认项（脚本验不了）：`/ask/` 走**真实挂件**拿到回答；后台 GitHub 一键登录；后台上传一张图；微信内置浏览器打开正常
 
 ## 10. 回滚
 
