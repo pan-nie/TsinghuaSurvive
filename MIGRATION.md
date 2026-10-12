@@ -66,6 +66,13 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 - 每个媒体请求都是一次 **Worker 请求**，计入账号 W 的 100k 请求/天（与账号 W 上其它 Worker 共享）。缓解靠一年期不可变缓存头（浏览器只取一次）；真撞上限再考虑 Workers 付费档（$5/月）或回头给媒体单独的一级子域名。
 - 本地 `npm run dev`（纯 Astro）**看不到媒体**，要看媒体得用 `npm run dev:worker`（wrangler dev 连真实 R2）。
 
+**实测补记（2026-10-12）**：`auth.thu.whizzzest.com`（同样是二级子域名，但绑的是 **Worker Custom Domain**）
+拿到了免费的公开信任证书 —— issuer `Google Trust Services`，SAN 含 `auth.thu.whizzzest.com` 与 `*.auth.thu.whizzzest.com`，
+有效期到 2027-01-10 并自动续期。这条实测坐实了上面那句「Worker Custom Domain 不需要 ACM」，
+也说明**「二级子域名 = 要买证书」是错的**：要买的是「在 zone 上手动挂二级子域证书」那条路。
+
+> 相关决策：因此 `auth` 中转**保持独立子域名**，没有搬进站内 `/auth`（理由与代价见 HANDOVER.md 第 9.2 节）。
+
 ### 4.2 旧域名不续费 ⇒ 301 有寿命，且不可延长
 
 301 依赖旧域名还能解析。域名一到期 DNS 直接不存在，跳转环节被跳过、直接 NXDOMAIN。
@@ -96,10 +103,10 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
   "authHost": "auth.thu.whizzzest.com",
   "oauthAllowedDomains": "*.whizzzest.com,localhost",
   "cloudflare": {
-    "accountId": "REPLACE_ACCOUNT_W_ACCOUNT_ID",
-    "zoneId": "REPLACE_ACCOUNT_W_ZONE_ID",
+    "accountId": "67e59aecb10a2a8b4b4d525ff8ddcb56",
+    "zoneId": "158d2b4327671b36ae8b9183a5598daf",
     "r2Bucket": "tsinghua-guide-media",
-    "r2AccessKeyId": "REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID"
+    "r2AccessKeyId": "cc4b0674a8010051a2ed0f9be83d54a7"
   },
   "hostRewrites": {
     "tsinghua.nathanpenny.fun": "thu.whizzzest.com",
@@ -107,13 +114,16 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
     "media.nathanpenny.fun": "thu.whizzzest.com/media",
     "preview.nathanpenny.fun": "thu.whizzzest.com"
   },
-  "legacyApexDomains": ["nathanpenny.fun"]
+  "legacyApexDomains": ["nathanpenny.fun"],
+  "legacyIdentifiers": ["aa23021279f1ffd6901d7093879554f3", "068decbde572025a27b25b97080e4355"]
 }
 ```
 
 - **`mediaBaseUrl` 故意不写**：省略即自动取 `${siteOrigin}/media`（媒体并入主站的形态）。想回到独立媒体域名时再显式写上。
 - **`hostRewrites`** 是「旧域名 → 新域名」替换表，同时是守卫依据：右侧值写好后，全仓任何文件都不允许再出现左侧主机名。
 - **`legacyApexDomains`** 是补漏用的：只匹配完整主机名时，`*.旧域`、zone 名、裸域这类写法会溜过守卫（C3 实测踩到，HANDOVER/auth-worker README 里就有 `*.nathanpenny.fun`）。它是显式列表而不是从主机名推导后缀，避免把 `foo.co.uk` 推成 `co.uk` 造成误报。
+- **`legacyIdentifiers`** 同理补域名之外的口子：`deploy.yml` 注释里漏过一个旧 Account ID，域名扫描抓不到它。
+- 三个 Cloudflare 标识与 Turnstile sitekey **都已是真值**（2026-10-12），仓库内无占位符。
 
 ### 5.2 谁读它、谁被写、谁被守
 

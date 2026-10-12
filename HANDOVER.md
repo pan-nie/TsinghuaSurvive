@@ -439,6 +439,16 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 > 白名单反向验证：陌生域名 → `UNSUPPORTED_DOMAIN`。后台现在可以用 **Sign in with GitHub**（令牌登录仍保留作备用）。
 > 运维要点与重建步骤见 [`auth-worker/README.md`](./auth-worker/README.md) 与 MIGRATION.md §8 第 7 步：
 
+> **为什么不把它搬进站内 `/auth`（2026-10-12 决策，别再折腾一遍）**
+> 起因是「`auth.thu.whizzzest.com` 的 HTTPS 是不是要付费」。**不用付费，而且已经在工作**：Worker 的自定义域名会自动
+> 签发覆盖多级子域的证书 —— 实测 issuer 是 Google Trust Services（公开信任链），SAN 含 `whizzzest.com`、
+> `auth.thu.whizzzest.com`、`*.auth.thu.whizzzest.com`，有效期到 2027-01-10 且自动续期。
+> 需要付费的 Advanced Certificate Manager 是「自己在 zone 上手动给二级子域名挂证书」那条路，我们没有走。
+>
+> 搬进站内也不是改个地址：Sveltia 校验 OAuth 弹窗消息时要求**消息来源 origin 等于 `backend.base_url` 的 origin**
+> （已在 `@sveltia/cms` 的代码里确认），因此 `base_url` 与 GitHub OAuth App 的 callback 必须**同时**切到同一个域名，
+> 中间会出现「GitHub 一键登录失败、只能用令牌登录」的窗口。收益只是「少一个域名与一个 Worker」，故保持独立子域名。
+
 - **OAuth App 的 callback 必须一字不差**：`https://auth.thu.whizzzest.com/callback`；换域名时三处要一起改（`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback、`config.yml` 的 `base_url`），`check:admin` 能查前两处，GitHub 那边只能人工确认（本次迁移就是改现有 OAuth App 的 callback + Homepage URL）。
 - 写密钥：`cd auth-worker && npx wrangler secret put GITHUB_CLIENT_ID`（`..._SECRET` 同理），首次才需要 `wrangler deploy`；想先看打包结果：`npm run auth:dry`。
 - `ALLOWED_DOMAINS`（`auth-worker/wrangler.jsonc` 的 vars）是防滥用白名单，当前 `*.whizzzest.com,localhost` —— **不要改成 `*`**。这个值的事实来源同样是 `site.config.json` 的 `oauthAllowedDomains`（由 `npm run domain:sync` 写入）。
