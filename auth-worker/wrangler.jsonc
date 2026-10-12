@@ -25,7 +25,6 @@
     // 允许用这个中转的站点域名（逗号分隔，`*` 匹配任意子域）。
     // 这个白名单同时是防滥用和防钓鱼的：只有从这些域名打开的页面才能拿到令牌。
     //   tsinghua.nathanpenny.fun —— 正式站后台
-    //   preview.nathanpenny.fun  —— PR 预览后台（用 *.nathanpenny.fun 一并覆盖）
     //   localhost                —— 本地 npm run dev 的后台
     "ALLOWED_DOMAINS": "*.nathanpenny.fun,localhost"
   },

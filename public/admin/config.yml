@@ -39,14 +39,16 @@ backend:
     deleteMedia: 'docs(媒体): 后台删除 {{filename}}'
 
 # 编辑工作流：每次保存都开一个 PR 分支，而不是直推 main。
-# 这样 PR 上会自动跑全套 CI（内容检查/构建/资源检查）并部署到 preview.nathanpenny.fun，
-# 维护者看过、CI 全绿才合并。**这是「后台方便」不等于「质量下降」的关键开关。**
+# 这样 PR 上会自动跑全套 CI（内容检查/构建/资源检查），维护者看过、CI 全绿才合并。
+# **这是「后台方便」不等于「质量下降」的关键开关。**
 publish_mode: editorial_workflow
 
 app_title: 清华生存指南 · 内容后台
 site_url: https://tsinghua.nathanpenny.fun
 logo_url: /favicon.svg
-show_preview_links: true
+# 关掉「预览链接」：PR 预览环境已取消（原因见 MIGRATION.md），开着只会指向一个不存在的地址。
+# 作者要看渲染效果，用 `npm run dev`（本地）或合并后在线上看。
+show_preview_links: false
 
 # 文件名（URL 里的 slug）规则：作者在保存时手填（下面每个集合用 YAML 锚点引用）。
 #

@@ -62,7 +62,7 @@ turnstile:
   # off     —— 关闭校验。**只允许在本地开发和预览环境用**，正式站不能用。
   mode: enforce
   # sitekey 是公开值，可以进仓库。secret 由 `wrangler secret put TURNSTILE_SECRET_KEY` 写入。
-  # 挂件名 tsinghua-guide-ask，域名：tsinghua.nathanpenny.fun / preview.nathanpenny.fun / localhost / 127.0.0.1
+  # 挂件名 tsinghua-guide-ask，域名：tsinghua.nathanpenny.fun / localhost / 127.0.0.1
   sitekey: '0x4AAAAAAFOWNfKN0LO7Up_K'
   # 与前端挂件的 data-action 一致，siteverify 会核对这个值
   action: ask

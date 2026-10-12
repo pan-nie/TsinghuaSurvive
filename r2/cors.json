@@ -10,7 +10,6 @@
       "allowed": {
         "origins": [
           "https://tsinghua.nathanpenny.fun",
-          "https://preview.nathanpenny.fun",
           "http://localhost:4321"
         ],
         "methods": ["GET", "PUT", "DELETE", "HEAD"],
