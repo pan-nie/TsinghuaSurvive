@@ -88,7 +88,7 @@ media_libraries:
     access_key_id: REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID
     bucket: tsinghua-guide-media
     # 账号 ID 不是秘密（.github/workflows/deploy.yml 的注释里也有）
-    account_id: REPLACE_ACCOUNT_W_ACCOUNT_ID
+    account_id: 67e59aecb10a2a8b4b4d525ff8ddcb56
     # 媒体公开地址 = 站点自己的 /media 路径（由主 Worker 从 R2 读）。
     # 注意：本地 `npm run dev` 是纯 Astro，看不到这个路径；内容带图要用 `npm run dev:worker`。
     public_url: https://thu.whizzzest.com/media

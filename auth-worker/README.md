@@ -32,9 +32,11 @@ Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret�
 
 ## 一次性部署（需要你自己的 Cloudflare 与 GitHub 账号）
 
-> **当前状态（⏳ 迁移中，2026-10-12）**：下面的步骤在旧账号 N 上做过一遍（Worker 已部署、
-> `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 都已写入）。**迁移到新账号（账号 W）后要在新账号重建**：
-> 本目录的代码与配置已经就绪，但 `auth.thu.whizzzest.com` 目前还没有对应的 Worker ——
+> **当前状态（2026-10-12）**：主站已经迁到 `thu.whizzzest.com` 并上线；**但这个 OAuth 中转还没迁完**。
+> 下面的步骤在旧账号 N 上做过一遍（Worker 已部署、`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 都已写入），
+> 而旧账号里的这两个密钥**读不出来**，所以账号 W 侧要先拿到 GitHub OAuth App 的 Client ID / Client Secret
+> （并把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`），
+> 再走下面的步骤重建。**在重建完成之前，后台用「令牌登录」而不是 GitHub 一键登录**。
 > 完整顺序见仓库根目录的 `MIGRATION.md` §8 第 7 步。
 > 下面的步骤同样适用于「换 OAuth App、密钥泄漏、或别人 fork 后重建」。
 

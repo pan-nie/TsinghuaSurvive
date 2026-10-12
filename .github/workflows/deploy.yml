@@ -97,14 +97,21 @@ jobs:
         run: npm run check:media:worker
 
       # 凭证守卫：没有配 CLOUDFLARE_API_TOKEN 时给出明确提示并跳过部署，
-      # 而不是抛一个看不懂的认证错误。
+      # 而不是抛一个看不懂的认证错误；账号 ID 与 site.config.json 不一致时也拒绝部署 ——
+      # 迁移期最容易踩的坑就是「Secrets 还是旧账号的，而配置已经是新账号」，直接部署只会在
+      # 绑定自定义域名时报一个跟根因无关的错。
       - name: 检查部署凭证
         id: creds
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          EXPECTED_ACCOUNT=$(node -e "console.log(require('./site.config.json').cloudflare.accountId)")
           if [ -z "$CF_TOKEN" ]; then
             echo "::warning title=跳过部署::仓库缺少 CLOUDFLARE_API_TOKEN，本次只构建不部署。配置步骤见 HANDOVER.md。"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          elif [ -n "$CF_ACCOUNT" ] && [ "$CF_ACCOUNT" != "$EXPECTED_ACCOUNT" ]; then
+            echo "::error title=账号不匹配::CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT，而 site.config.json 期望 $EXPECTED_ACCOUNT。请先更新仓库 Secrets（见 MIGRATION.md §7），本次不部署。"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"

@@ -65,7 +65,7 @@ turnstile:
   # ⚠️ sitekey 与 Cloudflare **账号**绑定：迁移到新账号后必须新建挂件（允许域名填 thu.whizzzest.com）。
   #    新挂件建好之前这里保持占位符，问答会 fail-closed（界面上说清不可用）—— 这是期望行为，不要改成 off。
   # 挂件名建议沿用 tsinghua-guide-ask；本地开发的允许域名在 .dev.vars 里覆盖（localhost / 127.0.0.1）。
-  sitekey: 'REPLACE_TURNSTILE_SITEKEY'
+  sitekey: '0x4AAAAAAFUTnXn4vkXwvC5O'
   # 与前端挂件的 data-action 一致，siteverify 会核对这个值
   action: ask
   # 允许的前端域名（siteverify 返回的 hostname 必须在这里面）。

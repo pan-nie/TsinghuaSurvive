@@ -21,7 +21,7 @@ flowchart TB
     R2B["R2 tsinghua-guide-media"]
     DO["Durable Object AskGate<br/>限流 / 日额度 / 配置"]
   end
-  MAIN -- "GitHub Actions：12 步校验 → wrangler deploy" --> W1 --> SITE["thu.whizzzest.com ⏳ 待部署"]
+  MAIN -- "GitHub Actions：12 步校验 → wrangler deploy" --> W1 --> SITE["thu.whizzzest.com ✅ 线上"]
   PRB -- "本地 npm run dev 自查效果<br/>（PR 预览环境已取消）" --> LOCAL["本地开发"]
   ADM["/admin/ 内容后台（浏览器）"] -- "登录一次，需代理" --> W3
   ADM -- "之后读写内容：api.github.com" --> GH
@@ -33,11 +33,11 @@ flowchart TB
 
 | 组件 | 名字 | 状态 |
 | --- | --- | --- |
-| 正式站 Worker | `tsinghua-guide` → `thu.whizzzest.com` | ⏳ 待部署（账号 W 资源建好后，步骤见 MIGRATION.md §8） |
-| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | ⏳ 待部署（代码与配置已就绪，待执行 MIGRATION.md §8 第 7 步） |
-| R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ⏳ 待建桶（`REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 等占位符见 §2；桶不需要公开域名） |
+| 正式站 Worker | `tsinghua-guide` → `thu.whizzzest.com` | ✅ 已上线（2026-10-12 部署，369 个文件；页面 + `/api/*` + `/media/*` 实测 200） |
+| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | ⏳ 待建（需要 GitHub OAuth App 的 client id/secret，见 MIGRATION.md §8 第 7 步；在此之前后台用令牌登录） |
+| R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ✅ 桶已建、CORS 已配、媒体出口实测 200/206/404（⏳ 仅缺 R2 API 令牌，只影响后台传图） |
 | KV / D1 | —— | 没有，一个都不用 |
-| Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ⏳ 随 `wrangler deploy` 的迁移创建，见第 10 节 |
+| Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ✅ 随首次 `wrangler deploy` 已创建，见第 10 节 |
 | 内容后台 | `/admin/`（Sveltia CMS，纯静态） | ✅ 代码已就绪，随站点部署后生效，见第 9 节 |
 | PR 预览 Worker / 预览域名 | ~~`tsinghua-guide-preview`~~ | ❌ 已取消：没有预览 Worker、没有 `preview.yml`；要看效果用本地 `npm run dev`，或合并后在线上看 |
 
@@ -51,9 +51,9 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 所以「改了 Markdown → 提交 → 自动部署」这条主线没有变。
 **没有用户系统、没有数据库**；唯一的持久化是一个 Durable Object（限流计数 + 加密后的第三方 API Key）。
 
-> ⏳ **迁移前提（2026-10-12）**：站点正在从旧域名 / 旧 Cloudflare 账号迁到 `thu.whizzzest.com` / 账号 W。
-> 文档里的地址已经是**迁移后的值**，但账号 W 的 Worker / R2 / Turnstile / OAuth 中转尚未创建，
-> 因此本文凡标「⏳ 待部署」的状态都还没有在线上生效 —— 完整的控制台步骤见 [MIGRATION.md](./MIGRATION.md) §8。
+> ✅ **迁移状态（2026-10-12 实测）**：站点已从旧域名 / 旧 Cloudflare 账号迁到 `thu.whizzzest.com` / 账号 W，
+> **主站已部署上线**（页面 200、问答链路与媒体出口均已实测）。仍标「⏳」的只有四处控制台/仓库设置动作，
+> 见 [MIGRATION.md](./MIGRATION.md) §8 的 ⏳ 行：R2 API 令牌、CI 部署 Token、OAuth 中转、旧域名 301。
 
 ---
 
@@ -63,21 +63,27 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 
 | 项目 | 值 |
 | --- | --- |
-| 主域名 | `https://thu.whizzzest.com`（迁移目标，⏳ 待部署） |
+| 主域名 | `https://thu.whizzzest.com`（✅ 线上，2026-10-12 部署） |
 | Cloudflare 账号 | 账号 W（持 `whizzzest.com` 的账号；旧账号 N 已废弃） |
-| Account ID | `REPLACE_ACCOUNT_W_ACCOUNT_ID`（待维护者填；占位符在 `site.config.json`，见 MIGRATION.md §8） |
-| Zone | `whizzzest.com`（status: active，⏳ 待核对） |
-| Zone ID | `REPLACE_ACCOUNT_W_ZONE_ID`（待维护者填；同上） |
+| Account ID | `67e59aecb10a2a8b4b4d525ff8ddcb56` |
+| Zone | `whizzzest.com`（status: active，Free plan） |
+| Zone ID | `158d2b4327671b36ae8b9183a5598daf` |
 | Zone 的 NS | 以控制台 zone 详情页为准（旧 zone 的 NS 值已作废，不再记录） |
-| Worker（正式） | `tsinghua-guide` → `https://thu.whizzzest.com`（Custom Domain 随部署创建，ID 待部署后回填） |
-| Worker（OAuth 中转） | `tsinghua-guide-auth` → `https://auth.thu.whizzzest.com`，代码在 `auth-worker/`，**不随主站 CI 部署** |
-| R2 桶 | `tsinghua-guide-media` → `https://thu.whizzzest.com/media`（**由主 Worker 从 R2 读出，桶不需要公开域名**） |
+| Worker（正式） | `tsinghua-guide` → `https://thu.whizzzest.com`（✅ 已部署，Custom Domain 与证书已创建） |
+| Worker（OAuth 中转） | `tsinghua-guide-auth` → `https://auth.thu.whizzzest.com`，代码在 `auth-worker/`，**不随主站 CI 部署**（⏳ 待建，需要 GitHub OAuth App 的 client id/secret） |
+| R2 桶 | `tsinghua-guide-media` → `https://thu.whizzzest.com/media`（✅ 桶已建、CORS 已配；**由主 Worker 从 R2 读出，桶不需要公开域名**） |
+| Turnstile 挂件 | `tsinghua-guide-ask`（域名 `thu.whizzzest.com` / `localhost` / `127.0.0.1`），sitekey `0x4AAAAAAFUTnXn4vkXwvC5O` |
 | GitHub 仓库 | <https://github.com/pan-nie/TsinghuaSurvive>（public，`main`） |
 | 本地路径 | `TsinghuaSurvive/Tsinghua-guide/` |
 
-> ⚠️ **这三个 `REPLACE_` 占位符不是能直接用的值**：`REPLACE_ACCOUNT_W_ACCOUNT_ID`、`REPLACE_ACCOUNT_W_ZONE_ID`、
-> `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 都在 `site.config.json` 里，取号方式见 MIGRATION.md §7 与 §8；
-> Turnstile 那边还有一个 `REPLACE_TURNSTILE_SITEKEY`（需要新建挂件，见 §10.2）。填完跑 `npm run check:domain` 与 `npm run check:admin` 复核。
+> ⚠️ **仓库里只剩一个占位符**：`site.config.json` 的 `cloudflare.r2AccessKeyId`（`REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`）。
+> 它**只影响后台传图**：R2 的 S3 凭据只能在控制台创建（`POST /accounts/{id}/r2/api-tokens` 需要「API Tokens 管理」权限，
+> wrangler 的 OAuth 拿不到，实测 403）。因此 `npm run check:deploy-ready` 把它降级为警告而不是拒绝部署 ——
+> 判断标准是「这个值缺了，线上会不会有静默坏掉的东西」。建好令牌后填进 `site.config.json` 并跑 `npm run domain:sync`。
+>
+> ⚠️ 账号 W 里还有 7 个其它 Worker（nmail-site、whizzzest、whizzzest-admin、whizzzest-game、whizzzest-im、
+> whizzzest-merchant、whizzzest-writer）—— 免费档的 100k 请求/天与 Workers AI 10k Neurons/天是**账号级共享**的，
+> 本站的 `/api/*` 与 `/media/*` 都算在里面。
 
 站点能力一览 —— 除了最后一行，**其余全部在构建期完成**：
 
@@ -423,7 +429,9 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 
 ### 9.2 OAuth 中转（A）
 
-> **当前状态（⏳ 迁移中）**：代码与配置已就绪，但账号 W 上还没建 Worker —— 账号 N 时期那份已部署环境随旧域名一起废弃。
+> **当前状态（⏳ 待建）**：账号 W 上还没建这个 Worker —— 账号 N 时期那份已部署环境随旧域名一起废弃。
+> 卡在同一个前置条件：需要 GitHub OAuth App 的 Client ID / Client Secret（旧账号里的读不出来），
+> 并把 callback 改成 `https://auth.thu.whizzzest.com/callback`。**在此之前后台只能用令牌登录**（`auth_methods` 里保留了 token 兜底）。
 > 重建步骤见 MIGRATION.md §8 第 7 步，以及 [`auth-worker/README.md`](./auth-worker/README.md)（新建 / 重建的完整步骤）。这里只留运维要点：
 
 - **OAuth App 的 callback 必须一字不差**：`https://auth.thu.whizzzest.com/callback`；换域名时三处要一起改（`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback、`config.yml` 的 `base_url`），`check:admin` 能查前两处，GitHub 那边只能人工确认（本次迁移就是改现有 OAuth App 的 callback + Homepage URL）。
@@ -438,9 +446,10 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 （`wrangler.jsonc` 里的 `MEDIA` 绑定 + `assets.run_worker_first` 含 `/media/*`，实现见 `src/worker/media.js`）。
 **R2 桶不需要公开域名 / custom domain**：这样既省一个域名与一张证书，也让媒体与站点同源。
 
-> **当前状态（⏳ 待建）**：账号 W 上还没有桶。`site.config.json` 里的 `r2AccessKeyId` 现在是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 占位符，
-> 需要按 MIGRATION.md §8 第 2 步建桶 + 建 R2 API 令牌。跑 `npm run r2:setup -- --check` 复核时，脚本会直接报告「公开域名：不需要」——
-> 这是预期结果，不是漏配。
+> **当前状态（2026-10-12）**：桶已建、CORS 已应用、媒体出口已真机验证（200 + `immutable`、Range→206、未知 key→404）。
+> 仍缺 `site.config.json` 里的 `r2AccessKeyId`（`REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`）—— 它只影响**后台上传**，
+> 需要在控制台建 R2 API 令牌（见 MIGRATION.md §8 第 2 步）。
+> 跑 `npm run r2:setup -- --check` 复核时，脚本会直接报告「公开域名：不需要」—— 这是预期结果，不是漏配。
 
 ```bash
 npm run r2:setup -- --check   # 只报告当前状态，不改任何东西
@@ -551,8 +560,8 @@ npx wrangler turnstile widget create "tsinghua-guide-ask" \
 把返回的 **sitekey** 填进 `src/data/ai.config.yml` 的 `turnstile.sitekey`
 （也可以在后台「站点配置 → AI 问答」里填），**secret 不要写进任何文件**。
 
-> ⏳ **迁移注意**：这是**新建**的挂件（账号 W），不是沿用账号 N 那个。`site.config.json` 不管 Turnstile 的值，
-> 所以 `turnstile.sitekey` 现在还是 `REPLACE_TURNSTILE_SITEKEY` 占位符，必须人工替换；`check:ai` 会兜底提醒。
+> ✅ **迁移已完成这一步**：账号 W 上新建了挂件 `tsinghua-guide-ask`（域名 `thu.whizzzest.com` / `localhost` / `127.0.0.1`），
+> sitekey `0x4AAAAAAFUTnXn4vkXwvC5O` 已填进 `src/data/ai.config.yml`，secret 已写进 Worker Secret（本机备份在 `.secrets/turnstile-secret.txt`，已被 git 忽略）。
 
 **② 写三个 Worker Secret**（只写正式站，预览站已取消）：
 

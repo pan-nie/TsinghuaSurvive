@@ -2,10 +2,17 @@
 
 面向清华在校学生的经验分享站 —— 不是官方材料，是一群学长学姐把踩过的坑、绕过的路写下来。
 
-**线上地址（迁移目标）** <https://thu.whizzzest.com>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-03
+**线上地址** <https://thu.whizzzest.com>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-03
 
-> ⏳ **状态：域名已定，线上迁移尚未执行。** 全仓地址已换成新域名的值，但账号 W 的 Worker / R2 / Turnstile / OAuth 中转还没建，
-> 所以现在打开 `thu.whizzzest.com` 不等于新站已经上线 —— 待执行步骤见 [MIGRATION.md](./MIGRATION.md) §8，域名事实来源是 `site.config.json`。
+> ✅ **状态：已上线（2026-10-12）** —— 站点已从旧域名迁到 `thu.whizzzest.com`、部署在持有 `whizzzest.com` 的 Cloudflare 账号上，
+> 页面 / `/api/*` 问答 / `/media/*` 媒体出口均已实测 200（旧域名到期后废弃）。
+>
+> ⏳ **还差四件事**（都需要维护者在控制台/仓库设置里点一下，见 [MIGRATION.md](./MIGRATION.md) §8）：
+> ① R2 API 令牌（后台传图用，目前后台能改文字但传不了图）② GitHub Secrets 的 CI 部署 Token
+> ③ OAuth 中转 `auth.thu.whizzzest.com`（需要 GitHub OAuth App 的 client id/secret；在此之前后台用令牌登录）
+> ④ 旧域名的 301 跳转（旧 zone 在另一个 Cloudflare 登录里）。
+>
+> 域名事实来源是 `site.config.json`，改域名跑 `npm run domain:sync`。
 
 > **本文回答**：我想做 X，该改哪里、跑哪条命令。
 > **不回答**：部署与排障 → [HANDOVER.md](./HANDOVER.md)｜内容还缺什么 → [OUTLINE.md](./OUTLINE.md)｜为什么这么设计 → [REFERENCE-NOTES.md](./REFERENCE-NOTES.md)｜后台方案的决策记录 → [CONTENT-EDITING-PLAN.md](./CONTENT-EDITING-PLAN.md)

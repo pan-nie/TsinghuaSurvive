@@ -28,8 +28,8 @@
     "⚠️ 下面三个 REPLACE_ 值在迁移到账号 W 时替换（步骤见 MIGRATION.md §8 第 2、4 步）。"
   ],
   "cloudflare": {
-    "accountId": "REPLACE_ACCOUNT_W_ACCOUNT_ID",
-    "zoneId": "REPLACE_ACCOUNT_W_ZONE_ID",
+    "accountId": "67e59aecb10a2a8b4b4d525ff8ddcb56",
+    "zoneId": "158d2b4327671b36ae8b9183a5598daf",
     "r2Bucket": "tsinghua-guide-media",
     "r2AccessKeyId": "REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID"
   },

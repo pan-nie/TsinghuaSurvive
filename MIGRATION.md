@@ -1,12 +1,12 @@
 # 域名迁移方案：tsinghua.nathanpenny.fun → thu.whizzzest.com
 
-> 状态：**代码/配置/CI 已改完（分支 `migrate/thu-whizzzest`），Cloudflare 控制台步骤待执行**。
+> 状态：**主站已在新账号上线（thu.whizzzest.com 实测 200），剩余 3 项需要你的操作**（见 §8 的 ⏳ 行）。
 > 本文档是执行手册 + 决策记录。迁移完成后，把仍然有效的事实并进 `HANDOVER.md`；
 > 本文档保留为历史记录，并被 `check:domain` 列入旧域名白名单（只有它和 `site.config.json` 可以出现旧域名）。
 >
-> ⚠️ 分支上 `site.config.json` 与 `src/data/ai.config.yml` 里有 4 个 `REPLACE_` 占位符
-> （Account ID / Zone ID / R2 Access Key ID / Turnstile sitekey）。**占位符没换掉之前不要合并到 main、更不要部署**：
-> 换掉之前问答会 fail-closed、后台上传会失败，这是有意的（宁可显式失败，也不要静默用错账号）。
+> 剩余待办：① R2 API 令牌（后台传图，控制台点一次）② GitHub Secrets 的 CI Token ③ auth-worker（需要 GitHub OAuth App 的 client id/secret）+ 旧域名 301。
+> 唯一还留在仓库里的占位符是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`：它**只影响后台传图**，
+> `npm run check:deploy-ready` 因此把它降级为警告而不是拒绝部署（判断标准是「缺了会不会有线上静默坏掉的东西」）。
 >
 > 最后更新：2026-10-12
 
@@ -146,52 +146,54 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 `npm run domain:sync` 一次性改完 16 个文件（配置 + 文档正文），`npm run og` 重新生成了 4 张分享卡片图，
 `npm run check:domain` 确认全仓无旧域名残留。
 
-### 还需要你提供的值（阶段 3 的前置）
+### 这些值的状态
 
-| 值 | 从哪来 | 填到哪 |
+| 值 | 现在的值 | 状态 |
 |---|---|---|
-| 账号 W 的 Account ID | 控制台 → Workers & Pages 概览右侧 | `site.config.json` 的 `cloudflare.accountId` |
-| `whizzzest.com` 的 Zone ID | 控制台 → 该 zone 的 Overview | `site.config.json` 的 `cloudflare.zoneId` |
-| 新的 R2 Access Key ID | 阶段 3 第 2 步：R2 API 令牌（Object Read & Write，限桶） | `site.config.json` 的 `cloudflare.r2AccessKeyId` |
-| 新的 Turnstile sitekey | 阶段 3 第 3 步：新建挂件（允许域名 `thu.whizzzest.com`） | `src/data/ai.config.yml` 的 `turnstile.sitekey` |
-| 新的 API Token | 阶段 3 第 4 步：权限照 `HANDOVER.md` 第 5 节，zone 只选 `whizzzest.com` | GitHub Secrets 的 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
+| Account ID | `67e59aecb10a2a8b4b4d525ff8ddcb56` | ✅ 已填（新浪登录 nathanpenny@qq.com 唯一可见账号，且它拥有 whizzzest.com） |
+| Zone ID | `158d2b4327671b36ae8b9183a5598daf` | ✅ 已填（`whizzzest.com`，active，Free plan） |
+| Turnstile sitekey | `0x4AAAAAAFUTnXn4vkXwvC5O` | ✅ 已填（新建挂件 `tsinghua-guide-ask`，域名 thu.whizzzest.com / localhost / 127.0.0.1） |
+| R2 Access Key ID | `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` | ⏳ **只能你在控制台建**：R2 API 令牌的 API 端点需要「API Tokens 管理」权限，wrangler 的 OAuth 拿不到（实测 403） |
+| CI 的 API Token | 未创建 | ⏳ 同上，控制台建好后填 GitHub Secrets |
 
-前三个填完跑一次 `npm run domain:sync`（它会写进 `public/admin/config.yml`），四个都填完再跑 `npm run verify`。
+## 8. 阶段 3：Cloudflare 侧（账号 W）—— 执行结果
 
-## 8. 阶段 3：Cloudflare 控制台（账号 W）
-
-每步都要验证通过再进下一步。
-
-| # | 操作 | 验证 |
+| # | 操作 | 结果 |
 |---|---|---|
-| 1 | 确认 Workers AI 可用、账号 W 现有额度占用 | 控制台可见 Workers AI |
-| 2 | 建 R2 桶 `tsinghua-guide-media` + 建 R2 API 令牌（Object Read & Write，限此桶） | `npm run r2:setup -- --check` 报告「桶已存在 / 公开域名不需要」 |
-| 3 | 新建 Turnstile 挂件，域名填 `thu.whizzzest.com`（本地开发用 `.dev.vars` 覆盖成 localhost） | 挂件在页面上能渲染 |
-| 4 | 建 API Token（Workers Scripts/Routes Edit + Zone Read，zone 限 `whizzzest.com`）→ 填进 GitHub Secrets 的 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`；同时把 Account ID / Zone ID / R2 Access Key ID 填进 `site.config.json`、新 sitekey 填进 `src/data/ai.config.yml`，跑 `npm run domain:sync` | `npm run check:deploy-ready` 通过（占位符清零）、`npm run verify` 全绿 |
-| 5 | 部署主 Worker（绑 `thu.whizzzest.com`） | `curl -I https://thu.whizzzest.com/` = 200 |
-| 6 | 写 Secrets：`TURNSTILE_SECRET_KEY`（新挂件）、`ADMIN_TOKEN`、`CONFIG_ENC_KEY`（后两个可直接用 `.secrets/` 里的现成值） | `npx wrangler secret list` |
-| 7 | 部署 auth-worker（`npm run auth:deploy`）+ 改 GitHub OAuth App 的 callback、Homepage | `curl -s https://auth.thu.whizzzest.com/auth \| head -c 200` 不是 `MISCONFIGURED_CLIENT` |
-| 8 | 后台上传一张图，确认走 `/media/uploads/…` | 图片能打开；`curl -I` 看到 `cache-control: immutable` |
-| 9 | 旧 zone（账号 N）加 Redirect Rule：`tsinghua.nathanpenny.fun/*` → `https://thu.whizzzest.com/$1`，301 | `curl -sI https://tsinghua.nathanpenny.fun/start/how-to-use/` 返回 301 且 Location 正确 |
+| 1 | 账号与额度盘点 | ✅ 账号 W = `67e59aecb10a2a8b4b4d525ff8ddcb56`（登录邮箱 nathanpenny@qq.com）；zone `whizzzest.com` = `158d2b4327671b36ae8b9183a5598daf`（active / Free）。⚠️ **账号里已有 7 个 Worker**（nmail-site、whizzzest、whizzzest-admin、whizzzest-game、whizzzest-im、whizzzest-merchant、whizzzest-writer）→ 100k 请求/天与 Workers AI 10k Neurons/天都是**账号级共享**，本站的 `/api/*` 与 `/media/*` 都算在里面 |
+| 2 | 建 R2 桶 + 应用 CORS | ✅ 桶 `tsinghua-guide-media` 已建；`r2/cors.json` 已应用（后台直传 S3 接口要用）。⏳ **R2 API 令牌（后台传图的 S3 凭据）只能你在控制台建**：`POST /accounts/{id}/r2/api-tokens` 需要「API Tokens 管理」权限，wrangler 的 OAuth 拿不到（实测 403）。建好后把 Access Key ID 填进 `site.config.json` 的 `cloudflare.r2AccessKeyId`，跑 `npm run domain:sync` 即写入 CMS 配置 |
+| 3 | 新建 Turnstile 挂件 | ✅ 已建 `tsinghua-guide-ask`，域名 `thu.whizzzest.com` / `localhost` / `127.0.0.1`；sitekey `0x4AAAAAAFUTnXn4vkXwvC5O` 已填进 `src/data/ai.config.yml`；secret 存在本机 `.secrets/turnstile-secret.txt`（已写进 Worker Secret） |
+| 4 | CI 的 API Token → GitHub Secrets | ⏳ 待你操作（OAuth 同样不能创建 API Token）。建好后填 `CLOUDFLARE_API_TOKEN` 与 `CLOUDFLARE_ACCOUNT_ID=67e59aecb10a2a8b4b4d525ff8ddcb56`。**在填之前不要合并 `migrate/thu-whizzzest` 到 main**：仓库里现在还是旧账号的 token，CI 会明确报「账号不匹配」并跳过部署（不会静默部署到错账号） |
+| 5 | 部署主 Worker | ✅ 已部署：369 个文件；绑定 ASK_GATE（DO）/ MEDIA（R2）/ AI / ASSETS；自定义域名 `thu.whizzzest.com` 已创建，证书已签发（HTTPS 200 / 0.72 s） |
+| 6 | 写 3 个 Worker Secret | ✅ `TURNSTILE_SECRET_KEY`（新挂件）、`ADMIN_TOKEN`、`CONFIG_ENC_KEY`（后两个直接用本机 `.secrets/` 里的现成值） |
+| 7 | 部署 auth-worker + 改 GitHub OAuth App | ⏳ **需要你提供 GitHub OAuth App 的 Client ID / Client Secret**（旧账号里的那两个读不出来），并把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。之后跑 `npm run auth:deploy` + 写两个 secret。在此之前后台仍可用**令牌登录**（`auth_methods` 里保留了 token 兜底） |
+| 8 | 媒体出口真机验证 | ✅ 上传测试对象 → `GET /media/uploads/smoke-test.txt` = 200（`cache-control: immutable`、`etag`、`accept-ranges`）；`Range: bytes=6-10` → 206 + `content-range: bytes 6-10/22`；未知 key → 404；测试对象已删除 |
+| 9 | 旧域名 301 | ⏳ 旧 zone 在**另一个 Cloudflare 登录**（gmail 那个）里，当前 OAuth 会话看不到 → 需要你登录旧账号，或在控制台自行加 Redirect Rule：`tsinghua.nathanpenny.fun/*` → `https://thu.whizzzest.com/$1`（301）。⚠️ 域名到期后跳转自动失效 |
 
 ## 9. 验证清单
 
 **本地**（我负责）
 
-- [ ] `npm run verify` 全绿（含 `check:domain`；AI Worker 43 项端到端、媒体出口 33 项）
-- [ ] `site.config.json` 与 16 个同步文件一致；全仓无旧标识（域名 / 裸域 / 旧 Account、Zone ID）
-- [ ] 占位符填完前 `npm run check:deploy-ready` 必须失败并列出 4 个占位符；填完后必须通过（防呆闸门有效）
-- [ ] `npm run og` 后卡片图上的地址是新域名
-- [ ] 媒体路由的端到端测试（命中 / 404 / 路径穿越 / Range / 缓存头）
+**本地**（代码侧，已全部实测）
 
-**线上**（切换前逐条）
+- [x] `npm run verify` 全绿（含 `check:domain`；AI Worker 43 项端到端、媒体出口 33 项）
+- [x] `site.config.json` 与 16 个同步文件一致；全仓无旧标识（域名 / 裸域 / 旧 Account、Zone ID）
+- [x] `npm run og` 后卡片图上的地址是新域名（肉眼确认过生成图）
+- [x] 媒体路由的端到端测试（命中 / HEAD / 404/405/400/503 / Range 四形态 / 416 / 304 / 静态兜底）
+- [x] 部署闸门行为正确：填值前拒绝部署并列出占位符，填值后放行（仅 R2 Access Key ID 降级为警告）
 
-- [ ] `/`、`/sitemap-index.xml`、`/rss.xml`、`/robots.txt` 里的域名正确
-- [ ] 任一文章页的 `canonical`、`og:url`、JSON-LD `url` 都是新域名
-- [ ] Pagefind 站内搜索可用
-- [ ] `/api/ai-config` 200 且 sitekey 是新挂件的；`/ask/` 走真实 Turnstile 拿到回答
-- [ ] 后台 `https://thu.whizzzest.com/admin/` GitHub 一键登录能回到后台
-- [ ] 后台上传图片 → 存 R2 → 正文引用可打开；视频能拖进度条（Range）
+**线上**（2026-10-12 实测）
+
+- [x] `/` = 200（0.72 s）、`/ask/` = 200
+- [x] `/robots.txt` 的 Sitemap、`/sitemap-0.xml`、`/rss.xml` 全部是新域名
+- [x] 文章页 `canonical` 与 `og:url` 都是新域名
+- [x] `/api/ai-config` 200，`turnstileMode: enforce`，sitekey 是新挂件的
+- [x] `/api/ask` 无 token → 403 `challenge_failed`（证明 Turnstile secret 已生效、闸门在把关）
+- [x] R2 → `/media/*`：200 + `cache-control: immutable` + `etag`；Range → 206 + 正确 `content-range`；未知 key → 404
+- [ ] Pagefind 站内搜索可用（静态索引，建议你在浏览器里点一次确认）
+- [ ] `/ask/` 走**真实挂件**拿到回答（需要人点一下；无头环境过不了挑战）
+- [ ] 后台 `https://thu.whizzzest.com/admin/` 登录（OAuth 中转待部署；令牌登录可用）
+- [ ] 后台上传图片（等 R2 API 令牌）
 - [ ] 微信内置浏览器打开主域名正常
 
 ## 10. 回滚
@@ -223,6 +225,7 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | 0 | 域名单一来源（`site.config.json` + `domain:sync` / `check:domain` + CI） | ✅ 已完成（当地值 = 旧域名，行为不变） |
 | 0b | 取消 PR 预览环境（删 `preview.yml` / `wrangler.preview.jsonc`，`show_preview_links: false`，CORS 去掉预览源） | ✅ 已完成 |
 | 1 | 媒体改由主 Worker 提供 `/media/*`（绑定 + 路由 + 33 项断言） | ✅ 已完成（不改域名，可独立部署验证） |
-| 2 | 全量换域名（SSOT 翻转 + 16 个文件同步 + 4 张卡片图 + 文档改写 + 守卫补 `legacyApexDomains`） | ✅ 已完成（4 个 `REPLACE_` 占位符待你填，见 §7） |
-| 3 | 账号 W 控制台重建 + 部署 + 301 | ⏳ 待你提供 §7 的四个值 |
-| 4 | 收尾：并入 HANDOVER、删账号 N 资源 | ⏳ 待做 |
+| 2 | 全量换域名（SSOT 翻转 + 16 个文件同步 + 4 张卡片图 + 文档改写 + 守卫补 `legacyApexDomains`/`legacyIdentifiers`） | ✅ 已完成 |
+| 3 | 账号 W 侧执行：桶 + CORS + Turnstile 挂件 + 部署 + 3 个 Secret + 媒体真机验证 | ✅ 已完成（主站已上线） |
+| 3b | 账号 W 侧剩余：R2 API 令牌、CI Token、auth-worker、旧域名 301 | ⏳ 需要你的控制台操作（见 §8 的 ⏳ 行） |
+| 4 | 收尾：并入 HANDOVER、删旧账号资源 | ⏳ 待做（建议新站稳定 1–2 周后） |
