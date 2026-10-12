@@ -61,8 +61,14 @@ const SKIP_DIRS = new Set([
 ]);
 /** 这几个人工维护的文件里出现域名没有意义（锁文件、补丁），跳过以免拖慢扫描 */
 const SKIP_FILES = new Set(['package-lock.json']);
-/** 例外：SSOT 自己保存替换表；MIGRATION.md 是这次迁移的历史记录 */
-const RESIDUE_ALLOWLIST = new Set(['site.config.json', 'MIGRATION.md']);
+/**
+ * 例外清单（都不参与部署，且必须引用旧标识才能工作）：
+ *   · `site.config.json` —— SSOT 自己保存 hostRewrites / legacyIdentifiers 这两张「旧值表」
+ *   · `MIGRATION.md` —— 迁移历史记录（为什么迁、迁了什么）
+ *   · `MANUAL-STEPS.md` —— 收尾手工清单；301 规则的表达式必须是旧域名的**字面量**才能复制粘贴
+ * 最后两个是临时文档，收尾完成后删掉即可（那时这个清单也应该一起清空）。
+ */
+const RESIDUE_ALLOWLIST = new Set(['site.config.json', 'MIGRATION.md', 'MANUAL-STEPS.md']);
 
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {

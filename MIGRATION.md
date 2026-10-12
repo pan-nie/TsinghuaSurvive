@@ -13,6 +13,8 @@
 > 最后更新：2026-10-12
 >
 > 分支与 PR：`migrate/thu-whizzzest` 已推送，草稿 PR <https://github.com/pan-nie/TsinghuaSurvive/pull/6>（草稿状态即「还不能合并」）。
+>
+> 👉 **只想知道自己要点哪些东西** → 看 [MANUAL-STEPS.md](./MANUAL-STEPS.md)（5 项手工步骤，含控制台路径与验证命令）。
 
 ---
 
