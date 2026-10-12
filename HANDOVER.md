@@ -15,63 +15,69 @@ flowchart TB
   subgraph GH["GitHub · pan-nie/TsinghuaSurvive（public）"]
     MAIN["main 分支"]; PRB["PR"]
   end
-  subgraph CF["Cloudflare（全部在免费额度内）"]
-    W1["Worker tsinghua-guide<br/>静态资源 + /api/*（AI 问答）"]
-    W2["Worker tsinghua-guide-preview"]
+  subgraph CF["Cloudflare（账号 W，全部在免费额度内）"]
+    W1["Worker tsinghua-guide<br/>静态资源 + /api/*（AI 问答）+ /media/*（读 R2）"]
     W3["Worker tsinghua-guide-auth<br/>授权码 → 访问令牌"]
     R2B["R2 tsinghua-guide-media"]
     DO["Durable Object AskGate<br/>限流 / 日额度 / 配置"]
   end
-  MAIN -- "GitHub Actions：9 步校验 → wrangler deploy" --> W1 --> SITE["tsinghua.nathanpenny.fun"]
-  PRB -- "preview.yml" --> W2 --> PRE["preview.nathanpenny.fun"]
+  MAIN -- "GitHub Actions：12 步校验 → wrangler deploy" --> W1 --> SITE["thu.whizzzest.com ⏳ 待部署"]
+  PRB -- "本地 npm run dev 自查效果<br/>（PR 预览环境已取消）" --> LOCAL["本地开发"]
   ADM["/admin/ 内容后台（浏览器）"] -- "登录一次，需代理" --> W3
   ADM -- "之后读写内容：api.github.com" --> GH
-  ADM -- "图片 / 视频" --> R2B --> MEDIA["media.nathanpenny.fun"]
+  ADM -- "图片 / 视频（S3 直传，需 CORS）" --> R2B --> MEDIA["thu.whizzzest.com/media<br/>由主 Worker 读出"]
   ASK["/ask/ 站内问答（浏览器）"] -- "POST /api/ask（Turnstile 校验）" --> W1 --> DO
   W1 -- "默认模型，无需 Key" --> WAI["Workers AI"]
   ADMIN["/admin/ai/ 密钥后台"] -- "加密后存 Durable Object" --> DO
 ```
 
-| 组件 | 名字 | 状态（2026-10-03） |
+| 组件 | 名字 | 状态 |
 | --- | --- | --- |
-| 正式站 Worker | `tsinghua-guide` → `tsinghua.nathanpenny.fun` | ✅ 线上 200 / 0.65 s |
-| PR 预览 Worker | `tsinghua-guide-preview` → `preview.nathanpenny.fun` | ✅ 线上 200 |
-| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.nathanpenny.fun` | ✅ 已部署且两个 secret 都已配好 |
-| R2 桶 | `tsinghua-guide-media` → `media.nathanpenny.fun` | ✅ 桶 / 域名 / CORS / access_key_id 全绿 |
+| 正式站 Worker | `tsinghua-guide` → `thu.whizzzest.com` | ⏳ 待部署（账号 W 资源建好后，步骤见 MIGRATION.md §8） |
+| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | ⏳ 待部署（代码与配置已就绪，待执行 MIGRATION.md §8 第 7 步） |
+| R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ⏳ 待建桶（`REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 等占位符见 §2；桶不需要公开域名） |
 | KV / D1 | —— | 没有，一个都不用 |
-| Durable Object | `AskGate`（正式站与预览站各一个） | ✅ 随 `wrangler deploy` 的迁移创建，见第 10 节 |
-| 内容后台 | `/admin/`（Sveltia CMS，纯静态） | ✅ 随站点部署，见第 9 节 |
+| Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ⏳ 随 `wrangler deploy` 的迁移创建，见第 10 节 |
+| 内容后台 | `/admin/`（Sveltia CMS，纯静态） | ✅ 代码已就绪，随站点部署后生效，见第 9 节 |
+| PR 预览 Worker / 预览域名 | ~~`tsinghua-guide-preview`~~ | ❌ 已取消：没有预览 Worker、没有 `preview.yml`；要看效果用本地 `npm run dev`，或合并后在线上看 |
 
 ---
 
 ## 1. 一句话现状
 
-经验分享站：Markdown 写在 GitHub，构建产物托管在 Cloudflare Workers，主域名 <https://tsinghua.nathanpenny.fun>。
+经验分享站：Markdown 写在 GitHub，构建产物托管在 Cloudflare Workers，主域名 <https://thu.whizzzest.com>。
 **2026-10-05 起多了一个后端**：`/api/*` 提供站内 AI 问答（检索 + 生成 + 人机校验）。页面、图片、
-Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 交给 Worker，静态请求不进 Worker，
+Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 与 `/media/*` 交给 Worker，其余静态请求不进 Worker，
 所以「改了 Markdown → 提交 → 自动部署」这条主线没有变。
 **没有用户系统、没有数据库**；唯一的持久化是一个 Durable Object（限流计数 + 加密后的第三方 API Key）。
+
+> ⏳ **迁移前提（2026-10-12）**：站点正在从旧域名 / 旧 Cloudflare 账号迁到 `thu.whizzzest.com` / 账号 W。
+> 文档里的地址已经是**迁移后的值**，但账号 W 的 Worker / R2 / Turnstile / OAuth 中转尚未创建，
+> 因此本文凡标「⏳ 待部署」的状态都还没有在线上生效 —— 完整的控制台步骤见 [MIGRATION.md](./MIGRATION.md) §8。
 
 ---
 
 ## 2. 资源清单
 
-接手时最先要的就是这串 ID，**全部已核对**。
+接手时最先要的就是这串 ID。**旧账号与旧域名的值已全部移除**：迁移后一律以账号 W 为准（旧账号在域名到期后整体废弃）。
 
 | 项目 | 值 |
 | --- | --- |
-| 主域名 | `https://tsinghua.nathanpenny.fun` |
-| Cloudflare 账号 | `Nathanpenny520@gmail.com's Account` |
-| Account ID | `aa23021279f1ffd6901d7093879554f3` |
-| Zone | `nathanpenny.fun`（status: active） |
-| Zone ID | `068decbde572025a27b25b97080e4355` |
-| Zone 的 NS | `anton.ns.cloudflare.com`、`mona.ns.cloudflare.com` |
-| Worker（正式） | `tsinghua-guide`｜Custom Domain ID `4185b3075488e7e75699ac5e82db5500b545e3df`｜证书 ID `21a021b9-dcc7-4d03-98ee-2e46106ccb78` |
-| Worker（预览） | `tsinghua-guide-preview` → `https://preview.nathanpenny.fun` |
-| Worker（OAuth 中转） | `tsinghua-guide-auth` → `https://auth.nathanpenny.fun`，代码在 `auth-worker/`，**不随主站 CI 部署** |
-| R2 桶 | `tsinghua-guide-media` → `https://media.nathanpenny.fun` |
+| 主域名 | `https://thu.whizzzest.com`（迁移目标，⏳ 待部署） |
+| Cloudflare 账号 | 账号 W（持 `whizzzest.com` 的账号；旧账号 N 已废弃） |
+| Account ID | `REPLACE_ACCOUNT_W_ACCOUNT_ID`（待维护者填；占位符在 `site.config.json`，见 MIGRATION.md §8） |
+| Zone | `whizzzest.com`（status: active，⏳ 待核对） |
+| Zone ID | `REPLACE_ACCOUNT_W_ZONE_ID`（待维护者填；同上） |
+| Zone 的 NS | 以控制台 zone 详情页为准（旧 zone 的 NS 值已作废，不再记录） |
+| Worker（正式） | `tsinghua-guide` → `https://thu.whizzzest.com`（Custom Domain 随部署创建，ID 待部署后回填） |
+| Worker（OAuth 中转） | `tsinghua-guide-auth` → `https://auth.thu.whizzzest.com`，代码在 `auth-worker/`，**不随主站 CI 部署** |
+| R2 桶 | `tsinghua-guide-media` → `https://thu.whizzzest.com/media`（**由主 Worker 从 R2 读出，桶不需要公开域名**） |
 | GitHub 仓库 | <https://github.com/pan-nie/TsinghuaSurvive>（public，`main`） |
 | 本地路径 | `TsinghuaSurvive/Tsinghua-guide/` |
+
+> ⚠️ **这三个 `REPLACE_` 占位符不是能直接用的值**：`REPLACE_ACCOUNT_W_ACCOUNT_ID`、`REPLACE_ACCOUNT_W_ZONE_ID`、
+> `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 都在 `site.config.json` 里，取号方式见 MIGRATION.md §7 与 §8；
+> Turnstile 那边还有一个 `REPLACE_TURNSTILE_SITEKEY`（需要新建挂件，见 §10.2）。填完跑 `npm run check:domain` 与 `npm run check:admin` 复核。
 
 站点能力一览 —— 除了最后一行，**其余全部在构建期完成**：
 
@@ -85,8 +91,10 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | RSS / sitemap / robots | `src/pages/rss.xml.ts`、`@astrojs/sitemap`、`public/robots.txt` |
 | 内容后台 + 视频语法糖 | `public/admin/`、`src/utils/media-embed.mjs`（见第 9 节） |
 | **站内 AI 问答** | `src/worker/`（运行时，`/api/*`）+ `src/components/AskBox.astro`（见第 10 节） |
+| **媒体出口** | `/media/*` 由 `src/worker/media.js` 从 R2 读（见第 9.3 节） |
 
-仓库 Secrets（**两个都已配好，CI 已实测跑通**）：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅（权限最小集合见第 5 节）。
+仓库 Secrets（**账号 N 时期两个都已配好、CI 已实测跑通**）：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅（权限最小集合见第 5 节）。
+⏳ **迁移到账号 W 时两个都要换成新账号的值**（`CLOUDFLARE_ACCOUNT_ID` 换账号 W 的 ID，`CLOUDFLARE_API_TOKEN` 按第 5 节重建），见 MIGRATION.md §8 第 4 步。
 
 **Worker 侧的 Secret（不属于仓库 Secrets，用 `wrangler secret put` 写入，见第 10.2 节）**：
 
@@ -95,7 +103,8 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | `TURNSTILE_SECRET_KEY` | 人机校验的 siteverify | `/api/ask` 一律 503（fail-closed） |
 | `ADMIN_TOKEN` | `/admin/ai/` 的口令 | 后台接口 503，密钥改不了 |
 | `CONFIG_ENC_KEY` | 加密后台填的第三方 API Key | 后台存不了 Key（仍可用 Workers AI） |
-CI 验证记录：`workflow_dispatch` 运行 34 s 全绿，Cloudflare 侧生成新版本 `2166042b-d87d-4c0a-9292-b5a95e0602dd`（02:51:52Z），站点 HTTP 200。
+
+CI 验证记录（**账号 N 时期的历史记录**，迁移后需重跑一次 `deploy:dry` 确认）：`workflow_dispatch` 运行 34 s 全绿，Cloudflare 侧生成新版本 `2166042b-d87d-4c0a-9292-b5a95e0602dd`（02:51:52Z），站点 HTTP 200。
 
 > ⚠️ token 被吊销或过期时，工作流**不会红叉**：凭证守卫分支会给出 `::warning::` 注解并只构建不部署。
 
@@ -108,11 +117,11 @@ CI 验证记录：`workflow_dispatch` 运行 34 s 全绿，Cloudflare 侧生成�
 | 框架 | Astro 7，`output: 'static'` | 默认零 JS；VitePress 加自定义排版要写 Vue，Docusaurus / Next.js 对这个体量是纯负担 |
 | 主题 | Starlight | 侧边导航、目录、深色模式、搜索、i18n 全部内置 |
 | 搜索 | Pagefind（Starlight 内置） | 构建时生成静态索引，不需要服务端 |
-| 托管 | Cloudflare Workers：静态资源 + 一个 `/api/*` 入口 | 页面仍然是纯静态直出（`run_worker_first` 只管 `/api/*`），静态请求不计费、无冷启动；**加后端只加在问答接口上**，不牺牲站点其余的零运行时特性 |
+| 托管 | Cloudflare Workers：静态资源 + 一个 `/api/*` 入口 + `/media/*` 媒体出口 | 页面仍然是纯静态直出（`run_worker_first` 只管 `/api/*` 与 `/media/*`），静态请求不计费、无冷启动；**加后端只加在问答接口与媒体出口上**，不牺牲站点其余的零运行时特性 |
 | 内容 | Markdown / MDX + zod 强校验 | frontmatter 写错**构建直接失败并指出文件**，不会静默生成坏页面 |
 
 **决策一：必须用自定义域名。** 实测 `tsinghua-guide.pan-nie.workers.dev` 在校园网被 DNS 污染（解析到美国 IP `208.101.21.43` 后超时）；绑定自定义域名后 **HTTP 200、TLS 0.17 s、整页 0.5–0.9 s**。所以 `wrangler.jsonc` 里写的是
-`"routes": [{ "pattern": "tsinghua.nathanpenny.fun", "custom_domain": true }]`。
+`"routes": [{ "pattern": "thu.whizzzest.com", "custom_domain": true }]`。
 副作用：声明 `routes` 后 Wrangler **默认关闭 workers.dev 入口与 Preview URL** —— 有意的，避免同一站点两个域名；海外调试可临时加 `"workers_dev": true`。
 
 **决策二：仓库根 = 站点根。** 别人 clone 后 `npm install && npm run dev` 就能跑。**没有**把父目录 `TsinghuaSurvive/` 当仓库根 —— 那样会把 `Tsinghua-agent/`（含 `.env`、爬虫逻辑、自己的远程仓库）一起暴露到公开仓库。
@@ -259,9 +268,26 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 
 ---
 
-## 5. CI 的 API Token
+## 5. 部署校验：域名事实来源与 CI 的 API Token
 
-**状态：已配好并实测通过。** 本节留给「token 过期 / 被吊销 / 换账号」时用。
+### 5.1 域名只存在于一个地方：`site.config.json`
+
+**唯一事实来源是仓库根目录的 `site.config.json`**（`siteHost` / `authHost` / `oauthAllowedDomains` / `cloudflare.*`）。
+不要在别的文件里手写域名 —— 能 import 它的代码直接读；不能 import 的配置文件与文档由脚本写。配套四条命令：
+
+| 命令 | 做什么 | 什么时候跑 |
+| --- | --- | --- |
+| `npm run domain:sync` | 把 `site.config.json` 的值写进 `wrangler.jsonc`、`public/admin/config.yml`、`robots.txt`、`r2/cors.json` 与四份文档等 16 个同步文件，**幂等**，打印逐行 diff | 改了 `site.config.json` 之后 |
+| `npm run check:domain` | 校验同步文件与 SSOT 一致，并全仓扫描旧标识残留（`hostRewrites` 的键、`legacyApexDomains` 的裸域、`legacyIdentifiers` 里的旧 Account/Zone ID 一律不允许再出现） | 每次提 PR 前；已并入 `check:all` / `verify`，在 `deploy.yml` 里是独立一步 |
+| `npm run check:media:worker` | `/media/*` 出口的端到端断言（命中、HEAD、404/405/400/503、Range、416、304、静态兜底），已并入 `verify` 与 CI | 改 `src/worker/media.js` 或部署前 |
+| `npm run check:deploy-ready` | 部署闸门：`site.config.json` / `ai.config.yml` 里还有 `REPLACE_` 占位符就**拒绝部署**（否则 wrangler 只会抛一个跟根因无关的错） | `deploy` / `deploy:dry` 与 CI 部署步骤会自动先跑；迁移期它会故意失败 |
+
+**以后换域名的完整动作**：① 改 `site.config.json`（新域名 + 把旧域名加进 `hostRewrites`）→ ② `npm run domain:sync` →
+③ `npm run og` → ④ `npm run verify`。本次迁移的完整方案与账号侧步骤见 [MIGRATION.md](./MIGRATION.md)。
+
+### 5.2 CI 的 API Token
+
+**状态：账号 N 时期已配好并实测通过；⏳ 迁移到账号 W 时按本节重建。** 本节留给「token 过期 / 被吊销 / 换账号」时用。
 
 创建这一步**必须人工做** —— wrangler 的 OAuth 凭证没有管理 API Token 的权限（调用返回 `9109 Unauthorized`），无法脚本化。
 
@@ -272,12 +298,12 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 | --- | --- | --- |
 | Account | **Workers Scripts** · Edit | 上传脚本与静态资源 |
 | Account | **Account Settings** · Read | wrangler 解析账号 |
-| Zone · `nathanpenny.fun` | **Workers Routes** · Edit | 部署时核对自定义域名绑定 |
-| Zone · `nathanpenny.fun` | **Zone** · Read | 同上，需要先列出已有域名 |
+| Zone · `whizzzest.com` | **Workers Routes** · Edit | 部署时核对自定义域名绑定 |
+| Zone · `whizzzest.com` | **Zone** · Read | 同上，需要先列出已有域名 |
 
-3. Account Resources 选你的账号；Zone Resources **只选 `nathanpenny.fun`**（不要给 All zones）。
-4. 创建后立刻复制 token 写入仓库 Secret：`gh secret set CLOUDFLARE_API_TOKEN --repo pan-nie/TsinghuaSurvive`（或网页 Settings → Secrets → Actions）。
-5. 验证：`gh workflow run deploy.yml --repo pan-nie/TsinghuaSurvive`，然后 `gh run watch`。
+3. Account Resources 选账号 W；Zone Resources **只选 `whizzzest.com`**（不要给 All zones）。
+4. 创建后立刻复制 token 写入仓库 Secret：`gh secret set CLOUDFLARE_API_TOKEN --repo pan-nie/TsinghuaSurvive`（或网页 Settings → Secrets → Actions），`CLOUDFLARE_ACCOUNT_ID` 填账号 W 的 Account ID。
+5. 验证：先 `npm run check:domain && npm run deploy:dry`（本地即可确认域名与绑定一致），再 `gh workflow run deploy.yml --repo pan-nie/TsinghuaSurvive` + `gh run watch`。
 
 ---
 
@@ -287,8 +313,8 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 | --- | --- |
 | `EPERM ... ~/.npm/_logs` | 沙箱不允许写用户目录。`export npm_config_cache="$PWD/.npm-cache"` |
 | `EPERM ... .wrangler/logs` | 同上，`export WRANGLER_LOG_PATH="$PWD/.wrangler-logs"` |
-| 域名解析 NXDOMAIN | **先别急着改配置**。清华校园网**透明劫持 53 端口 DNS**：问 8.8.8.8 / 223.5.5.5 / 119.29.29.29 拿到的都是校内解析器的答案，看起来像「公共 DNS 全挂了」。用 DoH（443 端口）绕开验证：`curl "https://dns.alidns.com/resolve?name=tsinghua.nathanpenny.fun&type=A"`；铁证：`dig +short TXT o-o.myaddr.l.google.com @8.8.8.8` 返回校内地址就是被劫持。真正原因通常只是校内解析器缓存了建记录之前的否定结果（SOA minimum=1800，约 30 分钟过期） |
-| 站点打不开但 Cloudflare 显示已部署 | 先分清 DNS 还是部署：`curl --resolve tsinghua.nathanpenny.fun:443:172.67.207.247 https://tsinghua.nathanpenny.fun/` 绕过 DNS 直连 |
+| 域名解析 NXDOMAIN | **先别急着改配置**。清华校园网**透明劫持 53 端口 DNS**：问 8.8.8.8 / 223.5.5.5 / 119.29.29.29 拿到的都是校内解析器的答案，看起来像「公共 DNS 全挂了」。用 DoH（443 端口）或直接 `dig` 绕开验证：`curl "https://dns.alidns.com/resolve?name=thu.whizzzest.com&type=A"`、`dig +short thu.whizzzest.com @1.1.1.1`；铁证：`dig +short TXT o-o.myaddr.l.google.com @8.8.8.8` 返回校内地址就是被劫持。真正原因通常只是校内解析器缓存了建记录之前的否定结果（SOA minimum=1800，约 30 分钟过期） |
+| 站点打不开但 Cloudflare 显示已部署 | 先分清 DNS 还是部署：`dig +short thu.whizzzest.com @1.1.1.1`（或 DoH 查询）看解析是否正常，再 `curl -I https://thu.whizzzest.com/` 看响应；**不要写死 IP** —— Cloudflare 的 anycast 地址会变，硬编码的 `--resolve` 只是把 DNS 问题掩盖成连接问题 |
 | 搜索搜不到中文 | Pagefind 支持中文分词但**不做词干化**：「选课」与「选课规则」不互相命中。搜 2–3 字短词，靠 tags 补足 |
 | **github.com 网页端打不开** | 校园网实测（2026-09-30 超时 / 2026-10-03 复测 200，**会变**）：`git push` / `git clone`（SSH，22 与 `ssh.github.com:443`）、`api.github.com`、`gh` CLI 全部正常，**只有网页端不行**。所以走「本地改 + `git push`」或站内后台，别指望点网页上的「编辑此页」——那些链接没写错 |
 | 构建报 frontmatter 错误 | **设计如此**。按报错指出的文件修正字段，字段定义见 `src/content.config.ts` |
@@ -298,8 +324,8 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 | 页面顶部红色过期警告 | 作者把 `status` 设成了 `outdated`。内容修好后改成 `stable` |
 | 分享卡片还是旧标题 | `public/og.png` 是**静态文件**，改标题后要跑 `npm run og` |
 | 内容检查报「站内链接指向不存在的页面」 | 改文件名或移动文章后没同步引用。报错带文件:行号；中文标签链接（`/tags/选课/`）与编码形式都已识别，不会误报 |
-| 预览链接 404 或 PR 上没有预览评论 | 先确认 PR 是不是来自 **fork**（fork PR 拿不到 Secrets，设计如此）；再看 `wrangler.preview.jsonc` 的预览域名是否创建成功 |
-| 想删掉预览环境 | `npx wrangler delete --config wrangler.preview.jsonc`，并删除 `.github/workflows/preview.yml` |
+| 想核对线上页面时页面 404 | 迁移期先确认查的是**新域名**（账号 W 部署后才有效）；旧域名的 301 只做到期为止，域名到期后旧链接必然 404（原因见 MIGRATION.md §4.2） |
+| 要在本地看渲染效果 | PR 预览环境已取消（没有预览 Worker / 预览域名 / `preview.yml`）：用 `npm run dev` 看页面，`npm run dev:worker` 连真实 R2 看媒体 |
 
 ---
 
@@ -355,13 +381,16 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 - **HTML 不是瓶颈**：课程索引页原始 205.8 KB，gzip 后只有 25.8 KB（8 倍压缩，卡片结构高度重复）。定位曾经是 269 KB，2026-09-30 瘦身过一次（去掉 Astro 作用域类 + `data-search` 副本 + 按资料库分组）。
 - **真正的重量是 Starlight 的 UI bundle（约 98–104 KB 未压缩）与 CSS（71–89 KB）**，gzip 后约 30 KB + 15 KB，可以接受。要再快一档的方向是**按需加载 Expressive Code**（只有带代码块的页面才需要），不是继续压 HTML。
 - **与 2026-09-30 那版的差别**：链接页 `HTML(gzip)` 18.9 → 23.8 KB（链接 47 → 60 条；09-30 那次是 39 → 47 条、+1.8 KB）；课程索引原始 204.4 → 205.8 KB；其余页面在 0.3 KB 量级，**框架带来的 JS / CSS 一个字节没变**。
-- **图片走 R2，不走 Astro 图片管线**：正文图片是 R2 公网 URL，后台媒体库上传前在浏览器里转 WebP、长边 2048、剥 EXIF。代价是没有响应式 srcset / AVIF；收益是作者零心智负担、仓库永不因图片变重。想改回「图片进仓库 + Astro 优化」，得同时改 `public/admin/config.yml` 的媒体库设置与 `scripts/check-media.mjs` 的白名单，别只改一半。（Astro 确实能优化正文里的**相对路径**图片，但 Sveltia 的 `public_folder` 不支持相对路径，两者不能同时要。）
+- **图片走 R2，由主 Worker 在 `/media/*` 读出，不走 Astro 图片管线**：正文图片的地址是 `https://thu.whizzzest.com/media/…`（`wrangler.jsonc` 的 `MEDIA` 绑定 + `assets.run_worker_first`），后台媒体库上传前在浏览器里转 WebP、长边 2048、剥 EXIF。代价是没有响应式 srcset / AVIF；收益是作者零心智负担、仓库永不因图片变重。想改回「图片进仓库 + Astro 优化」，得同时改 `public/admin/config.yml` 的媒体库设置与 `scripts/check-media.mjs` 的白名单，别只改一半。（Astro 确实能优化正文里的**相对路径**图片，但 Sveltia 的 `public_folder` 不支持相对路径，两者不能同时要。）
+- ⚠️ **本地 `npm run dev`（纯 Astro）看不到媒体**：`/media/*` 是 Worker 的路由，纯 Astro dev server 不实现它。要在本地看图片 / 视频，用 `npm run dev:worker`（wrangler dev，连真实 R2）。
 
 ---
 
 ## 8. 已知限制
 
 - **境内访问是「可用」不是「快」**：整页 0.5–0.9 s，走 Cloudflare 海外节点。要更快需要 **ICP 备案 + Cloudflare 中国网络（企业版）**，或换境内云厂商静态托管 —— 产品决策，不是技术限制。
+- **旧域名会 301 到新域名，但只做到期为止**：301 依赖旧域名还能解析，域名一到期 DNS 直接不存在，跳转被跳过、旧链接必然 404（已确认不续费，见 MIGRATION.md §4.2）。过渡期按 MIGRATION.md §8 第 9 步在旧 zone 加 Redirect Rule。
+- **迁移期间新域名可能还没上线**：`thu.whizzzest.com` 的 Worker / R2 / Turnstile / OAuth 中转都在账号 W，需按 MIGRATION.md §8 逐步建好；在那之前不要对外宣布新站可用。
 - **`workers.dev` 入口已关闭**，不要写进任何对外宣传材料。
 - **没有评论系统**（刻意不做）：依赖 `github.com` 登录才能发言，校园网内读者不会为评论去挂代理；且评论区会把「不指名评价老师」这条红线从「我们写」变成「读者写、站长兜底」。纠错入口是页脚的 GitHub Issues。
 - **站点上没有任何课程文件**：`/courses/` 只是索引，许可、存活、下架都不由本站控制。
@@ -382,11 +411,11 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 
 | 项 | 内容 |
 | --- | --- |
-| 地址 | <https://tsinghua.nathanpenny.fun/admin/> |
+| 地址 | <https://thu.whizzzest.com/admin/> |
 | 实现 | Sveltia CMS —— 纯前端单页应用，静态文件在 `public/admin/`，随站点部署，**没有额外服务器** |
 | 配置 | `public/admin/config.yml`：12 个目录集合 + 1 个单文件集合，覆盖 **47 个内容文件**（`check:admin` 每次复核） |
-| 登录 | **默认 GitHub 一键登录（OAuth）**，走自建中转 `auth.nathanpenny.fun`；令牌登录保留作备用 |
-| 数据流 | 浏览器 →（登录时一次 OAuth 跳转）→ 之后所有读写直连 `api.github.com` → 提交到分支 → PR → `preview.nathanpenny.fun` + 全套 CI → 合并 main → 自动部署 |
+| 登录 | **默认 GitHub 一键登录（OAuth）**，走自建中转 `auth.thu.whizzzest.com`；令牌登录保留作备用 |
+| 数据流 | 浏览器 →（登录时一次 OAuth 跳转）→ 之后所有读写直连 `api.github.com` → 提交到分支 → PR → `thu.whizzzest.com` + 全套 CI → 合并 main → 自动部署 |
 | 保存方式 | `publish_mode: editorial_workflow`：**每次保存开一个 PR**，不直推 main |
 
 **为什么需要一个 OAuth 中转**：Sveltia 是纯前端应用，浏览器里不能放 client secret，而 GitHub 的纯前端 PKCE 流程目前没开放 —— 所以用 `auth-worker/`（内联上游 `sveltia/sveltia-cms-auth`，MIT，单个 13 KB Worker）做「授权码 → 访问令牌」的交换。
@@ -394,27 +423,29 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 
 ### 9.2 OAuth 中转（A）
 
-> **当前状态（2026-10-03 复核：已全部配好）**：Worker 已部署，`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 都已写入
-> （`npx wrangler secret list --config auth-worker/wrangler.jsonc` 可见；最后一次部署就是 2026-09-30 16:18 UTC 的 secret 变更），
-> `https://auth.nathanpenny.fun/auth` 返回正常登录页而不是 `MISCONFIGURED_CLIENT`。
-> **新建 / 重建的完整步骤在 [`auth-worker/README.md`](./auth-worker/README.md)**，这里只留运维要点：
+> **当前状态（⏳ 迁移中）**：代码与配置已就绪，但账号 W 上还没建 Worker —— 账号 N 时期那份已部署环境随旧域名一起废弃。
+> 重建步骤见 MIGRATION.md §8 第 7 步，以及 [`auth-worker/README.md`](./auth-worker/README.md)（新建 / 重建的完整步骤）。这里只留运维要点：
 
-- **OAuth App 的 callback 必须一字不差**：`https://auth.nathanpenny.fun/callback`；换域名时三处要一起改（`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback、`config.yml` 的 `base_url`），`check:admin` 能查前两处，GitHub 那边只能人工确认。
+- **OAuth App 的 callback 必须一字不差**：`https://auth.thu.whizzzest.com/callback`；换域名时三处要一起改（`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback、`config.yml` 的 `base_url`），`check:admin` 能查前两处，GitHub 那边只能人工确认（本次迁移就是改现有 OAuth App 的 callback + Homepage URL）。
 - 写密钥：`cd auth-worker && npx wrangler secret put GITHUB_CLIENT_ID`（`..._SECRET` 同理），首次才需要 `wrangler deploy`；想先看打包结果：`npm run auth:dry`。
-- `ALLOWED_DOMAINS`（`wrangler.jsonc` 的 vars）是防滥用白名单，当前 `*.nathanpenny.fun,localhost` —— **不要改成 `*`**。
+- `ALLOWED_DOMAINS`（`auth-worker/wrangler.jsonc` 的 vars）是防滥用白名单，当前 `*.whizzzest.com,localhost` —— **不要改成 `*`**。这个值的事实来源同样是 `site.config.json` 的 `oauthAllowedDomains`（由 `npm run domain:sync` 写入）。
 - **`auth_scope` 只接受 `repo` / `public_repo` 两个值**（schema 的 enum 就只有这两个）。写成 `public_repo,user` 会被直接拒绝 —— 实测踩过。本站用 `public_repo`：公开仓库足够读写文章与开 PR，比默认的 `repo`（含所有私有仓库）小得多。
 - 验证：开代理打开 `/admin/` → **Sign in with GitHub** → 授权 → 回到后台并看到全部 13 个集合。
 
 ### 9.3 R2 媒体库（B）
 
-图片/视频**不进 Git 仓库**，存 R2 桶 `tsinghua-guide-media`，通过 `https://media.nathanpenny.fun` 访问。
+图片/视频**不进 Git 仓库**，存 R2 桶 `tsinghua-guide-media`，由**主 Worker 在 `https://thu.whizzzest.com/media/*` 从 R2 读出**
+（`wrangler.jsonc` 里的 `MEDIA` 绑定 + `assets.run_worker_first` 含 `/media/*`，实现见 `src/worker/media.js`）。
+**R2 桶不需要公开域名 / custom domain**：这样既省一个域名与一张证书，也让媒体与站点同源。
 
-> **当前状态（2026-10-03 复核：全绿）**：`npm run r2:setup -- --check` 五项都过 —— 桶、公开域名、CORS、
-> 后台 `public_url` 一致、以及 **R2 API 令牌的 Access Key ID 已填进 `public/admin/config.yml`**。
+> **当前状态（⏳ 待建）**：账号 W 上还没有桶。`site.config.json` 里的 `r2AccessKeyId` 现在是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` 占位符，
+> 需要按 MIGRATION.md §8 第 2 步建桶 + 建 R2 API 令牌。跑 `npm run r2:setup -- --check` 复核时，脚本会直接报告「公开域名：不需要」——
+> 这是预期结果，不是漏配。
 
 ```bash
 npm run r2:setup -- --check   # 只报告当前状态，不改任何东西
-npm run r2:setup              # 建桶 + 接公开域名 + 应用 CORS（可重复执行）
+npm run r2:setup              # 建桶 + 应用 CORS（媒体由主 Worker 读时跳过「公开域名」一步；可重复执行）
+npm run check:media:worker    # 端到端验证 /media/* 出口（33 项断言）
 ```
 
 换令牌或重建环境时的最后一步（脚本做不了，官方只提供控制台路径）：<https://dash.cloudflare.com/?to=/:account/r2/api-tokens> → **Create API token** → Permission `Object Read & Write`、桶只勾 `tsinghua-guide-media` → 把 **Access Key ID** 填进 `config.yml` 的 `media_libraries.cloudflare_r2.access_key_id`（它不是密钥，官方明确可以公开）。
@@ -422,7 +453,8 @@ npm run r2:setup              # 建桶 + 接公开域名 + 应用 CORS（可重�
 
 > ⚠️ 两个实施时踩过的坑（脚本/文件里都有注释）：
 > **CORS 的 JSON 形状是 R2 那套**（`{ "rules": [ { "allowed": { "origins": [...] } } ] }`），不是 S3 的顶层 `AllowedOrigins` —— 写成 S3 形状 wrangler 会直接拒绝；
-> **`wrangler r2 object put/get` 默认操作本地模拟存储**，不加 `--remote` 时对象只写进 `.wrangler/state/`（表现：`object_count: 0`、公开域名取不到对象）。
+> **CORS 仍然必须配**：媒体虽然不再有独立域名，但后台是在浏览器里**直传 R2 的 S3 接口**（`uploads`），没有 CORS 上传会被浏览器拦掉。
+> **`wrangler r2 object put/get` 默认操作本地模拟存储**，不加 `--remote` 时对象只写进 `.wrangler/state/`（表现：`object_count: 0`、`/media/*` 取不到对象）。
 
 ### 9.4 日常维护后台
 
@@ -459,14 +491,14 @@ npm run r2:setup              # 建桶 + 接公开域名 + 应用 CORS（可重�
 | 3 | **一个集合只能对应一种扩展名**（官方明确） | `.mdx`（含 JSX 组件）单独成集合，并在 `description` 里写「不要删 import 那几行」；编辑器默认原文模式，`:::` 与组件都不会被改写 |
 | 4 | **Sveltia 保存时只写回配置里声明过的字段** —— 漏声明一个字段，作者保存一次就把它丢了 | `check:admin` 做「源码出现过的 frontmatter 字段是否都被声明」的覆盖率检查，加字段时别绕过 |
 | 5 | 后台不写 `slug`：文件名（网址）由作者保存时手填 | 规则是小写英文/数字/连字符 —— 被 `check-content.ts` 的 ASCII slug 规则逼出来的 |
-| 6 | Media 域名白名单在两处 | `config.yml` 的 `public_url`（上传用）+ `scripts/check-media.mjs` 的 `allowedHosts`（校验用），换域名两处都要改 |
+| 6 | Media 地址与白名单在两处 | `config.yml` 的 `public_url`（上传用）+ `scripts/check-media.mjs` 的 `allowedHosts`（校验用），换域名两处都要改；媒体并入主站后 `public_url` 是 `${站点}/media`（由 `domain:sync` 写入） |
 | 7 | 后台是公开地址，但里面没有密钥 | 仓库是 public，`access_key_id` / `bucket` / `account_id` 官方明确可公开；真正的写权限在 GitHub。收录层面三处一起挡：`robots.txt` 的 `Disallow: /admin/`、`_headers` 的 `X-Robots-Tag`、页面 `<meta name="robots" content="noindex">` |
 | 8 | **选项写在错误的层级 → CMS 静默忽略**（只打印 warning） | `commit_messages` 属于 `backend`；`slug` 有两套选项，`editable`/`pattern`/`hint` 必须写在**每个集合**里；`automatic_deployments` 已过时（改用 `skip_ci`），本站没写。这类问题由 `check:admin` 用官方 JSON Schema 挡掉 |
 | 9 | **`.mdx` 里不能写 `<https://…>` 自动链接**（MDX 当 JSX 解析，构建失败：`Unexpected character after <`） | `.mdx` 写 `[文字](https://…)`；`.md` 两种都行 |
 | 10 | 改完内容要看一眼浏览器控制台 | `check:admin` 覆盖 schema 与字段，但 CMS 的运行时警告只有真打开后台才打印 —— 花 10 秒点一次 |
 | 11 | **OAuth 三处地址必须一致**，否则「点了登录、也授权了，但回到后台仍未登录」 | `config.yml` 的 `base_url`、`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback URL；前两处 `check:admin` 比对，第三处人工确认 |
 | 12 | `auth_scope` 只接受 `repo` / `public_repo` | 写成 `public_repo,user` 这类列表会被 schema 拒绝（见 9.2） |
-| 13 | `auth-worker` 是第三个 Worker，**不随主站 CI 部署** | 改动很少，手动 `npm run auth:deploy`；改前先 `npm run auth:dry`；`ALLOWED_DOMAINS` 不要写 `*` |
+| 13 | `auth-worker` 是独立 Worker，**不随主站 CI 部署** | 改动很少，手动 `npm run auth:deploy`；改前先 `npm run auth:dry`；`ALLOWED_DOMAINS` 不要写 `*` |
 | 14 | 内联的上游代码要保留来源注释与 LICENSE | `auth-worker/src/index.js` 来自 MIT 的 `sveltia/sveltia-cms-auth`，文件头记了 commit 与 sha256，升级方式在 `auth-worker/README.md`；`check:admin` 会检查这些还在不在 |
 | 15 | **横向按钮条里「第一颗按钮更高」** | `Starlight` 给 `.sl-markdown-content` 里「后一个元素」加 `margin-top: var(--sl-content-gap-y)`（1rem）。一排 flex 按钮里第 2..n 颗各带 16px 上边距，而 flex 默认 `align-items: stretch` 会把没有边距的第一颗拉到「最高外框」——表现为第一颗 53px、其余 37px（实测 /ask/ 与 /academics/course-decision/）。修法见 `src/styles/custom.css` 末尾：把站内那几个按钮条容器的段落间距清零。**新增按钮条要把容器类名加进那个列表** |
 | 16 | **自定义页面（`StarlightPage`）的右侧目录只有「概述」** | 目录来自 `headings` prop，默认是空数组，读不到 `.astro` 里手写的 `<h2>`。要么显式传 `headings`（会和正文漂移），要么**把页面写成 `src/content/docs/*.mdx`** —— 走 Markdown 管线之后目录、侧栏分组、后台可编辑都自动成立。`/ask/` 就是为此从 `src/pages/ask.astro` 改成 `src/content/docs/ask.mdx` 的 |
@@ -484,7 +516,7 @@ npm run r2:setup              # 建桶 + 接公开域名 + 应用 CORS（可重�
 | 块 | 位置 | 什么时候跑 |
 | --- | --- | --- |
 | 索引构建 | `scripts/build-ai-index.mjs` | **构建期**（`npm run build` 的一部分） |
-| 检索 + 生成 | `src/worker/index.js`、`retrieval.js`、`providers.js`、`turnstile.js`、`gate.js` | 请求时（只有 `/api/*` 会进 Worker） |
+| 检索 + 生成 | `src/worker/index.js`、`retrieval.js`、`providers.js`、`turnstile.js`、`gate.js` | 请求时（只有 `/api/*` 与 `/media/*` 会进 Worker） |
 | 前端 | `src/components/AskBox.astro` + `src/pages/ask.astro` | 浏览器 |
 | 密钥后台 | `public/admin/ai/index.html` | 浏览器（改模型/Key 时用） |
 | 配置 | `src/data/ai.config.yml` → `dist/ai-config.json` | 构建期生成，后台可编辑 |
@@ -510,8 +542,7 @@ npm run r2:setup              # 建桶 + 接公开域名 + 应用 CORS（可重�
 ```bash
 # wrangler ≥ 4.109。domain 里必须包含 localhost / 127.0.0.1，否则本地开发渲染不出挂件。
 npx wrangler turnstile widget create "tsinghua-guide-ask" \
-  --domain tsinghua.nathanpenny.fun \
-  --domain preview.nathanpenny.fun \
+  --domain thu.whizzzest.com \
   --domain localhost \
   --domain 127.0.0.1 \
   --mode managed --json
@@ -520,17 +551,15 @@ npx wrangler turnstile widget create "tsinghua-guide-ask" \
 把返回的 **sitekey** 填进 `src/data/ai.config.yml` 的 `turnstile.sitekey`
 （也可以在后台「站点配置 → AI 问答」里填），**secret 不要写进任何文件**。
 
-**② 写三个 Worker Secret**（正式站与预览站各一次）：
+> ⏳ **迁移注意**：这是**新建**的挂件（账号 W），不是沿用账号 N 那个。`site.config.json` 不管 Turnstile 的值，
+> 所以 `turnstile.sitekey` 现在还是 `REPLACE_TURNSTILE_SITEKEY` 占位符，必须人工替换；`check:ai` 会兜底提醒。
+
+**② 写三个 Worker Secret**（只写正式站，预览站已取消）：
 
 ```bash
 npx wrangler secret put TURNSTILE_SECRET_KEY          # ① 里拿到的挂件 secret
 npx wrangler secret put ADMIN_TOKEN                   # 自己生成一串长的随机口令
 npx wrangler secret put CONFIG_ENC_KEY                # 加密第三方 Key 的主密钥，越长越好
-
-# 预览站（另一个 Worker，密钥是独立的）
-npx wrangler secret put TURNSTILE_SECRET_KEY --config wrangler.preview.jsonc
-npx wrangler secret put ADMIN_TOKEN --config wrangler.preview.jsonc
-npx wrangler secret put CONFIG_ENC_KEY --config wrangler.preview.jsonc
 ```
 
 > `TURNSTILE_SECRET_KEY` 缺失时 `/api/ask` **一律 503**（fail-closed）。
@@ -546,7 +575,7 @@ Turnstile 官方测试密钥。注意 `.dev.vars` 会把 `TURNSTILE_HOSTNAMES` �
 npm run verify            # 含 check:ai（索引+检索自测）与 check:ai:worker（43 项端到端）
 npm run deploy:dry        # 校验 Worker 配置与绑定
 # 部署后
-curl -s https://tsinghua.nathanpenny.fun/api/ai-config | head -c 300
+curl -s https://thu.whizzzest.com/api/ai-config | head -c 300
 ```
 
 ### 10.3 日常操作
@@ -621,11 +650,12 @@ idf 用的是「正文与标题合并后的 df」——用标题自身的 df 会
 ### 10.6 验证到什么程度了
 
 自动化检查（`npm run check:ai` + `check:ai:worker`）跑的是真实入口函数、真实检索、真实提示词，
-桩掉的只有 AI 绑定与 Durable Object 存储。**真环境的三项已于 2026-10-05 在预览站验证**：
+桩掉的只有 AI 绑定与 Durable Object 存储。**下面三项是 2026-10-05 在旧站环境（已废弃）验证过的历史记录**，
+⏳ 账号 W 上的正式站部署完成后，需要用同一套手法在新域名上复测一遍：
 
-| 项目 | 怎么验的 | 结果 |
+| 项目 | 怎么验的 | 结果（旧环境，2026-10-05） |
 | --- | --- | --- |
-| 真实 Turnstile 令牌 | 无头 Chrome 打开 `preview.nathanpenny.fun/ask/`，走完真实挂件 | ✅ 拿到 794 字符令牌，问答成功 |
+| 真实 Turnstile 令牌 | 无头 Chrome 打开 `/ask/`，走完真实挂件 | ✅ 拿到 794 字符令牌，问答成功 |
 | 令牌不可重放 | 同一个令牌连打两次 `/api/ask` | ✅ 第一次 200、第二次 403 `challenge_failed` |
 | Workers AI 真实推理 | 页面上问「绩点是怎么算的」「军训要准备什么」「保研需要什么条件」 | ✅ 答案有出处、角标指向正确锚点 |
 | 后台配置页 | `/admin/ai/` 输口令 → 状态面板 → 「测试连接」 | ✅ 返回真实模型回复「可用」 |
@@ -636,8 +666,8 @@ idf 用的是「正文与标题合并后的 df」——用标题自身的 df 会
 **还没验证的只剩一件**：真实 Neuron 消耗曲线。上线几天后去 Cloudflare 控制台的
 Workers AI 面板看真实用量，和 10.3 的估算对一下，再决定 `daily_answers` 要不要调。
 
-**正式站首次上线后请再手测一次**（两个 Worker 的 `TURNSTILE_HOSTNAMES` 不同，
-正式站是 `tsinghua.nathanpenny.fun`）：打开 <https://tsinghua.nathanpenny.fun/ask/> 问一句，
+**账号 W 部署完成后请手测一次**（`TURNSTILE_HOSTNAMES` 现在是 `thu.whizzzest.com`，
+且挂件是新建的）：打开 <https://thu.whizzzest.com/ask/> 问一句，
 确认挂件能渲染、能答出来、**连续问两次都成功**（第二次依赖 `turnstile.reset`，是最容易漏的一步）。
 
 
@@ -725,9 +755,10 @@ Workers AI 面板看真实用量，和 10.3 的估算对一下，再决定 `dail
   ⚠️ 这一步一开始**漏了**，是 `check:admin` 报「不在任何后台集合里」才补的 ——
   构建照样绿、页面照样上线，只有那一条提醒。**通用规矩见 §4 的「加一个根目录单文件页」。**
 
-**上线方式**：提交 `1b0a0c6` → push `main` → `deploy.yml` 自动部署（12 步 CI 全过）。
+**上线方式（旧账号 N 环境，2026-10-06）**：提交 `1b0a0c6` → push `main` → `deploy.yml` 自动部署（12 步 CI 全过）。
 线上验证：`/qingxiaoda/` 200、普通文章页侧边栏显示「AI 功能」。
 注意**首页查不到「AI 功能」是正常的**——`template: splash` 不渲染侧边栏。
+⏳ 迁移到账号 W 后，这套「push main → 自动部署」的流程不变，但首次部署前要先按 MIGRATION.md §8 建好资源。
 
 ### 12.2 这一页是纯内容，但有两条硬约束
 

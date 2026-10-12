@@ -22,6 +22,7 @@
     "check:feeds": "node scripts/check-feeds.mjs",
     "check:admin": "node scripts/check-admin.mjs",
     "check:domain": "node scripts/domain-check.mjs",
+    "check:deploy-ready": "node scripts/check-deploy-ready.mjs",
     "domain:sync": "node scripts/domain-sync.mjs",
     "check:ai": "node scripts/check-ai-index.mjs",
     "check:ai:worker": "node scripts/check-ai-worker.mjs",
@@ -40,8 +41,8 @@
     "r2:setup": "node scripts/r2-setup.mjs",
     "auth:deploy": "wrangler deploy --config auth-worker/wrangler.jsonc",
     "auth:dry": "wrangler deploy --dry-run --config auth-worker/wrangler.jsonc",
-    "deploy": "npm run build && wrangler deploy",
-    "deploy:dry": "npm run build && wrangler deploy --dry-run"
+    "deploy": "npm run check:deploy-ready && npm run build && wrangler deploy",
+    "deploy:dry": "npm run check:deploy-ready && npm run build && wrangler deploy --dry-run"
   },
   "engines": {
     "node": ">=20"

@@ -65,14 +65,14 @@
     // Turnstile 的允许域名（siteverify 返回的 hostname 必须在这里面）。
     // ⚠️ 正式环境**绝不能**包含 localhost / 127.0.0.1。本地开发用 .dev.vars 覆盖
     //    这一项（.dev.vars 已在 .gitignore 里），两份名单物理隔离，不会手滑带到线上。
-    "TURNSTILE_HOSTNAMES": "tsinghua.nathanpenny.fun"
+    "TURNSTILE_HOSTNAMES": "thu.whizzzest.com"
   },
 
   // 自定义域名。部署时 Wrangler 会自动创建 DNS 记录并绑定到本 Worker。
   // 必须用自定义域名的原因：*.<账号>.workers.dev 在境内被 DNS 污染，校园网打不开。
   "routes": [
     {
-      "pattern": "tsinghua.nathanpenny.fun",
+      "pattern": "thu.whizzzest.com",
       "custom_domain": true
     }
   ]

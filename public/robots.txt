@@ -9,4 +9,4 @@ Disallow: /pagefind/
 # 页面里还有 <meta robots noindex>，_headers 里还有 X-Robots-Tag，三处一起挡。
 Disallow: /admin/
 
-Sitemap: https://tsinghua.nathanpenny.fun/sitemap-index.xml
+Sitemap: https://thu.whizzzest.com/sitemap-index.xml

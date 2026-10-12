@@ -20,7 +20,7 @@
 
 ## 内容红线自查
 
-投稿和审稿都必须遵守，详见[免责声明与内容边界](https://tsinghua.nathanpenny.fun/start/disclaimer/)。
+投稿和审稿都必须遵守，详见[免责声明与内容边界](https://thu.whizzzest.com/start/disclaimer/)。
 
 - [ ] 没有内部系统的数据、截图、账号，或绕过权限的方法
 - [ ] 没有针对具体老师的指名评价

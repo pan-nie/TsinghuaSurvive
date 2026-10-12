@@ -110,6 +110,12 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # 占位符闸门：迁移期间 site.config.json / ai.config.yml 里可能还留着 REPLACE_ 占位符。
+      # 带着它们部署，wrangler 会抛一个跟根因无关的错（例如 zone not found），排查成本很高。
+      - name: 部署前占位符检查
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run check:deploy-ready
+
       - name: 部署到 Cloudflare Workers
         if: steps.creds.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@v4
@@ -119,5 +125,5 @@ jobs:
           command: deploy
 
 # 需要的仓库 Secrets（Settings → Secrets and variables → Actions）：
-#   CLOUDFLARE_ACCOUNT_ID  —— aa23021279f1ffd6901d7093879554f3（已配好）
-#   CLOUDFLARE_API_TOKEN   —— 需要在 Cloudflare 控制台手动创建，权限清单见 HANDOVER.md
+#   CLOUDFLARE_ACCOUNT_ID  —— ⚠️ 迁移到新账号后必须换成新账号的 ID（旧值指向即将废弃的账号）
+#   CLOUDFLARE_API_TOKEN   —— 在新账号里创建（权限清单见 HANDOVER.md 第 5 节，zone 只选 whizzzest.com）

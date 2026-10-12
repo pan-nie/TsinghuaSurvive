@@ -1,8 +1,12 @@
 # 域名迁移方案：tsinghua.nathanpenny.fun → thu.whizzzest.com
 
-> 状态：**方案已确认，分阶段执行中**。
+> 状态：**代码/配置/CI 已改完（分支 `migrate/thu-whizzzest`），Cloudflare 控制台步骤待执行**。
 > 本文档是执行手册 + 决策记录。迁移完成后，把仍然有效的事实并进 `HANDOVER.md`；
 > 本文档保留为历史记录，并被 `check:domain` 列入旧域名白名单（只有它和 `site.config.json` 可以出现旧域名）。
+>
+> ⚠️ 分支上 `site.config.json` 与 `src/data/ai.config.yml` 里有 4 个 `REPLACE_` 占位符
+> （Account ID / Zone ID / R2 Access Key ID / Turnstile sitekey）。**占位符没换掉之前不要合并到 main、更不要部署**：
+> 换掉之前问答会 fail-closed、后台上传会失败，这是有意的（宁可显式失败，也不要静默用错账号）。
 >
 > 最后更新：2026-10-12
 
@@ -76,22 +80,33 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 
 ## 5. 阶段 0（已完成）：域名单一来源
 
-### 5.1 事实来源：`site.config.json`
+### 5.1 事实来源：`site.config.json`（当前内容）
 
 ```json
 {
   "repo": "https://github.com/pan-nie/TsinghuaSurvive",
-  "siteHost": "tsinghua.nathanpenny.fun",
-  "authHost": "auth.nathanpenny.fun",
-  "mediaBaseUrl": "https://media.nathanpenny.fun",
-  "oauthAllowedDomains": "*.nathanpenny.fun,localhost",
-  "cloudflare": { "accountId": "…", "zoneId": "…", "r2Bucket": "tsinghua-guide-media", "r2AccessKeyId": "…" },
-  "hostRewrites": {}
+  "siteHost": "thu.whizzzest.com",
+  "authHost": "auth.thu.whizzzest.com",
+  "oauthAllowedDomains": "*.whizzzest.com,localhost",
+  "cloudflare": {
+    "accountId": "REPLACE_ACCOUNT_W_ACCOUNT_ID",
+    "zoneId": "REPLACE_ACCOUNT_W_ZONE_ID",
+    "r2Bucket": "tsinghua-guide-media",
+    "r2AccessKeyId": "REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID"
+  },
+  "hostRewrites": {
+    "tsinghua.nathanpenny.fun": "thu.whizzzest.com",
+    "auth.nathanpenny.fun": "auth.thu.whizzzest.com",
+    "media.nathanpenny.fun": "thu.whizzzest.com/media",
+    "preview.nathanpenny.fun": "thu.whizzzest.com"
+  },
+  "legacyApexDomains": ["nathanpenny.fun"]
 }
 ```
 
-- **`mediaBaseUrl` 可省略**：省略时自动取 `${siteOrigin}/media`（即媒体并入主站的形态），迁移时删掉这一行即可。
-- **`hostRewrites`** 是「旧域名 → 新域名」替换表，同时是守卫依据：右侧的值写好后，全仓任何文件里都不允许再出现左侧的主机名。
+- **`mediaBaseUrl` 故意不写**：省略即自动取 `${siteOrigin}/media`（媒体并入主站的形态）。想回到独立媒体域名时再显式写上。
+- **`hostRewrites`** 是「旧域名 → 新域名」替换表，同时是守卫依据：右侧值写好后，全仓任何文件都不允许再出现左侧主机名。
+- **`legacyApexDomains`** 是补漏用的：只匹配完整主机名时，`*.旧域`、zone 名、裸域这类写法会溜过守卫（C3 实测踩到，HANDOVER/auth-worker README 里就有 `*.nathanpenny.fun`）。它是显式列表而不是从主机名推导后缀，避免把 `foo.co.uk` 推成 `co.uk` 造成误报。
 
 ### 5.2 谁读它、谁被写、谁被守
 
@@ -105,7 +120,9 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 ### 5.3 两条命令 + CI 接入
 
 - `npm run domain:sync` —— 写入（幂等，打印逐行 diff）。
-- `npm run check:domain` —— 校验一致 + 全仓旧域名残留扫描；已并入 `check:all` / `verify`，并在 `deploy.yml` 里成为独立一步。
+- `npm run check:domain` —— 校验一致 + 全仓旧标识扫描（旧域名、裸域、旧 Account/Zone ID）；已并入 `check:all` / `verify`，并在 `deploy.yml` 里成为独立一步。
+- `npm run check:deploy-ready` —— 部署前闸门：`site.config.json` / `ai.config.yml` 里还有 `REPLACE_` 占位符就**拒绝部署**。
+  刻意**不**并入 `check:domain`：迁移期间占位符是预期状态，让本地整套校验跟着变红会挡住其它验证；但部署必须以清晰的错误被挡住（否则 wrangler 只会抛一个跟根因无关的错）。
 
 **以后换域名的完整动作**：① 改 `site.config.json`（新域名 + 把旧域名加进 `hostRewrites`）→ ② `npm run domain:sync` → ③ `npm run og` → ④ `npm run verify`。
 
@@ -123,27 +140,23 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 
 > 实测记录：这个测试第一次跑就抓出两个真问题 —— 越界 Range 返回 200 而不是 416（`end < start` 的判断顺序错了）、以及一个测试假设错误（WHATWG URL 会把 `%2e%2e` 归一化掉，真正的攻击面是 `..%2f`）。这类「页面照开、视频拖不动」的缺陷只有断言能发现。
 
-## 7. 阶段 2（待做）：代码全量换域名
+## 7. 阶段 2（已完成）：代码全量换域名
 
-主要由 `domain:sync` 完成，人工只剩：
+`site.config.json` 已切成新域名（删掉 `mediaBaseUrl`、填好 `hostRewrites` 与 `legacyApexDomains`），
+`npm run domain:sync` 一次性改完 16 个文件（配置 + 文档正文），`npm run og` 重新生成了 4 张分享卡片图，
+`npm run check:domain` 确认全仓无旧域名残留。
 
-| 组 | 内容 |
-|---|---|
-| A 值 | `site.config.json` 的 `siteHost` / `authHost` 换成新域名，删掉 `mediaBaseUrl`（自动落到 `${siteOrigin}/media`），`oauthAllowedDomains` 换成 `*.whizzzest.com,localhost` |
-| B 迁移表 | `hostRewrites` 填入 `tsinghua.nathanpenny.fun` / `auth.nathanpenny.fun` / `media.nathanpenny.fun` → 新值（媒体那条映射到 `thu.whizzzest.com/media`） |
-| C 账号 | `cloudflare.accountId` / `zoneId` / `r2AccessKeyId` 换成账号 W 的新值 |
-| D 手动 | Turnstile `sitekey`（新挂件）→ `src/data/ai.config.yml`；`npm run og` 重新生成卡片图 |
-| E 文档 | 文档里的历史叙述（为什么当初用自定义域名、迁移原因）人工重写；纯地址替换由 sync 负责 |
+### 还需要你提供的值（阶段 3 的前置）
 
-### 需要你提供的值（阶段 2 的前置）
+| 值 | 从哪来 | 填到哪 |
+|---|---|---|
+| 账号 W 的 Account ID | 控制台 → Workers & Pages 概览右侧 | `site.config.json` 的 `cloudflare.accountId` |
+| `whizzzest.com` 的 Zone ID | 控制台 → 该 zone 的 Overview | `site.config.json` 的 `cloudflare.zoneId` |
+| 新的 R2 Access Key ID | 阶段 3 第 2 步：R2 API 令牌（Object Read & Write，限桶） | `site.config.json` 的 `cloudflare.r2AccessKeyId` |
+| 新的 Turnstile sitekey | 阶段 3 第 3 步：新建挂件（允许域名 `thu.whizzzest.com`） | `src/data/ai.config.yml` 的 `turnstile.sitekey` |
+| 新的 API Token | 阶段 3 第 4 步：权限照 `HANDOVER.md` 第 5 节，zone 只选 `whizzzest.com` | GitHub Secrets 的 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` |
 
-| 值 | 从哪来 |
-|---|---|
-| 账号 W 的 Account ID | Cloudflare 控制台 → Workers & Pages 概览右侧 |
-| `whizzzest.com` 的 Zone ID | 控制台 → 该 zone 的 Overview |
-| 新的 R2 Access Key ID | 阶段 3 第 2 步（R2 API 令牌，Object Read & Write，限桶） |
-| 新的 Turnstile sitekey | 阶段 3 第 3 步（新挂件） |
-| 新的 API Token | 阶段 3 第 4 步（权限照 `HANDOVER.md` 第 5 节，zone 只选 `whizzzest.com`） |
+前三个填完跑一次 `npm run domain:sync`（它会写进 `public/admin/config.yml`），四个都填完再跑 `npm run verify`。
 
 ## 8. 阶段 3：Cloudflare 控制台（账号 W）
 
@@ -154,7 +167,7 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | 1 | 确认 Workers AI 可用、账号 W 现有额度占用 | 控制台可见 Workers AI |
 | 2 | 建 R2 桶 `tsinghua-guide-media` + 建 R2 API 令牌（Object Read & Write，限此桶） | `npm run r2:setup -- --check` 报告「桶已存在 / 公开域名不需要」 |
 | 3 | 新建 Turnstile 挂件，域名填 `thu.whizzzest.com`（本地开发用 `.dev.vars` 覆盖成 localhost） | 挂件在页面上能渲染 |
-| 4 | 建 API Token（Workers Scripts/Routes Edit + Zone Read，zone 限 `whizzzest.com`）→ 填进 GitHub Secrets 的 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | 手动触发 deploy 成功 |
+| 4 | 建 API Token（Workers Scripts/Routes Edit + Zone Read，zone 限 `whizzzest.com`）→ 填进 GitHub Secrets 的 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`；同时把 Account ID / Zone ID / R2 Access Key ID 填进 `site.config.json`、新 sitekey 填进 `src/data/ai.config.yml`，跑 `npm run domain:sync` | `npm run check:deploy-ready` 通过（占位符清零）、`npm run verify` 全绿 |
 | 5 | 部署主 Worker（绑 `thu.whizzzest.com`） | `curl -I https://thu.whizzzest.com/` = 200 |
 | 6 | 写 Secrets：`TURNSTILE_SECRET_KEY`（新挂件）、`ADMIN_TOKEN`、`CONFIG_ENC_KEY`（后两个可直接用 `.secrets/` 里的现成值） | `npx wrangler secret list` |
 | 7 | 部署 auth-worker（`npm run auth:deploy`）+ 改 GitHub OAuth App 的 callback、Homepage | `curl -s https://auth.thu.whizzzest.com/auth \| head -c 200` 不是 `MISCONFIGURED_CLIENT` |
@@ -165,8 +178,9 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 
 **本地**（我负责）
 
-- [ ] `npm run verify` 全绿（含 `check:domain`；AI Worker 43 项端到端）
-- [ ] `site.config.json` 与 16 个同步文件一致；全仓无旧域名残留
+- [ ] `npm run verify` 全绿（含 `check:domain`；AI Worker 43 项端到端、媒体出口 33 项）
+- [ ] `site.config.json` 与 16 个同步文件一致；全仓无旧标识（域名 / 裸域 / 旧 Account、Zone ID）
+- [ ] 占位符填完前 `npm run check:deploy-ready` 必须失败并列出 4 个占位符；填完后必须通过（防呆闸门有效）
 - [ ] `npm run og` 后卡片图上的地址是新域名
 - [ ] 媒体路由的端到端测试（命中 / 404 / 路径穿越 / Range / 缓存头）
 
@@ -209,6 +223,6 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | 0 | 域名单一来源（`site.config.json` + `domain:sync` / `check:domain` + CI） | ✅ 已完成（当地值 = 旧域名，行为不变） |
 | 0b | 取消 PR 预览环境（删 `preview.yml` / `wrangler.preview.jsonc`，`show_preview_links: false`，CORS 去掉预览源） | ✅ 已完成 |
 | 1 | 媒体改由主 Worker 提供 `/media/*`（绑定 + 路由 + 33 项断言） | ✅ 已完成（不改域名，可独立部署验证） |
-| 2 | 全量换域名（sync + 卡片图 + 文档） | ⏳ 待做（需要 §7 的账号值） |
+| 2 | 全量换域名（SSOT 翻转 + 16 个文件同步 + 4 张卡片图 + 文档改写 + 守卫补 `legacyApexDomains`） | ✅ 已完成（4 个 `REPLACE_` 占位符待你填，见 §7） |
 | 3 | 账号 W 控制台重建 + 部署 + 301 | ⏳ 待你提供 §7 的四个值 |
 | 4 | 收尾：并入 HANDOVER、删账号 N 资源 | ⏳ 待做 |

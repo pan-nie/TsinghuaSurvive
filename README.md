@@ -2,7 +2,10 @@
 
 面向清华在校学生的经验分享站 —— 不是官方材料，是一群学长学姐把踩过的坑、绕过的路写下来。
 
-**线上** <https://tsinghua.nathanpenny.fun>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-03
+**线上地址（迁移目标）** <https://thu.whizzzest.com>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-03
+
+> ⏳ **状态：域名已定，线上迁移尚未执行。** 全仓地址已换成新域名的值，但账号 W 的 Worker / R2 / Turnstile / OAuth 中转还没建，
+> 所以现在打开 `thu.whizzzest.com` 不等于新站已经上线 —— 待执行步骤见 [MIGRATION.md](./MIGRATION.md) §8，域名事实来源是 `site.config.json`。
 
 > **本文回答**：我想做 X，该改哪里、跑哪条命令。
 > **不回答**：部署与排障 → [HANDOVER.md](./HANDOVER.md)｜内容还缺什么 → [OUTLINE.md](./OUTLINE.md)｜为什么这么设计 → [REFERENCE-NOTES.md](./REFERENCE-NOTES.md)｜后台方案的决策记录 → [CONTENT-EDITING-PLAN.md](./CONTENT-EDITING-PLAN.md)
@@ -15,7 +18,7 @@
 
 | 我会 | 走哪条路 | 代价 |
 | --- | --- | --- |
-| **用浏览器** | 站内后台 <https://tsinghua.nathanpenny.fun/admin/>，改文字 / 拖图 / 嵌视频，保存自动开 PR | 登录那一下要能打开 `github.com`（开一次代理），之后全在校园网内完成 |
+| **用浏览器** | 站内后台 <https://thu.whizzzest.com/admin/>，改文字 / 拖图 / 嵌视频，保存自动开 PR | 登录那一下要能打开 `github.com`（开一次代理），之后全在校园网内完成 |
 | **会 Git** | `npm install && npm run dev` → 改 `src/content/docs/` → push | 装一次 Node 20+ |
 | **只想给素材** | 提 [Issue](https://github.com/pan-nie/TsinghuaSurvive/issues/new/choose) | 同样要能打开 `github.com` |
 | **改代码 / 批量改** | 见下一节的三张表 | — |
@@ -84,7 +87,7 @@
 
 | 分组 | 命令 | 什么时候用 |
 | --- | --- | --- |
-| **日常开发** | `npm run dev` ｜ `npm run build` ｜ `npm run preview` ｜ `npm run check` | 本地写内容；`check` 是 `astro check` 类型检查 |
+| **日常开发** | `npm run dev` ｜ `npm run dev:worker` ｜ `npm run build` ｜ `npm run preview` ｜ `npm run check` | 本地写内容；`check` 是 `astro check`。**`dev` 是纯 Astro，看不到媒体**（`/media/*` 由 Worker 从 R2 读）；要看媒体用 `dev:worker` |
 | **最全自查** | `npm run verify` | **提 PR 前跑这个**（等于 `check:all` + 构建 + 四项产物校验） |
 | **内容检查** | `npm run check:content` ｜ `check:content:strict` | `strict` 连债务警告也当错误（发布前用） |
 | **AI 问答** | `npm run check:ai` ｜ `check:ai:worker` | 索引体积 / 覆盖度 / 锚点 + 19 个真实提问的排序自测；后者直接跑 Worker 入口（闸门、鉴权、流式、fail-closed，43 项） |
@@ -93,6 +96,7 @@
 | **链接** | `check:links` ｜ `verify:links [-- --apply]` ｜ `review:links [-- --open]` ｜ `review:links:apply -- <文件> [--write]` | 实测 → 语义核对 → 人工核对 |
 | **本地自检** | `npm run check:e2e -- --base http://localhost:4321` ｜ `npm run measure:perf -- --base http://127.0.0.1:4322` | 无头 Chrome；**`--base` 写 `localhost`**，`astro preview` 在 macOS 上只绑 IPv6 回环 |
 | **后台与云资源** | `admin:vendor` ｜ `auth:dry` ｜ `auth:deploy` ｜ `r2:setup [-- --check]` | 后台编辑器兜底、OAuth 中转、R2 桶 |
+| **域名与媒体出口** | `npm run domain:sync` ｜ `check:domain` ｜ `check:media:worker` | 域名唯一来源是根目录 `site.config.json`：`domain:sync` 写入、`check:domain` 校验一致并扫旧域名残留、`check:media:worker` 端到端验证 `/media/*` 出口（见 HANDOVER §5） |
 | **部署** | `npm run deploy` ｜ `deploy:dry` | 平时不用跑：推 `main` 会自动部署 |
 
 > 💡 **受限环境里的两个重定向**（`EPERM ... ~/.npm`、`EPERM ... .wrangler/logs`）：
@@ -106,7 +110,7 @@
 ```
 Tsinghua-guide/
 ├─ astro.config.mjs        站点配置：标题、侧边栏、SEO、视频语法糖处理器
-├─ wrangler.jsonc          正式站（静态资源 + /api/* 问答接口）｜ wrangler.preview.jsonc 预览站
+├─ wrangler.jsonc          正式站（静态资源 + /api/* 问答接口 + /media/* 读 R2）｜域名与账号标识的事实来源是 site.config.json
 ├─ content-policy.json     ★ 时效阈值（看门狗与检查脚本共用，避免两边漂移）
 ├─ src/
 │  ├─ content.config.ts    ★ 内容模型（frontmatter 校验规则）
@@ -136,17 +140,18 @@ Tsinghua-guide/
 ```mermaid
 flowchart LR
   A["后台 / 本地 / 网页"] --> B["提交到分支 → PR"]
-  B --> C{"CI 十二步<br/>check → content → admin → media<br/>→ courses:check → build<br/>→ ai → ai:worker<br/>→ jsonld → assets → markup<br/>→ feeds/media"}
+  B --> C{"CI 校验<br/>check → domain → content → admin<br/>→ media → courses:check → build<br/>→ ai → ai:worker<br/>→ jsonld → assets → markup<br/>→ feeds/media → media:worker"}
   C -- "失败" --> D["PR 上留下注解：哪个文件、哪一行"]
-  C -- "通过" --> E["预览站 preview.nathanpenny.fun"]
+  C -- "通过" --> E["本地 npm run dev 自查效果<br/>（PR 预览环境已取消）"]
   E --> F["合并到 main"]
   F --> G["CI 再跑一遍 → wrangler deploy"]
-  G --> H["tsinghua.nathanpenny.fun"]
+  G --> H["thu.whizzzest.com"]
 ```
 
 | CI 步骤 | 拦什么（都是「错了不会报错、只会静默失效」的东西） |
 | --- | --- |
 | `check` | 类型错误 |
+| `check:domain` | 全仓旧域名残留、同步文件与 `site.config.json` 不一致（域名唯一来源，换域名时漏改一处就静默失效） |
 | `check:content` | 站内死链、中文文件名、`reviewedAt` 写在未来、同目录 `sidebar.order` 冲突、`links.ts` 重名或非法网址、资料有提取码却没链接、课程索引引用了未定义的资料库 |
 | `check:admin` | 后台配置漏字段（漏一个字段，作者保存一次就丢一个字段）、OAuth 三处地址漂移、R2 占位符 |
 | `check:media` | 视频语法糖写错、外链图床、空 alt |
@@ -158,9 +163,11 @@ flowchart LR
 | `check:assets` | 分享卡片尺寸不是 1200×630、文件为空、页面引用的图不存在 |
 | `check:markup` | `**加粗**` 紧贴全角标点（`**「图库」**`）导致标记不生效、星号被原样印在页面上；banner 里写 Markdown 加粗；卡片文案漏调 `descHtml()` |
 | `check:feeds` / `check:media:dist` | sitemap 指向不存在的页面、RSS 缺字段、robots 把整站屏蔽；产物里的视频容器与源码对不上 |
+| `check:media:worker` | `/media/*` 出口的 33 项断言：路径穿越、Range（含越界 416）、304、桶未绑定返回 503 而不是 404 |
 
 > ✅ 错误级检测都做过**注入测试**验证会真的触发，不是写着好看。
-> 💡 来自 fork 的 PR **没有预览**、也拿不到 Secrets —— 有意的安全取舍（工作流用 `pull_request`，不用 `pull_request_target`）。
+> 💡 来自 fork 的 PR **拿不到 Secrets**、也没有预览环境（预览环境已取消）—— 有意的安全取舍（工作流用 `pull_request`，不用 `pull_request_target`）。
+> 看渲染效果用本地 `npm run dev`；要看媒体（图片 / 视频）用 `npm run dev:worker`，纯 Astro 的 `dev` 读不到 R2。
 
 ---
 

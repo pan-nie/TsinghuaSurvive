@@ -47,6 +47,22 @@ export const cloudflare = raw.cloudflare;
 /** 旧域名 → 新域名（供 sync 改写、check 拦截） */
 export const hostRewrites = raw.hostRewrites ?? {};
 
+/**
+ * 旧域名所属的**裸域名**（例如某个已废弃的二级域名所属的注册域名）。
+ *
+ * 为什么需要它：`hostRewrites` 的键是完整主机名，只匹配完整主机名时，
+ * `*.旧域`、裸域这类写法会从守卫眼皮底下溜过去（实测踩过）。
+ * 显式列出而不是从主机名推导后缀：`foo.co.uk` 推导出 `co.uk` 会制造误报。
+ */
+export const legacyApexDomains = raw.legacyApexDomains ?? [];
+
+/**
+ * 旧账号 / 旧 zone 的标识（一串十六进制 ID，格式与新值相同）。
+ * 域名扫描抓不到它们 —— C3 实测就在 `.github/workflows/deploy.yml` 的注释里漏了一个。
+ * 这些值不是秘密，但指向一个即将废弃的账号，留在仓库里只会误导。
+ */
+export const legacyIdentifiers = raw.legacyIdentifiers ?? [];
+
 /** 常用绝对地址，避免各脚本各自拼 */
 export const sitemapUrl = `${siteOrigin}/sitemap-index.xml`;
 export const rssUrl = `${siteOrigin}/rss.xml`;
@@ -65,6 +81,8 @@ export default {
   oauthAllowedDomains,
   cloudflare,
   hostRewrites,
+  legacyApexDomains,
+  legacyIdentifiers,
   sitemapUrl,
   rssUrl,
   ogImageUrl,

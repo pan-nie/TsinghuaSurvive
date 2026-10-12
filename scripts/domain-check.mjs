@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
 import { buildPlan, ROOT, SYNCED_FILES } from './domain-sync.mjs';
-import { configPath, hostRewrites, mediaBaseUrl, siteHost, authHost } from './site-config.mjs';
+import { configPath, hostRewrites, legacyApexDomains, legacyIdentifiers, mediaBaseUrl, siteHost, authHost } from './site-config.mjs';
 
 const problems = [];
 
@@ -80,10 +80,12 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-const legacyHosts = Object.keys(hostRewrites ?? {});
+const legacyTokens = [
+  ...new Set([...Object.keys(hostRewrites ?? {}), ...legacyApexDomains, ...legacyIdentifiers]),
+];
 const residue = [];
 
-if (legacyHosts.length) {
+if (legacyTokens.length) {
   for (const file of walk(ROOT)) {
     const rel = relative(ROOT, file).replace(/\\/g, '/');
     if (RESIDUE_ALLOWLIST.has(rel)) continue;
@@ -94,9 +96,9 @@ if (legacyHosts.length) {
       continue;
     }
     const lines = text.split('\n');
-    for (const host of legacyHosts) {
+    for (const host of legacyTokens) {
       for (let i = 0; i < lines.length; i += 1) {
-        if (lines[i].includes(host)) residue.push(`${rel}:${i + 1} 还残留旧域名 ${host}`);
+        if (lines[i].includes(host)) residue.push(`${rel}:${i + 1} 还残留旧标识（域名或账号 ID）${host}`);
       }
     }
   }
@@ -117,5 +119,5 @@ if (problems.length) {
 
 console.log(
   `✔ 域名检查通过：siteHost=${siteHost}，authHost=${authHost}，mediaBaseUrl=${mediaBaseUrl}` +
-    `${legacyHosts.length ? `，已确认全仓无 ${legacyHosts.length} 个旧域名残留` : ''}`,
+    `${legacyTokens.length ? `，已确认全仓无 ${legacyTokens.length} 个旧域名残留` : ''}`,
 );
