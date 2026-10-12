@@ -18,7 +18,17 @@ import { courses } from '../data/courses';
 const { head, entry, lastUpdated, lang } = Astro.locals.starlightRoute;
 const data = entry.data;
 
-const siteUrl = Astro.site ?? new URL('https://tsinghua.nathanpenny.fun');
+/**
+ * 站点地址由 astro.config.mjs 的 `site` 注入（它读 site.config.json，唯一事实来源）。
+ *
+ * ⚠️ 组件里**不要**再写一份域名兜底：写死域名正是漂移的源头。
+ * 也**不要**在这里 import 读文件的模块 —— 这个组件会被 Vite 打进 prerender bundle，
+ * 打包后 `import.meta.url` 不再指向仓库根目录，读 site.config.json 会 ENOENT（实测踩过）。
+ */
+const siteUrl = Astro.site;
+if (!siteUrl) {
+  throw new Error('Astro.site 未设置：检查 astro.config.mjs 的 site（它来自 site.config.json）');
+}
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
 
 const SITE_NAME = '清华生存指南';

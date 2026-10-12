@@ -22,6 +22,7 @@ import { dirname, extname, join, relative, resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import Ajv from 'ajv';
+import { authHost, authOrigin, mediaBaseUrl, oauthAllowedDomains, repoSlug } from './site-config.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const CONFIG = join(ROOT, 'public/admin/config.yml');
@@ -200,8 +201,11 @@ if (!cmsPackage) {
 if (config.backend?.name !== 'github') {
   error(`backend.name 应为 github，现在是 ${JSON.stringify(config.backend?.name)}`, 'public/admin/config.yml');
 }
-if (config.backend?.repo !== 'pan-nie/TsinghuaSurvive') {
-  error(`backend.repo 指向了别的仓库：${JSON.stringify(config.backend?.repo)}`, 'public/admin/config.yml');
+if (config.backend?.repo !== repoSlug) {
+  error(
+    `backend.repo（${JSON.stringify(config.backend?.repo)}）与 site.config.json 里写的仓库（${repoSlug}）不一致。`,
+    'public/admin/config.yml',
+  );
 }
 
 const authMethods = Array.isArray(config.backend?.auth_methods) ? config.backend.auth_methods : [];
@@ -216,7 +220,7 @@ if (authMethods.includes('oauth') && !config.backend?.base_url) {
   error(
     'auth_methods 里有 oauth，但没有 backend.base_url：CMS 会去用 Netlify 的默认 OAuth 中转，站点点不通。',
     'public/admin/config.yml',
-    '填 https://auth.nathanpenny.fun（即 auth-worker 部署出来的地址）。',
+    `填 ${authOrigin}（即 auth-worker 部署出来的地址）。`,
   );
 }
 
@@ -264,11 +268,12 @@ if (authMethods.includes('oauth')) {
         error(
           'auth-worker 的 vars.ALLOWED_DOMAINS 是空的：任何网站都能拿你的中转去换令牌（防滥用失效）。',
           'auth-worker/wrangler.jsonc',
-          '至少写上 *.nathanpenny.fun,localhost。',
+          `至少写上 ${oauthAllowedDomains}。`,
         );
-      } else if (!allowed.includes('nathanpenny.fun') && !allowed.includes('*')) {
+      } else if (allowed !== oauthAllowedDomains) {
         warn(
-          `ALLOWED_DOMAINS（${allowed}）里没有站点域名，后台登录会被中转拒绝。`,
+          `ALLOWED_DOMAINS（${allowed}）与 site.config.json 里的 ${oauthAllowedDomains} 不一致：` +
+            `站点域名（${authHost} 之外的）后台登录会被中转拒绝。`,
           'auth-worker/wrangler.jsonc',
         );
       }
@@ -330,7 +335,7 @@ if (!r2) {
     warn(
       'cloudflare_r2.public_url 还是占位符：图片能上传也显示不出来。',
       'public/admin/config.yml',
-      '给 R2 桶配公开域名（推荐 media.nathanpenny.fun）后替换。',
+      `填上媒体公开地址（site.config.json 的 mediaBaseUrl，当前是 ${mediaBaseUrl}）后替换。`,
     );
   }
 }

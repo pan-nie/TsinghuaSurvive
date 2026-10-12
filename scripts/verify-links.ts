@@ -31,6 +31,7 @@ import { execFileSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 
 import { campusLinks, type CampusLink } from '../src/data/links.ts';
+import { siteOrigin } from './site-config.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const OUT_DIR = join(ROOT, '.review');
@@ -185,7 +186,7 @@ async function fetchPage(url: string) {
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: {
         'user-agent':
-          'Mozilla/5.0 (compatible; TsinghuaGuideLinkVerify/1.0; +https://tsinghua.nathanpenny.fun)',
+          `Mozilla/5.0 (compatible; TsinghuaGuideLinkVerify/1.0; +${siteOrigin})`,
         accept: 'text/html,application/xhtml+xml,*/*;q=0.8',
         'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
       },

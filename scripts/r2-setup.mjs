@@ -2,8 +2,12 @@
 /**
  * R2 媒体库开通脚本 —— 把「建桶 / 接公开域名 / 配 CORS」三步一次做完，且可重复执行。
  *
+ * ⚠️ 媒体挂在主站路径时（`site.config.json` 里 mediaBaseUrl = `<站点>/media`，
+ *    由主 Worker 从 R2 读），第 2 步「公开域名」整步跳过：不需要额外域名，也不需要额外证书。
+ *    只有媒体用独立域名时才会去连 R2 的 custom domain。
+ *
  * 为什么写成脚本而不是让人照着文档点：
- *   1. 这三步的每一步都有个容易踩空的细节（CORS 必须用 R2 API 的形状、自定义域名要 zone id、
+ *   1. 这几步的每一步都有个容易踩空的细节（CORS 必须用 R2 API 的形状、自定义域名要 zone id、
  *      r2.dev 只适合开发），写成脚本就不用每次重新推。
  *   2. 桶要是哪天被删了、或者有人 fork 了这个项目，一条命令就能复原。
  *
@@ -12,7 +16,7 @@
  *    所以脚本最后会把那一步的命令和链接打出来。
  *
  * 用法：
- *   npm run r2:setup              建桶 + 接域名 + 配 CORS（已存在的部分会跳过）
+ *   npm run r2:setup              建桶 + 接域名（如需要）+ 配 CORS（已存在的部分会跳过）
  *   npm run r2:setup -- --check   只报告当前状态，不改任何东西
  *
  * 需要：已登录的 wrangler（`npx wrangler login`），以及 Cloudflare 账号里能管理该 zone 的权限。
@@ -20,12 +24,14 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { cloudflare, mediaBaseUrl, mediaHost, mediaOnSiteHost } from './site-config.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
-const BUCKET = 'tsinghua-guide-media';
-const DOMAIN = 'media.nathanpenny.fun';
-// zone id 也从 HANDOVER.md 的资源清单里来（不是秘密，是公开的标识）
-const ZONE_ID = process.env.R2_ZONE_ID ?? '068decbde572025a27b25b97080e4355';
+const BUCKET = cloudflare.r2Bucket;
+// 媒体公开地址：独立域名时才需要给桶接 custom domain
+const DOMAIN = mediaHost;
+// zone id 与账号一样属于「非秘密标识」，统一放在 site.config.json 里（换账号时改一处）
+const ZONE_ID = process.env.R2_ZONE_ID ?? cloudflare.zoneId;
 const CORS_FILE = join(ROOT, 'r2/cors.json');
 const CONFIG = join(ROOT, 'public/admin/config.yml');
 const checkOnly = process.argv.includes('--check');
@@ -61,16 +67,20 @@ if (!checkOnly && !bucketExists) {
   console.log('  ✔ 已创建');
 }
 
-// ── 2. 公开域名 ────────────────────────────────────────────────────────
-let domainState = run(['r2', 'bucket', 'domain', 'list', BUCKET], { allowFailure: true }).output;
-const domainConnected = domainState.includes(DOMAIN);
-console.log(`${line.pad('公开域名')}${domainConnected ? '✔ 已连接' : '✖ 未连接'}：${DOMAIN}`);
+// ── 2. 公开域名（只有媒体用独立域名时才需要）────────────────────────────
+if (mediaOnSiteHost) {
+  console.log(`${line.pad('公开域名')}不需要：媒体由主 Worker 在 ${mediaBaseUrl} 提供（桶不需要公开域名）`);
+} else {
+  const domainState = run(['r2', 'bucket', 'domain', 'list', BUCKET], { allowFailure: true }).output;
+  const domainConnected = domainState.includes(DOMAIN);
+  console.log(`${line.pad('公开域名')}${domainConnected ? '✔ 已连接' : '✖ 未连接'}：${DOMAIN}`);
 
-if (!checkOnly && !domainConnected) {
-  const zoneId = ZONE_ID || '<zone-id>';
-  console.log('  → 连接中…');
-  run(['r2', 'bucket', 'domain', 'add', BUCKET, '--domain', DOMAIN, '--zone-id', zoneId, '--min-tls', '1.2', '-y']);
-  console.log('  ✔ 已连接（证书签发要几分钟，状态会从 pending 变 active）');
+  if (!checkOnly && !domainConnected) {
+    const zoneId = ZONE_ID || '<zone-id>';
+    console.log('  → 连接中…');
+    run(['r2', 'bucket', 'domain', 'add', BUCKET, '--domain', DOMAIN, '--zone-id', zoneId, '--min-tls', '1.2', '-y']);
+    console.log('  ✔ 已连接（证书签发要几分钟，状态会从 pending 变 active）');
+  }
 }
 
 // ── 3. CORS ────────────────────────────────────────────────────────────
@@ -98,9 +108,9 @@ if (!checkOnly && !corsApplied) {
 // ── 4. 与后台配置对得上吗 ──────────────────────────────────────────────
 const configText = readFileSync(CONFIG, 'utf8');
 const publicUrl = configText.match(/public_url:\s*(\S+)/)?.[1] ?? '';
-console.log(`${line.pad('后台 public_url')}${publicUrl === `https://${DOMAIN}` ? '✔ 一致' : `✖ 不一致：${publicUrl || '(空)'}`}：${publicUrl || '(空)'}`);
-if (publicUrl !== `https://${DOMAIN}`) {
-  console.log(`  → 把 public/admin/config.yml 的 public_url 改成 https://${DOMAIN}`);
+console.log(`${line.pad('后台 public_url')}${publicUrl === mediaBaseUrl ? '✔ 一致' : `✖ 不一致：${publicUrl || '(空)'}`}：${publicUrl || '(空)'}`);
+if (publicUrl !== mediaBaseUrl) {
+  console.log(`  → 把 public/admin/config.yml 的 public_url 改成 ${mediaBaseUrl}（或跑 npm run domain:sync）`);
 }
 
 // ── 5. 剩下那一步（脚本做不了）─────────────────────────────────────────

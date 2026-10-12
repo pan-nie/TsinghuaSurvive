@@ -22,6 +22,7 @@ import worker, { resetConfigCache } from '../src/worker/index.js';
 import { AskGate } from '../src/worker/gate.js';
 import { verifyTurnstile } from '../src/worker/turnstile.js';
 import { resetKnowledgeCache } from '../src/worker/retrieval.js';
+import { siteHost } from './site-config.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const DIST = join(ROOT, 'dist');
@@ -97,7 +98,7 @@ function makeEnv({ configPatch = {}, ai, stores } = {}) {
 
 async function post(path, body, env, headers = {}) {
   return worker.fetch(
-    new Request(`https://tsinghua.nathanpenny.fun${path}`, {
+    new Request(`https://${siteHost}${path}`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...headers },
       body: JSON.stringify(body),
@@ -309,19 +310,19 @@ const okConfig = { turnstile: { mode: 'off', sitekey: '', action: 'ask', hostnam
   const run = async (stub) => {
     globalThis.fetch = stub;
     try {
-      return await verifyTurnstile({ TURNSTILE_SECRET_KEY: 'secret', TURNSTILE_HOSTNAMES: 'tsinghua.nathanpenny.fun' }, { token: 'tok', ip: '1.2.3.4', action: 'ask', hostnames: ['tsinghua.nathanpenny.fun'] });
+      return await verifyTurnstile({ TURNSTILE_SECRET_KEY: 'secret', TURNSTILE_HOSTNAMES: siteHost }, { token: 'tok', ip: '1.2.3.4', action: 'ask', hostnames: [siteHost] });
     } finally {
       globalThis.fetch = realFetch;
     }
   };
 
-  const ok = await run(async () => Response.json({ success: true, action: 'ask', hostname: 'tsinghua.nathanpenny.fun' }));
+  const ok = await run(async () => Response.json({ success: true, action: 'ask', hostname: siteHost }));
   check('Turnstile：通过', ok.ok === true, JSON.stringify(ok));
 
   const mismatchHost = await run(async () => Response.json({ success: true, action: 'ask', hostname: 'evil.example' }));
   check('Turnstile：域名不符 → 拒绝', mismatchHost.ok === false && mismatchHost.code === 'hostname_mismatch', JSON.stringify(mismatchHost));
 
-  const mismatchAction = await run(async () => Response.json({ success: true, action: 'login', hostname: 'tsinghua.nathanpenny.fun' }));
+  const mismatchAction = await run(async () => Response.json({ success: true, action: 'login', hostname: siteHost }));
   check('Turnstile：action 不符 → 拒绝', mismatchAction.ok === false && mismatchAction.code === 'action_mismatch', JSON.stringify(mismatchAction));
 
   const failed = await run(async () => Response.json({ success: false }));

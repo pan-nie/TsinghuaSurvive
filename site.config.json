@@ -1,0 +1,44 @@
+{
+  "_comment": [
+    "站点域名的唯一事实来源。改这里，然后跑 `npm run domain:sync`。",
+    "不要在别的文件里手写域名：不能 import 本文件的配置由 sync 写入，能 import 的代码直接读本文件，",
+    "`npm run check:domain` 会在 CI 里校验两者一致，并扫描全仓拒绝 `hostRewrites` 里的旧域名残留。",
+    "换域名时的完整流程见 MIGRATION.md；这里只放事实，不放任何密钥。"
+  ],
+
+  "repo": "https://github.com/pan-nie/TsinghuaSurvive",
+
+  "siteHost": "tsinghua.nathanpenny.fun",
+  "authHost": "auth.nathanpenny.fun",
+
+  "_mediaBaseUrl": [
+    "媒体公开地址。留空/删除本字段时自动取 `<siteOrigin>/media`（由主 Worker 提供）。",
+    "现在仍指向 R2 的独立公开域名，迁移到新域名时会改成 `<siteOrigin>/media`。"
+  ],
+  "mediaBaseUrl": "https://media.nathanpenny.fun",
+
+  "_oauthAllowedDomains": [
+    "auth-worker 的 ALLOWED_DOMAINS：允许拿这个 OAuth 中转去换令牌的站点。",
+    "绝不要写成 `*`（那等于任何人都能借用你的中转）。"
+  ],
+  "oauthAllowedDomains": "*.nathanpenny.fun,localhost",
+
+  "_cloudflare": [
+    "Cloudflare 侧的非秘密标识（Access Key ID 官方明确说可以放在客户端配置里）。",
+    "真正的 Secret Access Key 由每个编辑者第一次打开后台媒体库时在浏览器里输入，不进仓库。"
+  ],
+  "cloudflare": {
+    "accountId": "aa23021279f1ffd6901d7093879554f3",
+    "zoneId": "068decbde572025a27b25b97080e4355",
+    "r2Bucket": "tsinghua-guide-media",
+    "r2AccessKeyId": "0d1c5f79e255a59fb33c0e108d2a186e"
+  },
+
+  "_hostRewrites": [
+    "旧域名 → 新域名的替换表。`npm run domain:sync` 会把它应用到所有同步目标文件（含注释与文档），",
+    "`npm run check:domain` 会拒绝任何文件里仍残留左侧这些主机名（白名单只有本文件与 MIGRATION.md）。",
+    "迁移完成后这个表保持非空：它是「以后不许再出现旧域名」的守卫依据。",
+    "值为路径时写 `host/path`，例如媒体从独立域名并入主站路径。"
+  ],
+  "hostRewrites": {}
+}

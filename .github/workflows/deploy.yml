@@ -32,6 +32,12 @@ jobs:
       - name: 类型检查
         run: npm run check
 
+      # 域名检查：所有能 import 的代码都从 site.config.json 取域名，不能 import 的配置由
+      # `npm run domain:sync` 写入。这一条确认两边一致，并扫描全仓拒绝旧域名残留 ——
+      # 换域名时最怕的就是「漏改一处」，而漏改的表现全是静默的（canonical 指错、CORS 被拦）。
+      - name: 域名一致性检查
+        run: npm run check:domain
+
       # 内容检查：死链、中文文件名、未来日期、占位符与过期核对日期。
       # 默认模式只把「真错误」当失败，占位符之类的债务只提示，不阻断部署。
       - name: 内容检查
@@ -84,6 +90,11 @@ jobs:
       # 必需，因为 Astro 的内容加载器出错时**构建仍然以 0 退出**，那一页正文会整个变空。
       - name: 媒体产物比对
         run: npm run check:media:dist
+
+      # 媒体出口（/media/* → R2）的端到端：Range、条件请求、路径穿越、缓存头、桶未绑定。
+      # 全是「页面照开、图片/视频静默坏掉」的失败方式，必须断言。
+      - name: 媒体出口检查（Worker）
+        run: npm run check:media:worker
 
       # 凭证守卫：没有配 CLOUDFLARE_API_TOKEN 时给出明确提示并跳过部署，
       # 而不是抛一个看不懂的认证错误。
