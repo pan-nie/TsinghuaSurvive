@@ -45,7 +45,13 @@ publish_mode: editorial_workflow
 
 app_title: 清华生存指南 · 内容后台
 site_url: https://thu.whizzzest.com
-logo_url: /favicon.svg
+# 后台的 logo 与站点图标共用 public/favicon.svg。
+# ⚠️ 用 logo.src，不要用已弃用的 logo_url：后者从 0.229.0 起会在后台控制台打印弃用警告
+#    （功能仍正常，官方计划在 1.0 里移除）。这次替换是**行为等价**的 —— bundle 里两者
+#    解析到同一个 logo 来源（`logo?.src || logo_url || 默认 logo`），所以顶栏显示不变。
+# show_in_header 刻意不写：默认就是 true，与替换前一致；只有要藏起来才需要显式写 false。
+logo:
+  src: /favicon.svg
 # 关掉「预览链接」：PR 预览环境已取消（原因见 MIGRATION.md），开着只会指向一个不存在的地址。
 # 作者要看渲染效果，用 `npm run dev`（本地）或合并后在线上看。
 show_preview_links: false
