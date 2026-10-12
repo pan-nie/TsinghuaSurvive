@@ -26,6 +26,15 @@ const year = new Date().getFullYear();
     <a href={`${repo}/issues/new`} target="_blank" rel="noopener">GitHub Issues</a>
     提出，或直接<a href={`${repo}/edit/main/`} target="_blank" rel="noopener">编辑对应页面</a>提交 PR。
   </p>
+  <!--
+    维护者入口：给站长一个从任意页面直达站内后台的入口，省得每次手打地址。
+    用相对路径 /admin/（public/admin/index.html，静态资源），**不要**写死域名。
+    对读者无害：后台本身带 noindex，且没有 GitHub 权限的人只能看到登录页。
+  -->
+  <p class="site-notice__admin">
+    维护者入口：<a href="/admin/" rel="nofollow">站内后台</a>
+    —— GitHub 登录后可改文字 / 传图 / 嵌视频，保存会自动开 PR，合并后上线。
+  </p>
   <p class="site-notice__copy">
     © {year} 清华生存指南 · 内容采用 CC BY-NC-SA 4.0 许可 · 由
     <a href={`${repo}`} target="_blank" rel="noopener">一群学长学姐</a>共同维护
@@ -58,5 +67,10 @@ const year = new Date().getFullYear();
     margin-top: 0.75rem !important;
     /* gray-4 在深色下对比度不足 3:1，小字读起来吃力；gray-3 达标 */
     color: var(--sl-color-gray-3);
+  }
+
+  .site-notice__admin {
+    /* 比免责声明更弱一档：它是给维护者的入口，不该抢读者的注意力 */
+    opacity: 0.85;
   }
 </style>
