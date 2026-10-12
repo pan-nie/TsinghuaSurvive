@@ -64,11 +64,9 @@ const SKIP_FILES = new Set(['package-lock.json']);
 /**
  * 例外清单（都不参与部署，且必须引用旧标识才能工作）：
  *   · `site.config.json` —— SSOT 自己保存 hostRewrites / legacyIdentifiers 这两张「旧值表」
- *   · `MIGRATION.md` —— 迁移历史记录（为什么迁、迁了什么）
- *   · `MANUAL-STEPS.md` —— 收尾手工清单；301 规则的表达式必须是旧域名的**字面量**才能复制粘贴
- * 最后两个是临时文档，收尾完成后删掉即可（那时这个清单也应该一起清空）。
+ *   · `MIGRATION.md` —— 迁移历史记录（为什么迁、迁了什么，含旧域名 301 的填法）
  */
-const RESIDUE_ALLOWLIST = new Set(['site.config.json', 'MIGRATION.md', 'MANUAL-STEPS.md']);
+const RESIDUE_ALLOWLIST = new Set(['site.config.json', 'MIGRATION.md']);
 
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {

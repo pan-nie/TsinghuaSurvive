@@ -1,20 +1,19 @@
 # 域名迁移方案：tsinghua.nathanpenny.fun → thu.whizzzest.com
 
-> 状态：**主站与 auth 中转的基础设施都已上线**（`thu.whizzzest.com` 实测 200、`/api/*` 与 `/media/*` 正常、`auth.thu.whizzzest.com` 证书就位且只差两个 secret），
-> **剩余 4 项都需要你的凭据或控制台操作**（见 §8 的 ⏳ / 🟡 行）。
+> 状态：**迁移完成（2026-10-12）**。站点已在 `thu.whizzzest.com` / 新账号上线：
+> 页面、AI 问答、媒体出口、后台 GitHub 一键登录、CI 自动部署 + 部署后线上冒烟全部打通，**仓库里已无任何占位符**。
 >
-> 本文档是执行手册 + 决策记录。迁移完成后，把仍然有效的事实并进 `HANDOVER.md`；
-> 本文档保留为历史记录，并被 `check:domain` 列入旧域名白名单（只有它和 `site.config.json` 可以出现旧域名）。
+> 两处**刻意不做**（都是用户的决定，不是遗漏）：
+> 1. **旧域名 301** —— 旧账号不再处理；旧链接在域名到期后直接 404（已接受）。
+> 2. **Always Use HTTPS** —— `http://thu.whizzzest.com/` 仍返回 200；canonical 是 https、站点是公开内容站，影响有限；
+>    `check:live` 对这个只给警告不失败。
 >
-> 剩余待办：① R2 API 令牌（后台传图）② GitHub Secrets 的 CI Token ③ GitHub OAuth App 的 client id/secret（auth 中转）④ 旧域名 301。
-> 唯一还留在仓库里的占位符是 `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`：它**只影响后台传图**，
-> `npm run check:deploy-ready` 因此把它降级为警告而不是拒绝部署（判断标准是「缺了会不会有线上静默坏掉的东西」）。
+> 本文档是执行手册 + 决策记录。事实已并进 `HANDOVER.md`；本文档保留为历史记录，
+> 并被 `check:domain` 列入残留白名单（只有它和 `site.config.json` 可以出现旧标识）。
 >
 > 最后更新：2026-10-12
 >
-> 分支与 PR：`migrate/thu-whizzzest` 已推送，草稿 PR <https://github.com/pan-nie/TsinghuaSurvive/pull/6>（草稿状态即「还不能合并」）。
->
-> 👉 **只想知道自己要点哪些东西** → 看 [MANUAL-STEPS.md](./MANUAL-STEPS.md)（5 项手工步骤，含控制台路径与验证命令）。
+> 分支与 PR：`migrate/thu-whizzzest`；PR <https://github.com/pan-nie/TsinghuaSurvive/pull/6>。
 
 ---
 
@@ -159,23 +158,23 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 | Account ID | `67e59aecb10a2a8b4b4d525ff8ddcb56` | ✅ 已填（新浪登录 nathanpenny@qq.com 唯一可见账号，且它拥有 whizzzest.com） |
 | Zone ID | `158d2b4327671b36ae8b9183a5598daf` | ✅ 已填（`whizzzest.com`，active，Free plan） |
 | Turnstile sitekey | `0x4AAAAAAFUTnXn4vkXwvC5O` | ✅ 已填（新建挂件 `tsinghua-guide-ask`，域名 thu.whizzzest.com / localhost / 127.0.0.1） |
-| R2 Access Key ID | `REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID` | ⏳ **只能你在控制台建**：R2 API 令牌的 API 端点需要「API Tokens 管理」权限，wrangler 的 OAuth 拿不到（实测 403） |
-| CI 的 API Token | 未创建 | ⏳ 同上，控制台建好后填 GitHub Secrets |
+| R2 Access Key ID | `cc4b0674a8010051a2ed0f9be83d54a7` | ✅ 已填（用户 2026-10-12 创建 R2 API 令牌）。**Secret Access Key 只在创建时显示一次**，由编辑者首次打开后台媒体库时在浏览器输入，不进仓库 |
+| CI 的 API Token | 已写入 GitHub Secrets | ✅ 已配（2026-10-12 14:05；CI 部署 + 线上冒烟实测通过） |
 
 ## 8. 阶段 3：Cloudflare 侧（账号 W）—— 执行结果
 
 | # | 操作 | 结果 |
 |---|---|---|
 | 1 | 账号与额度盘点 | ✅ 账号 W = `67e59aecb10a2a8b4b4d525ff8ddcb56`（登录邮箱 nathanpenny@qq.com）；zone `whizzzest.com` = `158d2b4327671b36ae8b9183a5598daf`（active / Free）。⚠️ **账号里已有 7 个 Worker**（nmail-site、whizzzest、whizzzest-admin、whizzzest-game、whizzzest-im、whizzzest-merchant、whizzzest-writer）→ 100k 请求/天与 Workers AI 10k Neurons/天都是**账号级共享**，本站的 `/api/*` 与 `/media/*` 都算在里面 |
-| 2 | 建 R2 桶 + 应用 CORS | ✅ 桶 `tsinghua-guide-media` 已建；`r2/cors.json` 已应用（后台直传 S3 接口要用）。⏳ **R2 API 令牌（后台传图的 S3 凭据）只能你在控制台建**：`POST /accounts/{id}/r2/api-tokens` 需要「API Tokens 管理」权限，wrangler 的 OAuth 拿不到（实测 403）。建好后把 Access Key ID 填进 `site.config.json` 的 `cloudflare.r2AccessKeyId`，跑 `npm run domain:sync` 即写入 CMS 配置 |
+| 2 | 建 R2 桶 + 应用 CORS + R2 API 令牌 | ✅ 桶 `tsinghua-guide-media` 已建；`r2/cors.json` 已应用（`allowed_origins: https://thu.whizzzest.com, http://localhost:4321`）；R2 API 令牌由用户创建，Access Key ID 已填进 `site.config.json` 并 `domain:sync` 进 CMS 配置（`public/admin/config.yml`） |
 | 3 | 新建 Turnstile 挂件 | ✅ 已建 `tsinghua-guide-ask`，域名 `thu.whizzzest.com` / `localhost` / `127.0.0.1`；sitekey `0x4AAAAAAFUTnXn4vkXwvC5O` 已填进 `src/data/ai.config.yml`；secret 存在本机 `.secrets/turnstile-secret.txt`（已写进 Worker Secret） |
-| 4 | CI 的 API Token → GitHub Secrets | ⏳ 待你操作（OAuth 同样不能创建 API Token）。建好后填 `CLOUDFLARE_API_TOKEN` 与 `CLOUDFLARE_ACCOUNT_ID=67e59aecb10a2a8b4b4d525ff8ddcb56`。**在填之前不要合并 `migrate/thu-whizzzest` 到 main**：仓库里现在还是旧账号的 token，CI 会明确报「账号不匹配」并跳过部署（不会静默部署到错账号） |
+| 4 | CI 的 API Token → GitHub Secrets | ✅ 已配：`gh secret list` 显示 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` 均为 2026-10-12 更新；`deploy.yml` 在分支上手动触发后，凭证守卫 `ready=true`、部署与线上冒烟全部通过（见 §12 的验证记录） |
 | 5 | 部署主 Worker | ✅ 已部署：369 个文件；绑定 ASK_GATE（DO）/ MEDIA（R2）/ AI / ASSETS；自定义域名 `thu.whizzzest.com` 已创建，证书已签发（HTTPS 200 / 0.72 s） |
 | 6 | 写 3 个 Worker Secret | ✅ `TURNSTILE_SECRET_KEY`（新挂件）、`ADMIN_TOKEN`、`CONFIG_ENC_KEY`（后两个直接用本机 `.secrets/` 里的现成值） |
-| 7 | 部署 auth-worker + 改 GitHub OAuth App | 🟡 **Worker 已部署**：`auth.thu.whizzzest.com` 的 DNS 记录与证书已就绪（DoH 实测解析到 172.67.209.47 / 104.21.23.47，直连 200）；白名单验证通过 —— `site_id=thu.whizzzest.com` 放行、陌生域名 → `UNSUPPORTED_DOMAIN`；带完整参数时返回 `MISCONFIGURED_CLIENT`，说明**只差两个 secret**。⏳ 仍需你：① 把 GitHub OAuth App 的 Client ID / Client Secret 交给我（或自行 `wrangler secret put` 写入 `auth-worker/`）② 把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。在此之前后台用**令牌登录** |
+| 7 | 部署 auth-worker + 改 GitHub OAuth App | ✅ 完成：Worker 已部署，`auth.thu.whizzzest.com` 的 DNS 记录与证书就绪；用户写入 `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 并把 callback 改成 `https://auth.thu.whizzzest.com/callback`。端到端实测：`GET /auth?provider=github&site_id=thu.whizzzest.com` → **302 到 github.com/login/oauth/authorize**（不再是 MISCONFIGURED_CLIENT）；白名单反向验证 —— 陌生域名 → `UNSUPPORTED_DOMAIN` |
 | 8 | 媒体出口真机验证 | ✅ 上传测试对象 → `GET /media/uploads/smoke-test.txt` = 200（`cache-control: immutable`、`etag`、`accept-ranges`）；`Range: bytes=6-10` → 206 + `content-range: bytes 6-10/22`；未知 key → 404；测试对象已删除 |
-| 9 | 旧域名 301 | ⏳ 旧 zone 在**另一个 Cloudflare 登录**（gmail 那个）里，当前 OAuth 会话看不到 → 需要你登录旧账号后，按下面「第 9 步的具体做法」加 Redirect Rule。⚠️ 域名到期后跳转自动失效 |
-| 10 | 强制 HTTPS（**冒烟检查新发现**） | ⏳ 待你操作：`http://thu.whizzzest.com/` 现在返回 **200**（明文可直接访问）。建议在 zone `whizzzest.com` 上开 **SSL/TLS → Edge Certificates → Always Use HTTPS = On**。⚠️ 这是**区域级**设置，会一并影响该 zone 下其它站点（通常也是它们想要的，所以值得顺手开）。我校验脚本只警告不失败，因为它属于区域决策，不该由本仓库单方面要求 |
+| 9 | 旧域名 301 | ❌ **按用户决定取消**（2026-10-12：「旧账号我不管了」）。旧 zone 在另一个 Cloudflare 登录里，不做 301、也不再清理旧账号资源 —— 后果是**旧链接在域名到期后直接 404**，已被接受。下面仍保留具体做法，将来若改主意可直接照做 |
+| 10 | 强制 HTTPS | ⚠️ 未开启，**已记录为可接受的现状**：`http://thu.whizzzest.com/` 返回 200。canonical 已是 https，站点是公开内容站、无敏感数据，所以影响有限；`check:live` 只给警告不失败。想开的话：zone `whizzzest.com` → SSL/TLS → Edge Certificates → Always Use HTTPS = On（区域级，会影响该 zone 下其它站点） |
 
 ### 第 4 步的具体做法（CI Token）
 
@@ -304,5 +303,5 @@ curl -sI https://media.nathanpenny.fun/uploads/example.webp | head -3
 | 1 | 媒体改由主 Worker 提供 `/media/*`（绑定 + 路由 + 33 项断言） | ✅ 已完成（不改域名，可独立部署验证） |
 | 2 | 全量换域名（SSOT 翻转 + 16 个文件同步 + 4 张卡片图 + 文档改写 + 守卫补 `legacyApexDomains`/`legacyIdentifiers`） | ✅ 已完成 |
 | 3 | 账号 W 侧执行：桶 + CORS + Turnstile 挂件 + 部署 + 3 个 Secret + 媒体真机验证 | ✅ 已完成（主站已上线） |
-| 3b | 账号 W 侧剩余：R2 API 令牌、CI Token、auth-worker、旧域名 301 | ⏳ 需要你的控制台操作（见 §8 的 ⏳ 行） |
-| 4 | 收尾：并入 HANDOVER、删旧账号资源 | ⏳ 待做（建议新站稳定 1–2 周后） |
+| 3b | 账号 W 侧剩余：R2 API 令牌、CI Token、auth-worker | ✅ 全部完成（2026-10-12）；旧域名 301 按用户决定取消 |
+| 4 | 收尾：并入 HANDOVER、删旧账号资源 | 🟡 事实已并入 HANDOVER；**旧账号资源不再清理**（用户决定不管），随域名到期自然废弃 |

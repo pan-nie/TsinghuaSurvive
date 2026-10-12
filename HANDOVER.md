@@ -34,7 +34,7 @@ flowchart TB
 | 组件 | 名字 | 状态 |
 | --- | --- | --- |
 | 正式站 Worker | `tsinghua-guide` → `thu.whizzzest.com` | ✅ 已上线（2026-10-12 部署，369 个文件；页面 + `/api/*` + `/media/*` 实测 200） |
-| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | 🟡 已部署（2026-10-12，DNS 记录与证书就绪、白名单生效、陌生域名被拒）；⏳ 只差 GitHub OAuth App 的 client id/secret 两个 Secret —— 在此之前后台用**令牌登录** |
+| OAuth 中转 Worker | `tsinghua-guide-auth` → `auth.thu.whizzzest.com` | ✅ 已完成（2026-10-12）：DNS 与证书就绪、`GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` 已写入、callback 已改；`/auth` 实测 **302 跳 GitHub 授权**，陌生域名被白名单拒绝 |
 | R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ✅ 桶已建、CORS 已配、媒体出口实测 200/206/404（⏳ 仅缺 R2 API 令牌，只影响后台传图） |
 | KV / D1 | —— | 没有，一个都不用 |
 | Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ✅ 随首次 `wrangler deploy` 已创建，见第 10 节 |
@@ -53,7 +53,8 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 
 > ✅ **迁移状态（2026-10-12 实测）**：站点已从旧域名 / 旧 Cloudflare 账号迁到 `thu.whizzzest.com` / 账号 W，
 > **主站已部署上线**（页面 200、问答链路与媒体出口均已实测）。仍标「⏳」的只有四处控制台/仓库设置动作，
-> 见 [MIGRATION.md](./MIGRATION.md) §8 的 ⏳ 行：R2 API 令牌、CI 部署 Token、OAuth 中转、旧域名 301。
+> 见 [MIGRATION.md](./MIGRATION.md) §8：全部完成（R2 API 令牌、CI 部署 Token、OAuth 中转）；
+> 旧域名 301 与 Always Use HTTPS 两项按维护者决定不做，见第 8 节「已知限制」。
 
 ---
 
@@ -76,10 +77,10 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | GitHub 仓库 | <https://github.com/pan-nie/TsinghuaSurvive>（public，`main`） |
 | 本地路径 | `TsinghuaSurvive/Tsinghua-guide/` |
 
-> ⚠️ **仓库里只剩一个占位符**：`site.config.json` 的 `cloudflare.r2AccessKeyId`（`REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`）。
-> 它**只影响后台传图**：R2 的 S3 凭据只能在控制台创建（`POST /accounts/{id}/r2/api-tokens` 需要「API Tokens 管理」权限，
-> wrangler 的 OAuth 拿不到，实测 403）。因此 `npm run check:deploy-ready` 把它降级为警告而不是拒绝部署 ——
-> 判断标准是「这个值缺了，线上会不会有静默坏掉的东西」。建好令牌后填进 `site.config.json` 并跑 `npm run domain:sync`。
+> ✅ **仓库里已无占位符**（2026-10-12）：`cloudflare.accountId` / `zoneId` / `r2AccessKeyId` 与 Turnstile sitekey 全是真值，
+> `npm run check:deploy-ready` 与 `npm run check:admin` 都不再报警告。
+> ⚠️ R2 API 令牌的 **Secret Access Key 只在创建时显示一次**，由每个编辑者第一次打开后台媒体库时在浏览器输入，
+> **不进仓库、也不在维护者手里流转**（丢了就在控制台重新生成一个令牌）。
 >
 > ⚠️ 账号 W 里还有 7 个其它 Worker（nmail-site、whizzzest、whizzzest-admin、whizzzest-game、whizzzest-im、
 > whizzzest-merchant、whizzzest-writer）—— 免费档的 100k 请求/天与 Workers AI 10k Neurons/天是**账号级共享**的，
@@ -99,7 +100,8 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | **站内 AI 问答** | `src/worker/`（运行时，`/api/*`）+ `src/components/AskBox.astro`（见第 10 节） |
 | **媒体出口** | `/media/*` 由 `src/worker/media.js` 从 R2 读（见第 9.3 节） |
 
-仓库 Secrets（**账号 N 时期两个都已配好、CI 已实测跑通**）：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅（权限最小集合见第 5 节）。
+仓库 Secrets：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅ —— **2026-10-12 已换成账号 W 的**（旧账号的 token 会因
+「看不到目标账号」被凭证守卫拦下、跳过部署；权限最小集合见第 5 节）。
 ⏳ **迁移到账号 W 时两个都要换成新账号的值**（`CLOUDFLARE_ACCOUNT_ID` 换账号 W 的 ID，`CLOUDFLARE_API_TOKEN` 按第 5 节重建），见 MIGRATION.md §8 第 4 步。
 
 **Worker 侧的 Secret（不属于仓库 Secrets，用 `wrangler secret put` 写入，见第 10.2 节）**：
@@ -331,7 +333,7 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 | 页面顶部红色过期警告 | 作者把 `status` 设成了 `outdated`。内容修好后改成 `stable` |
 | 分享卡片还是旧标题 | `public/og.png` 是**静态文件**，改标题后要跑 `npm run og` |
 | 内容检查报「站内链接指向不存在的页面」 | 改文件名或移动文章后没同步引用。报错带文件:行号；中文标签链接（`/tags/选课/`）与编码形式都已识别，不会误报 |
-| 想核对线上页面时页面 404 | 迁移期先确认查的是**新域名**（账号 W 部署后才有效）；旧域名的 301 只做到期为止，域名到期后旧链接必然 404（原因见 MIGRATION.md §4.2） |
+| 想核对线上页面时页面 404 | 先确认查的是**新域名** `thu.whizzzest.com`。旧域名不做 301（维护者决定），域名到期后旧链接一律 404，这是预期状态（见第 8 节） |
 | 要在本地看渲染效果 | PR 预览环境已取消（没有预览 Worker / 预览域名 / `preview.yml`）：用 `npm run dev` 看页面，`npm run dev:worker` 连真实 R2 看媒体 |
 
 ---
@@ -396,8 +398,9 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 ## 8. 已知限制
 
 - **境内访问是「可用」不是「快」**：整页 0.5–0.9 s，走 Cloudflare 海外节点。要更快需要 **ICP 备案 + Cloudflare 中国网络（企业版）**，或换境内云厂商静态托管 —— 产品决策，不是技术限制。
-- **旧域名会 301 到新域名，但只做到期为止**：301 依赖旧域名还能解析，域名一到期 DNS 直接不存在，跳转被跳过、旧链接必然 404（已确认不续费，见 MIGRATION.md §4.2）。过渡期按 MIGRATION.md §8 第 9 步在旧 zone 加 Redirect Rule。
-- **迁移期间新域名可能还没上线**：`thu.whizzzest.com` 的 Worker / R2 / Turnstile / OAuth 中转都在账号 W，需按 MIGRATION.md §8 逐步建好；在那之前不要对外宣布新站可用。
+- **旧域名不做 301，旧链接到期即 404**：维护者决定不再处理旧账号（2026-10-12），旧域名到期后 DNS 直接不存在、跳转被跳过（已确认不续费，见 MIGRATION.md §4.2 与 §8 第 9 步）。若将来改主意，Redirect Rule 的填法仍保留在 MIGRATION.md §8。
+- **`http://thu.whizzzest.com/` 仍可访问（未开 Always Use HTTPS）**：canonical 是 https，站点是公开内容站，影响有限；`check:live` 对这一项只警告不失败。开启方式见 MIGRATION.md §8 第 10 步（区域级设置，会影响该 zone 下其它站点）。
+- **旧账号资源不再清理**：旧 Worker / 旧 R2 桶随旧域名到期一起废弃，不做主动删除（维护者决定）。
 - **`workers.dev` 入口已关闭**，不要写进任何对外宣传材料。
 - **没有评论系统**（刻意不做）：依赖 `github.com` 登录才能发言，校园网内读者不会为评论去挂代理；且评论区会把「不指名评价老师」这条红线从「我们写」变成「读者写、站长兜底」。纠错入口是页脚的 GitHub Issues。
 - **站点上没有任何课程文件**：`/courses/` 只是索引，许可、存活、下架都不由本站控制。
@@ -430,12 +433,11 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 
 ### 9.2 OAuth 中转（A）
 
-> **当前状态（2026-10-12）**：Worker **已部署**，`auth.thu.whizzzest.com` 的 DNS 记录与证书已就绪，
-> 白名单也验证过（`site_id=thu.whizzzest.com` 放行、陌生域名回 `UNSUPPORTED_DOMAIN`）。
-> **只差两个 Secret**：`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` —— 它们需要你从 GitHub OAuth App 页面取
-> （旧 Cloudflare 账号里的那两个读不出来），同时把 Authorization callback 改成 `https://auth.thu.whizzzest.com/callback`、
-> Homepage 改成 `https://thu.whizzzest.com/`。**在写入这两个 Secret 之前，后台只能用令牌登录**（`auth_methods` 保留了 token 兜底）。
-> 完整步骤见 MIGRATION.md §8 第 7 步与 [`auth-worker/README.md`](./auth-worker/README.md)。这里只留运维要点：
+> **当前状态（2026-10-12）**：✅ 全部就绪 —— Worker 已部署，DNS 与证书就绪，
+> `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 已写入，OAuth App 的 callback 与 Homepage 已改。
+> 端到端实测：`GET /auth?provider=github&site_id=thu.whizzzest.com` → **302 跳到 github.com 授权页**；
+> 白名单反向验证：陌生域名 → `UNSUPPORTED_DOMAIN`。后台现在可以用 **Sign in with GitHub**（令牌登录仍保留作备用）。
+> 运维要点与重建步骤见 [`auth-worker/README.md`](./auth-worker/README.md) 与 MIGRATION.md §8 第 7 步：
 
 - **OAuth App 的 callback 必须一字不差**：`https://auth.thu.whizzzest.com/callback`；换域名时三处要一起改（`auth-worker/wrangler.jsonc` 的 routes、GitHub OAuth App 的 callback、`config.yml` 的 `base_url`），`check:admin` 能查前两处，GitHub 那边只能人工确认（本次迁移就是改现有 OAuth App 的 callback + Homepage URL）。
 - 写密钥：`cd auth-worker && npx wrangler secret put GITHUB_CLIENT_ID`（`..._SECRET` 同理），首次才需要 `wrangler deploy`；想先看打包结果：`npm run auth:dry`。
@@ -449,9 +451,9 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 （`wrangler.jsonc` 里的 `MEDIA` 绑定 + `assets.run_worker_first` 含 `/media/*`，实现见 `src/worker/media.js`）。
 **R2 桶不需要公开域名 / custom domain**：这样既省一个域名与一张证书，也让媒体与站点同源。
 
-> **当前状态（2026-10-12）**：桶已建、CORS 已应用、媒体出口已真机验证（200 + `immutable`、Range→206、未知 key→404）。
-> 仍缺 `site.config.json` 里的 `r2AccessKeyId`（`REPLACE_ACCOUNT_W_R2_ACCESS_KEY_ID`）—— 它只影响**后台上传**，
-> 需要在控制台建 R2 API 令牌（见 MIGRATION.md §8 第 2 步）。
+> **当前状态（2026-10-12）**：✅ 桶已建、CORS 已应用、R2 API 令牌已建（Access Key ID `cc4b0674a8010051a2ed0f9be83d54a7`
+> 已填进 `site.config.json` 并同步进 `public/admin/config.yml`）、媒体出口真机验证通过（200 + `immutable`、Range→206、未知 key→404）。
+> 编辑者第一次打开后台媒体库时输入 **Secret Access Key**（只在建令牌时显示一次，维护者这边不保存）。
 > 跑 `npm run r2:setup -- --check` 复核时，脚本会直接报告「公开域名：不需要」—— 这是预期结果，不是漏配。
 
 ```bash
