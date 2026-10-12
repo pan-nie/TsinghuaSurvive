@@ -14,6 +14,8 @@
 > 最后更新：2026-10-12
 >
 > 分支与 PR：`migrate/thu-whizzzest`；PR <https://github.com/pan-nie/TsinghuaSurvive/pull/6>。
+> 分支上跑过一次完整 CI（run [38211678042](https://github.com/pan-nie/TsinghuaSurvive/actions/runs/38211678042)）：
+> **21 步全绿**，含「检查部署凭证」（token 能看到账号 W）、「部署到 Cloudflare Workers」与「线上冒烟检查（部署后）」。
 
 ---
 
