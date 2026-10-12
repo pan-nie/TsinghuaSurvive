@@ -26,11 +26,14 @@ const year = new Date().getFullYear();
     <a href={`${repo}/issues/new`} target="_blank" rel="noopener">GitHub Issues</a>
     提出，或直接<a href={`${repo}/edit/main/`} target="_blank" rel="noopener">编辑对应页面</a>提交 PR。
   </p>
-  <!--
+  {/*
     维护者入口：给站长一个从任意页面直达站内后台的入口，省得每次手打地址。
-    用相对路径 /admin/（public/admin/index.html，静态资源），**不要**写死域名。
+    用相对路径 /admin/（public/admin/index.html，静态资源），不要写死域名。
     对读者无害：后台本身带 noindex，且没有 GitHub 权限的人只能看到登录页。
-  -->
+
+    ⚠️ 这里用 Astro 的 JSX 风格注释（花括号包起来的块注释），不要用 HTML 注释：
+    HTML 注释会被原样发到浏览器，等于把维护者说明公开给所有读者（2026-10-12 实测踩到）。
+  */}
   <p class="site-notice__admin">
     维护者入口：<a href="/admin/" rel="nofollow">站内后台</a>
     —— GitHub 登录后可改文字 / 传图 / 嵌视频，保存会自动开 PR，合并后上线。
