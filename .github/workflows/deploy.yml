@@ -1,27 +1,26 @@
 name: Deploy to Cloudflare Workers
 
+# 仓库是正式内容来源；飞书文档与工具独立保留，不在发布时读取或同步。
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: "7,22,37,52 * * * *"
 
 # 同一时间只跑一个部署，避免并发上传互相覆盖
 concurrency:
-  group: deploy-production
-  cancel-in-progress: false
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v7
         with:
-          # 更新日志与 Git 提交者统计依赖完整历史；飞书正文更新时间另由同步元信息提供
+          # 站点页脚显示"最后更新于"，依赖完整 git 历史
           fetch-depth: 0
 
       - uses: actions/setup-node@v7
@@ -32,88 +31,42 @@ jobs:
       - name: 安装依赖
         run: npm ci
 
-      - name: 恢复飞书内容缓存
-        uses: actions/cache/restore@v6
-        with:
-          path: .feishu-cache
-          key: feishu-${{ hashFiles('src/data/feishu-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: |
-            feishu-${{ hashFiles('src/data/feishu-manifest.json') }}-
-
-      - name: 安装官方飞书 CLI
-        run: npm install --global @larksuite/cli@1.0.98
-
-      - name: 配置飞书只读同步身份
-        env:
-          FEISHU_APP_ID: ${{ vars.FEISHU_APP_ID }}
-          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: node scripts/feishu/init-ci.mjs
-
-      - name: 从飞书增量同步
-        id: feishu
-        env:
-          FEISHU_IDENTITY: bot
-          FEISHU_COMPARE_PUBLISHED: '1'
-        run: npm run sync:feishu
-
-      - name: 判断是否需要发布
-        id: publish
-        env:
-          CONTENT_CHANGED: ${{ steps.feishu.outputs.changed }}
-        run: |
-          if [ "$CONTENT_CHANGED" = "true" ] || [ "${{ github.event_name }}" != "schedule" ]; then
-            echo "needed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "needed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: 飞书转换回归检查
-        if: steps.publish.outputs.needed == 'true'
-        run: npm run check:feishu
-
       - name: 类型检查
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check
 
       # 域名检查：所有能 import 的代码都从 site.config.json 取域名，不能 import 的配置由
       # `npm run domain:sync` 写入。这一条确认两边一致，并扫描全仓拒绝旧域名残留 ——
       # 换域名时最怕的就是「漏改一处」，而漏改的表现全是静默的（canonical 指错、CORS 被拦）。
       - name: 域名一致性检查
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:domain
 
       # 内容检查：死链、中文文件名、未来日期、占位符与过期核对日期。
       # 默认模式只把「真错误」当失败，占位符之类的债务只提示，不阻断部署。
       - name: 内容检查
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:content
 
-      # check:admin 在存在飞书映射时检查固定路径、来源元信息与维护入口；不走旧 CMS 字段检查。
-      - name: 飞书内容映射与维护入口检查
-        if: steps.publish.outputs.needed == 'true'
+      # 后台配置检查：确认后台声明的字段能装下所有 frontmatter。
+      # 漏一个字段不会报任何错，但作者在后台保存一次就会把那个字段丢掉。
+      - name: 后台配置检查
         run: npm run check:admin
 
       # 媒体检查（源码）：视频语法糖写法、外链图片是不是用了会失效的图床。
       # 这类问题构建查不出来：写法错了只是页面少一块，构建照样返回 0。
       - name: 媒体与视频检查
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:media
 
       # 课程索引与本地资料库（materials/，整理前是 reference/）的一致性。CI 上没有这些目录
       # （那是十几 GB 的本地参考资料），脚本检测不到就跳过并以 0 退出，不会误报。
       - name: 课程索引一致性
-        if: steps.publish.outputs.needed == 'true'
         run: npm run courses:check
 
       - name: 构建
-        if: steps.publish.outputs.needed == 'true'
         run: npm run build
 
       # 构建之后才能做的检查：结构化数据是否合法、分享卡片图有没有漏提交、
       # 加粗标记有没有被原样印到页面上。
       # 这几项都是「错了不会报错、只会静默失效」的类型，所以必须在部署前拦住。
       - name: 结构化数据检查
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:jsonld
 
       # 站内 AI 问答的两个检查（见 HANDOVER.md 第 10 节）：
@@ -121,44 +74,37 @@ jobs:
       #   check:ai:worker —— 直接跑 Worker 入口，43 项端到端（闸门、鉴权、流式、fail-closed）
       # 失败方式全是静默的：少一篇、排序退化、闸门顺序错、密钥被回显，页面都照开。
       - name: AI 索引与检索质量检查
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:ai
 
       - name: AI 问答端到端检查（Worker）
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:ai:worker
 
       - name: 静态资源检查（分享卡片 / favicon / robots）
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:assets
 
       # `**加粗**` 紧贴全角标点（`**「图库」**`）时不会生效，星号会被原样印在页面上；
       # banner 只认 HTML 不认 Markdown；卡片文案漏调 descHtml() 也会这样。
       # 三种都「构建成功、页面照开」，只能数一遍产物里的可见文本。
       - name: 渲染文本检查（加粗标记有没有泄漏）
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:markup
 
       # 视频与图片的产物比对：数一遍产物里的视频容器和源码里的语法糖是否一致。
       # 必需，因为 Astro 的内容加载器出错时**构建仍然以 0 退出**，那一页正文会整个变空。
       - name: 媒体产物比对
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:media:dist
 
       # 媒体出口（/media/* → R2）的端到端：Range、条件请求、路径穿越、缓存头、桶未绑定。
       # 全是「页面照开、图片/视频静默坏掉」的失败方式，必须断言。
       - name: 媒体出口检查（Worker）
-        if: steps.publish.outputs.needed == 'true'
         run: npm run check:media:worker
 
-      # 凭证守卫（三层），任何一层不过都会使工作流失败且不部署 —— 迁移期最容易踩的坑就是
+      # 凭证守卫（三层），任何一层不过都会失败且不部署 —— 迁移期最容易踩的坑就是
       # 「Secrets 还是旧账号的，而配置已经是新账号」，那样直接部署只会在绑定自定义域名时
       # 抛一个跟根因无关的错（zone not found / 10000 authentication error）。
       #   ① 有没有 token
       #   ② 仓库里的 CLOUDFLARE_ACCOUNT_ID 与 site.config.json 是否一致（快速失败）
       #   ③ **这个 token 到底能不能看到那个账号** —— 只比 ID 是不够的：ID 可以是对的而 token 是旧账号的
       - name: 检查部署凭证
-        if: steps.publish.outputs.needed == 'true'
         id: creds
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -166,17 +112,14 @@ jobs:
         run: |
           EXPECTED_ACCOUNT=$(node -e "console.log(require('./site.config.json').cloudflare.accountId)")
           if [ -z "$CF_TOKEN" ]; then
-            echo "::warning title=部署凭证缺失::仓库缺少 CLOUDFLARE_API_TOKEN，无法发布本次同步，保留线上版本。配置步骤见 HANDOVER.md。"
+            echo "::warning title=跳过部署::仓库缺少 CLOUDFLARE_API_TOKEN，本次只构建不部署。配置步骤见 HANDOVER.md。"
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 1
           elif [ -n "$CF_ACCOUNT" ] && [ "$CF_ACCOUNT" != "$EXPECTED_ACCOUNT" ]; then
             echo "::error title=账号不匹配::CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT，而 site.config.json 期望 $EXPECTED_ACCOUNT。请先更新仓库 Secrets（见 MIGRATION.md §7），本次不部署。"
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 1
           elif ! curl -sS -H "Authorization: Bearer $CF_TOKEN" https://api.cloudflare.com/client/v4/accounts | grep -q "$EXPECTED_ACCOUNT"; then
             echo "::error title=Token 看不到目标账号::CLOUDFLARE_API_TOKEN 列不出 site.config.json 期望的账号 ${EXPECTED_ACCOUNT}（典型原因：迁移后没换 Secrets，还是旧账号的 token）。本次不部署。见 MIGRATION.md §7。"
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 1
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
@@ -184,11 +127,11 @@ jobs:
       # 占位符闸门：迁移期间 site.config.json / ai.config.yml 里可能还留着 REPLACE_ 占位符。
       # 带着它们部署，wrangler 会抛一个跟根因无关的错（例如 zone not found），排查成本很高。
       - name: 部署前占位符检查
-        if: steps.publish.outputs.needed == 'true' && steps.creds.outputs.ready == 'true'
+        if: steps.creds.outputs.ready == 'true'
         run: npm run check:deploy-ready
 
       - name: 部署到 Cloudflare Workers
-        if: steps.publish.outputs.needed == 'true' && steps.creds.outputs.ready == 'true'
+        if: steps.creds.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -200,19 +143,9 @@ jobs:
       # 媒体出口 404、后台 noindex、404 页面与尾斜杠重定向。
       # 这些全是「部署成功但线上悄悄坏掉」的类型，构建阶段的检查一个都覆盖不到。
       - name: 线上冒烟检查（部署后）
-        if: steps.publish.outputs.needed == 'true' && steps.creds.outputs.ready == 'true'
+        if: steps.creds.outputs.ready == 'true'
         run: npm run check:live
 
-
-      - name: 确认线上飞书版本并记录已发布内容
-        if: steps.publish.outputs.needed == 'true' && steps.creds.outputs.ready == 'true'
-        run: |
-          node scripts/check-feishu-live.mjs
-          cp src/data/feishu-state.json .feishu-cache/published.json
-
-      - name: 保存已验证的内容缓存
-        if: success() && (steps.publish.outputs.needed == 'false' || steps.creds.outputs.ready == 'true')
-        uses: actions/cache/save@v6
-        with:
-          path: .feishu-cache
-          key: feishu-${{ hashFiles('src/data/feishu-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
+# 需要的仓库 Secrets（Settings → Secrets and variables → Actions）：
+#   CLOUDFLARE_ACCOUNT_ID  —— ⚠️ 迁移到新账号后必须换成新账号的 ID（旧值指向即将废弃的账号）
+#   CLOUDFLARE_API_TOKEN   —— 在新账号里创建（权限清单见 HANDOVER.md 第 5 节，zone 只选 whizzzest.com）

@@ -1,12 +1,6 @@
 #!/usr/bin/env node
 /**
- * 内容维护入口校验。存在 feishu-manifest.json 时转交 check-feishu-config.mjs，
- * 检查飞书固定路径、栏目、来源元信息与编辑入口后退出；不执行下方旧 CMS 校验。
- *
- * 当前用法：npm run check:admin。--strict 仅作用于下面保留的旧 CMS 路径，
- * 不会让当前飞书检查增加额外校验项。
- *
- * 以下为迁移前 Sveltia CMS 分支的历史说明：
+ * 后台配置校验 —— 防止「后台悄悄丢字段」和「占位符忘了换」这两类事故。
  *
  * 为什么需要它：
  *   1. Sveltia CMS 保存一篇文章时，只会写回**配置里声明过的字段**。配置漏了一个字段
@@ -35,10 +29,6 @@ const CONFIG = join(ROOT, 'public/admin/config.yml');
 const ADMIN_HTML = join(ROOT, 'public/admin/index.html');
 const DOCS_DIR = join(ROOT, 'src/content/docs');
 const CMS_PACKAGE = '@sveltia/cms';
-if (existsSync(join(ROOT, 'src/data/feishu-manifest.json'))) {
-  await import('./check-feishu-config.mjs');
-  process.exit(0);
-}
 
 /**
  * 读 wrangler 的 jsonc（允许 // 与 /* *​/ 注释）。

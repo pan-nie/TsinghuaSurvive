@@ -26,7 +26,7 @@ export const collections = {
         reviewedAt: z.coerce.date().optional(),
         /** 一句话摘要，显示在卡片和搜索引擎结果里 */
         summary: z.string().optional(),
-        /** 飞书是正文与元信息的编辑来源；页面地址仍由固定映射维护。 */
+        /** 保留飞书手动导出组件的元信息类型；正式网站以仓库 Markdown / MDX 为主稿。 */
         feishu: z.object({ url: z.url(), revision: z.number() }).optional(),
       }),
     }),

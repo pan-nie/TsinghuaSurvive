@@ -1,12 +1,12 @@
 # 交接文档
 
-> **2026-10-28 维护流程复核**：正文与文章信息在飞书编辑；JavaScript / TypeScript、Astro 组件、样式、同步与部署仍由仓库维护。当前内容流程见 [FEISHU-CONTENT.md](./FEISHU-CONTENT.md)，第 9 节保留旧 Sveltia CMS 的历史记录。
+> **当前模式（2026-10-28 恢复）**：仓库 Markdown / MDX 与数据是网站主稿，`/admin/` 为 Sveltia CMS；推送 `main` 或手动运行工作流后检查并发布。飞书文档独立维护，正式发布不调用飞书。保留工具只导出到 `.review/feishu-export/`，见 [FEISHU-CONTENT.md](./FEISHU-CONTENT.md)。
 
 > 这份文档假设读者**对这个项目一无所知**，目标是 10 分钟内接手全部运维。
 > **本文回答**：资源在哪、怎么部署、后台怎么运作、坏了怎么查、性能基线是多少。
 > **不回答**：日常改内容 → [README.md](./README.md)｜内容还缺什么 → [OUTLINE.md](./OUTLINE.md)｜设计史 → [REFERENCE-NOTES.md](./REFERENCE-NOTES.md)
 >
-> 最后更新 **2026-10-28**（按仓库代码修正维护与发布说明；历史云资源、性能与网络实测仍以各节原日期为准，本次未重新实测）
+> 维护流程更新 **2026-10-28**；历史网络、性能、账号资源记录仍以各节原实测日期为准。
 
 ---
 
@@ -23,12 +23,11 @@ flowchart TB
     R2B["R2 tsinghua-guide-media"]
     DO["Durable Object AskGate<br/>限流 / 日额度 / 配置"]
   end
-  FS["飞书：正文、标题、文章信息"] -- "应用身份只读拉取" --> SYNC["Actions：同步 → 校验 → 构建 → 部署"]
-  MAIN -- "push / 手动 / 定时" --> SYNC --> W1 --> SITE["thu.whizzzest.com"]
+  MAIN -- "GitHub Actions：12 步校验 → wrangler deploy" --> W1 --> SITE["thu.whizzzest.com ✅ 线上"]
   PRB -- "本地 npm run dev 自查效果<br/>（PR 预览环境已取消）" --> LOCAL["本地开发"]
-  ADM["/admin/ 维护导航"] --> FS
-  W3 -. "旧 CMS 资源保留" .-> GH
-  R2B --> MEDIA["thu.whizzzest.com/media<br/>由主 Worker 读出已有媒体"]
+  ADM["/admin/ 内容后台（浏览器）"] -- "登录一次，需代理" --> W3
+  ADM -- "之后读写内容：api.github.com" --> GH
+  ADM -- "图片 / 视频（S3 直传，需 CORS）" --> R2B --> MEDIA["thu.whizzzest.com/media<br/>由主 Worker 读出"]
   ASK["/ask/ 站内问答（浏览器）"] -- "POST /api/ask（Turnstile 校验）" --> W1 --> DO
   W1 -- "默认模型，无需 Key" --> WAI["Workers AI"]
   ADMIN["/admin/ai/ 密钥后台"] -- "加密后存 Durable Object" --> DO
@@ -41,17 +40,17 @@ flowchart TB
 | R2 桶 | `tsinghua-guide-media` → `thu.whizzzest.com/media`（主 Worker 读出） | ✅ 桶已建、CORS 已配、R2 API 令牌（Access Key ID 已填进 `site.config.json`）、媒体出口实测 200/206/404 |
 | KV / D1 | —— | 没有，一个都不用 |
 | Durable Object | `AskGate`（一个账号一个 Worker，只有一个） | ✅ 随首次 `wrangler deploy` 已创建，见第 10 节 |
-| 内容维护入口 | `/admin/`（飞书导航，纯静态） | 当前入口不加载 Sveltia CMS；旧 OAuth Worker 与配置保留，重建历史见第 9 节 |
+| 内容后台 | `/admin/`（Sveltia CMS，纯静态） | ✅ 代码已就绪，随站点部署后生效，见第 9 节 |
 | PR 预览 Worker / 预览域名 | ~~`tsinghua-guide-preview`~~ | ❌ 已取消：没有预览 Worker、没有 `preview.yml`；要看效果用本地 `npm run dev`，或合并后在线上看 |
 
 ---
 
 ## 1. 一句话现状
 
-经验分享站：飞书维护正文与文章信息，GitHub 维护代码和文档映射，构建产物托管在 Cloudflare Workers，主域名 <https://thu.whizzzest.com>。
+经验分享站：Markdown 写在 GitHub，构建产物托管在 Cloudflare Workers，主域名 <https://thu.whizzzest.com>。
 **2026-10-05 起多了一个后端**：`/api/*` 提供站内 AI 问答（检索 + 生成 + 人机校验）。页面、图片、
-Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 与 `/media/*` 交给 Worker，其余静态请求不进 Worker。
-部署工作流先拉取飞书，再校验、构建与发布；支持 `main` 推送、手动触发和定时同步。同步不会自动把最新正文提交回 GitHub。
+Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 与 `/media/*` 交给 Worker，其余静态请求不进 Worker，
+所以「改了 Markdown → 提交 → 自动部署」这条主线没有变。
 **没有用户系统、没有数据库**；唯一的持久化是一个 Durable Object（限流计数 + 加密后的第三方 API Key）。
 
 > ✅ **迁移状态（2026-10-12 实测）**：站点已从旧域名 / 旧 Cloudflare 账号迁到 `thu.whizzzest.com` / 账号 W，
@@ -82,13 +81,14 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 
 > ✅ **仓库里已无占位符**（2026-10-12）：`cloudflare.accountId` / `zoneId` / `r2AccessKeyId` 与 Turnstile sitekey 全是真值，
 > `npm run check:deploy-ready` 与 `npm run check:admin` 都不再报警告。
-> 旧 CMS 媒体库的 Secret Access Key 输入流程已不用于日常飞书写作。飞书图片、附件、画板、嵌入电子表格尚未接入发布，遇到这些资源会停止同步；已有 R2 媒体出口仍保留。
+> ⚠️ R2 API 令牌的 **Secret Access Key 只在创建时显示一次**，由每个编辑者第一次打开后台媒体库时在浏览器输入，
+> **不进仓库、也不在维护者手里流转**（丢了就在控制台重新生成一个令牌）。
 >
 > ⚠️ 账号 W 里还有 7 个其它 Worker（nmail-site、whizzzest、whizzzest-admin、whizzzest-game、whizzzest-im、
 > whizzzest-merchant、whizzzest-writer）—— 免费档的 100k 请求/天与 Workers AI 10k Neurons/天是**账号级共享**的，
 > 本站的 `/api/*` 与 `/media/*` 都算在里面。
 
-站点能力一览（区分构建期、浏览器与服务端运行时）：
+站点能力一览：页面和索引在构建期生成，互动工具在浏览器运行，问答与媒体出口在 Worker 运行。
 
 | 能力 | 实现位置 |
 | --- | --- |
@@ -98,15 +98,12 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 | JSON-LD 结构化数据 | `src/components/Head.astro` |
 | 分享卡片图 | `public/og.png` + `public/og/*.png`，由 `scripts/generate-og.mjs` 生成 |
 | RSS / sitemap / robots | `src/pages/rss.xml.ts`、`@astrojs/sitemap`、`public/robots.txt` |
-| 内容同步与维护入口 | `scripts/sync-feishu.mjs`（构建前拉取）、`public/admin/`（飞书导航），见 FEISHU-CONTENT |
-| 浏览器互动工具 | `src/components/` 内的学分表、选课工具、课程筛选、链接搜索与待办保存；组件由 `FeishuSlots.astro` 等接入 |
+| 内容后台 + 视频语法糖 | `public/admin/`、`src/utils/media-embed.mjs`（见第 9 节） |
 | **站内 AI 问答** | `src/worker/`（运行时，`/api/*`）+ `src/components/AskBox.astro`（见第 10 节） |
 | **媒体出口** | `/media/*` 由 `src/worker/media.js` 从 R2 读（见第 9.3 节） |
 
 仓库 Secrets：`CLOUDFLARE_ACCOUNT_ID` ✅、`CLOUDFLARE_API_TOKEN` ✅ —— **2026-10-12 已换成账号 W 的**（`gh secret list` 可见两者的更新时间；
-旧账号的 token 会因「看不到目标账号」被凭证守卫拦下并使工作流失败；权限最小集合与重建步骤见第 5 节、MIGRATION.md §8 第 4 步）。
-
-飞书同步还需要仓库变量 `FEISHU_APP_ID` 与 Secret `FEISHU_APP_SECRET`。CI 使用应用身份，只读访问已映射文档；凭证配置与缓存恢复见 [FEISHU-CONTENT.md](./FEISHU-CONTENT.md)。
+旧账号的 token 会因「看不到目标账号」被凭证守卫拦下、跳过部署；权限最小集合与重建步骤见第 5 节、MIGRATION.md §8 第 4 步）。
 
 **Worker 侧的 Secret（不属于仓库 Secrets，用 `wrangler secret put` 写入，见第 10.2 节）**：
 
@@ -118,7 +115,7 @@ Pagefind 索引仍然是纯静态直出——`run_worker_first` 只把 `/api/*` 
 
 CI 验证记录（**账号 N 时期的历史记录**，迁移后需重跑一次 `deploy:dry` 确认）：`workflow_dispatch` 运行 34 s 全绿，Cloudflare 侧生成新版本 `2166042b-d87d-4c0a-9292-b5a95e0602dd`（02:51:52Z），站点 HTTP 200。
 
-> ⚠️ 当前凭证守卫在 Token 缺失、账号不匹配或无法访问目标账号时以非零状态退出，工作流失败且不部署；不会仅给警告后成功结束。
+> ⚠️ 当前凭证守卫在 Token 缺失、账号不匹配或无法访问目标账号时使工作流失败，且不部署。
 
 ---
 
@@ -130,7 +127,7 @@ CI 验证记录（**账号 N 时期的历史记录**，迁移后需重跑一次 
 | 主题 | Starlight | 侧边导航、目录、深色模式、搜索、i18n 全部内置 |
 | 搜索 | Pagefind（Starlight 内置） | 构建时生成静态索引，不需要服务端 |
 | 托管 | Cloudflare Workers：静态资源 + 一个 `/api/*` 入口 + `/media/*` 媒体出口 | 页面仍然是纯静态直出（`run_worker_first` 只管 `/api/*` 与 `/media/*`），静态请求不计费、无冷启动；**加后端只加在问答接口与媒体出口上**，不牺牲站点其余的零运行时特性 |
-| 内容 | 飞书 → Markdown / 自定义页数据 + zod 校验 | 生成副本供构建使用；转换校验和内容模型共同检查字段与结构，正文主稿不在仓库副本里 |
+| 内容 | Markdown / MDX + zod 强校验 | frontmatter 写错**构建直接失败并指出文件**，不会静默生成坏页面 |
 
 **决策一：必须用自定义域名。** 实测 `tsinghua-guide.pan-nie.workers.dev` 在校园网被 DNS 污染（解析到美国 IP `208.101.21.43` 后超时）；绑定自定义域名后 **HTTP 200、TLS 0.17 s、整页 0.5–0.9 s**。所以 `wrangler.jsonc` 里写的是
 `"routes": [{ "pattern": "thu.whizzzest.com", "custom_domain": true }]`。
@@ -144,28 +141,21 @@ CI 验证记录（**账号 N 时期的历史记录**，迁移后需重跑一次 
 
 ### 改一篇文章
 
-从 [飞书总导航](https://my.feishu.cn/docx/S2FVdp173oWkY4x0v2dcKCcIn0f) 找到文章，修改正文与「文档信息」表格，保留分界标题和组件标记。自动同步计划每小时第 7、22、37、52 分钟运行，调度可能延迟；需要立即发布可手动运行 `deploy.yml`。普通内容修改不经过代码 PR，发布检查也不等于人工事实审阅。
-
-> 已迁文章的 Markdown、`feishu-custom.json`、`feishu-state.json` 和 `public/content-version.json` 是生成副本，直接修改会在下次同步被覆盖。飞书代码块只展示代码，不执行 JavaScript。新增文章须同时登记 `feishu-manifest.json`；实现互动功能应修改组件和同步适配，不在正文副本中加入 MDX 逻辑。
-
-### 改网站代码与本地预览
-
 ```bash
-npm ci
-npm run sync:feishu    # 需要已配置官方 lark-cli；读取最新正文并刷新本地生成副本
-npm run dev            # http://localhost:4321；修改组件、样式、Worker 或配置
-npm run check:feishu
-npm run verify
+npm run dev            # http://localhost:4321，改 Markdown 自动热更新
+npm run check:all      # 提 PR 前跑（类型 + 内容 + 后台 + 媒体）
+git add -A && git commit -m "docs: 更新选课时间线" && git push
 ```
 
-完整缓存可用 `node scripts/sync-feishu.mjs --cached` 离线转换。同步产生的正文差异不属于功能改动，提交前用 `git diff` 核对并只暂存本次需要的文件；代码经 PR 合并 `main` 后自动发布。
+> ⚠️ **正文里要写 JS 时必须用 `.mdx`，而且顶层声明要写 `export const`**（2026-09-30 实测）：
+> 裸 `const` 时 `astro check` 报 0 errors，但 `npm run build` 直接失败 —— **`check:all` 抓不到，只有真跑一次 build 才暴露**。
+> 报错文案：对象字面量 → `Could not parse expression with oxc: Expected ',' or ')' but found ':'`；普通语句 → `Unexpected statement in code: only import/exports are supported`。
 
 ### 提交前的自动检查
 
 | 命令 | 关键点 |
 | --- | --- |
-| `npm run check:feishu` | 飞书转换回归检查；未包含在 `verify` 中，需单独运行 |
-| `npm run check:all` | 类型 + 域名 + 内容 + 飞书映射与入口 + 媒体 |
+| `npm run check:all` | 类型 + 内容 + 后台 + 媒体 |
 | `npm run check:content` / `:strict` | 内容检查；`strict` 连债务警告也当错误（发布前用） |
 | `npm run verify` | 上面全部 + 构建 + JSON-LD + 资源 + 订阅 + 产物比对 —— **一条命令跑完，提 PR 前跑这个** |
 
@@ -176,7 +166,8 @@ npm run verify
 | **错误**（阻断部署） | 站内链接指向不存在的页面（带文件:行号）、文件名不是 ASCII slug、`reviewedAt` 写在未来、同目录 `sidebar.order` 冲突、`links.ts` 重名或非法网址、资料有提取码却没链接、课程索引引用了未定义的资料库或拼不出链接 |
 | **警告**（只提示） | 作者还是占位符、`status: draft` 数量、链接没有 `reviewedAt` 或超过 12 个月未确认、链接实测结果过期或有链接打不开、文章超过 6 个月未核对 |
 
-当前 `deploy.yml` 在构建前同步飞书，运行转换、类型、域名、内容、映射、媒体与课程索引检查；构建后运行 AI、结构化数据、资源、文本与媒体检查。`check:feeds` 包含在本地 `verify` 中，当前未单独接入部署工作流。当前无 PR 检查工作流，合并前须本地自查。
+CI 另外跑：`courses:check`（构建前）、构建后的 `check:jsonld` / `check:assets` / `check:markup` / `check:media:dist`；`check:feeds` 在本地 `verify` 中运行。当前无独立 PR 检查工作流，合并前需本地自查。
+**错误级检测都做过注入测试验证会真的触发**，不是写了没用。
 
 ### 实测链接是否还能打开
 
@@ -187,7 +178,7 @@ LINK_CHECK_NETWORK='清华校园网（无线，DNS 166.111.8.28）' npm run chec
 ```
 
 ⚠️ 需要联网，所以**不进 CI 必跑步骤**（某个学校系统抽风会误报）。建议每次内容批量更新后手动跑一次并提交 `link-status.json`。
-这些脚本读取保留的结构化链接数据；当前链接目录正文在飞书。写入 `link-status.json` / `links.ts` 不会自动刷新飞书里的链接、日期和状态，需要核对后同步更新文档。
+页面上每条链接有两个独立角标：**实测**（机器测「网址活着」，不证明入口还是干那件事）与**人工核对**（`reviewedAt`，有人点开确认过）。
 
 ### 验证前端交互（改了 `/courses/` 或链接页之后）
 
@@ -247,17 +238,18 @@ npm run check:content && npm run build
 
 ### 加一个校内链接 / 加一份资料
 
-在对应飞书目录文档中编辑正文，按实际核对结果填写网址、说明、日期和状态。`src/data/links.ts` / `resources.ts` 等旧数据仍供保留组件与检查脚本使用，只改这些文件不会更新飞书主稿。资料只放外链，**文件本体不要进仓库**。
+- `src/data/links.ts`：加记录（含 `reach` 与 `origin`）。**网址活着是机器测的，入口有没有写错只有人能判断** —— 填上 `reviewedAt` + `verifiedBy` 才会消掉「人工核对：待补」。
+- `src/data/resources.ts`：`url` 留空或写 `'TODO'` 时页面显示「待补充」，不会渲染死链。**文件本体不要进仓库。**
 
 ### 站内互动工具（没有后端）
 
 | 工具 | 文件 | localStorage 键名 |
 | --- | --- | --- |
-| 飞书文章中的待办（含报到清单） | `FeishuChecklist.astro` | `feishu-checklist:<飞书文档 URL>:<项序号>` |
+| 报到清单（可勾选） | `Checklist.astro` → `/freshman/arrival-checklist/` | `tsinghua-guide-checklist:<id>` |
 | 学分缺口拆解表 | `CreditPlanner.astro` → `/academics/credit-planner/` | `tsinghua-guide-credit-planner-v1` |
 | 选课决策工作台 | `SelectionWorkbench.astro` → `/academics/course-decision/` | `tsinghua-guide-selection-workbench-v1` |
 
-数据只存在读者自己的浏览器里，**不采集、不上传**；不会与飞书共享待办互相同步。当前待办按项序号保存，调整顺序后需检查旧勾选是否错位；旧 `Checklist.astro` 的存储键不自动迁移。`check:e2e` 覆盖课程、链接搜索和学分表等交互，选课工作台与待办保存还需在浏览器实际操作核对。
+数据只存在读者自己的浏览器里，**不采集、不上传**。改动后务必跑 `npm run check:e2e` —— 这几个组件的关键路径是「点一下会不会真算」。
 
 > ⚠️ **写这类组件必须用 `<style is:global>` + 类名前缀**（`CreditPlanner` 踩过，2026-09-30 修掉）。
 > Astro 的 `<style>` 默认是作用域样式，选择器编译成 `.foo:where(.astro-xxxx) input:where(.astro-xxxx)`，
@@ -277,13 +269,11 @@ npm run og             # 用 sharp 渲染，只要 npm install 过就能跑
 ### 部署 / 回滚 / 紧急下线
 
 ```bash
-npm run deploy         # 部署闸门 → build → wrangler deploy；不会主动同步飞书
+npm run deploy         # = npm run build && wrangler deploy（平时不用跑，推 main 会自动部署）
 npm run deploy:dry     # 只验证，不上传
 npx wrangler versions list && npx wrangler rollback <VERSION_ID>   # 回滚
 npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起清理）
 ```
-
-手动部署前先同步最新飞书内容并完成检查。回滚内容版本时先暂停定时同步，否则下一次调度可能重新发布飞书当前稿；步骤见 FEISHU-CONTENT。`wrangler delete` 会删除 Worker，仅用于明确决定下线，不作为普通回滚步骤。
 
 ---
 
@@ -302,8 +292,8 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 | `npm run check:deploy-ready` | 部署闸门：`site.config.json` / `ai.config.yml` 里还有会**拖坏线上**的 `REPLACE_` 占位符就拒绝部署；只影响后台传图的占位符降级为警告（否则 wrangler 只会抛一个跟根因无关的错） | `deploy` / `deploy:dry` 与 CI 部署步骤会自动先跑 |
 | `npm run check:live` | **线上真实站点**的冒烟检查（18 项）：canonical / robots / sitemap / RSS 的域名、`/api/ai-config` 的 sitekey 与仓库配置是否一致、无 token 时是否 fail-closed、媒体 404、后台 noindex、404 页面与尾斜杠重定向、auth 白名单、http 是否跳 https | 部署后（已接入 `deploy.yml`）、换域名/换挂件后、怀疑线上有静默问题时；`--base <url>` 可指向别的地址 |
 
-**以后换域名的动作**：① 改 `site.config.json`（新域名 + 把旧域名加进 `hostRewrites`）→ ② `npm run domain:sync` →
-③ `npm run og` → ④ `npm run verify`。飞书迁移后还需核对 `feishu-manifest.json` 的 `siteOrigin`、飞书主稿链接与维护入口，不能只改生成副本。本次域名迁移的历史方案与账号侧步骤见 [MIGRATION.md](./MIGRATION.md)。
+**以后换域名的完整动作**：① 改 `site.config.json`（新域名 + 把旧域名加进 `hostRewrites`）→ ② `npm run domain:sync` →
+③ `npm run og` → ④ `npm run verify`。本次迁移的完整方案与账号侧步骤见 [MIGRATION.md](./MIGRATION.md)。
 
 ### 5.2 CI 的 API Token
 
@@ -336,8 +326,7 @@ npx wrangler delete    # 紧急下线（自定义域名的 DNS 记录会一起�
 | 域名解析 NXDOMAIN | **先别急着改配置**。清华校园网**透明劫持 53 端口 DNS**：问 8.8.8.8 / 223.5.5.5 / 119.29.29.29 拿到的都是校内解析器的答案，看起来像「公共 DNS 全挂了」。用 DoH（443 端口）或直接 `dig` 绕开验证：`curl "https://dns.alidns.com/resolve?name=thu.whizzzest.com&type=A"`、`dig +short thu.whizzzest.com @1.1.1.1`；铁证：`dig +short TXT o-o.myaddr.l.google.com @8.8.8.8` 返回校内地址就是被劫持。真正原因通常只是校内解析器缓存了建记录之前的否定结果（SOA minimum=1800，约 30 分钟过期） |
 | 站点打不开但 Cloudflare 显示已部署 | 先分清 DNS 还是部署：`dig +short thu.whizzzest.com @1.1.1.1`（或 DoH 查询）看解析是否正常，再 `curl -I https://thu.whizzzest.com/` 看响应；**不要写死 IP** —— Cloudflare 的 anycast 地址会变，硬编码的 `--resolve` 只是把 DNS 问题掩盖成连接问题 |
 | 搜索搜不到中文 | Pagefind 支持中文分词但**不做词干化**：「选课」与「选课规则」不互相命中。搜 2–3 字短词，靠 tags 补足 |
-| **github.com 网页端打不开** | 2026-09-30 / 10-03 的校园网记录仅供参考，可达性会变。日常正文编辑走飞书；代码修改可使用本地 Git。当前文章「编辑此页」指向对应飞书文档 |
-| 飞书已保存但网站没变化 | 看 `deploy.yml` 是否已调度、同步与构建是否失败；核对应用访问权限、组件标记与未支持资源。调度可能延迟，可手动触发。部署后用 `node scripts/check-feishu-live.mjs` 核对内容版本 |
+| **github.com 网页端打不开** | 校园网实测（2026-09-30 超时 / 2026-10-03 复测 200，**会变**）：`git push` / `git clone`（SSH，22 与 `ssh.github.com:443`）、`api.github.com`、`gh` CLI 全部正常，**只有网页端不行**。所以走「本地改 + `git push`」或站内后台，别指望点网页上的「编辑此页」——那些链接没写错 |
 | 构建报 frontmatter 错误 | **设计如此**。按报错指出的文件修正字段，字段定义见 `src/content.config.ts` |
 | 部署刚完成时个别页面 404 | **部署传播竞态**，几秒后自恢复（实测遇到过一次 `/freshman/dorm-and-network/`）。等 10 秒再请求一次，仍 404 才是真问题 |
 | 中文标签/阶段页返回 307 | **正常**。Cloudflare 把原始 UTF-8 路径（`/tags/选课/`）307 规范化到百分号编码形式，浏览器自动跟随，最终 200 |
@@ -402,7 +391,7 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 - **HTML 不是瓶颈**：课程索引页原始 205.8 KB，gzip 后只有 25.8 KB（8 倍压缩，卡片结构高度重复）。定位曾经是 269 KB，2026-09-30 瘦身过一次（去掉 Astro 作用域类 + `data-search` 副本 + 按资料库分组）。
 - **真正的重量是 Starlight 的 UI bundle（约 98–104 KB 未压缩）与 CSS（71–89 KB）**，gzip 后约 30 KB + 15 KB，可以接受。要再快一档的方向是**按需加载 Expressive Code**（只有带代码块的页面才需要），不是继续压 HTML。
 - **与 2026-09-30 那版的差别**：链接页 `HTML(gzip)` 18.9 → 23.8 KB（链接 47 → 60 条；09-30 那次是 39 → 47 条、+1.8 KB）；课程索引原始 204.4 → 205.8 KB；其余页面在 0.3 KB 量级，**框架带来的 JS / CSS 一个字节没变**。
-- **已有媒体继续由主 Worker 的 `/media/*` 读取 R2**。旧 CMS 的浏览器压缩与 S3 直传流程已停用；飞书图片、附件等尚未适配发布，不能沿用旧传图说明。旧设计取舍保留在第 9 节。
+- **图片走 R2，由主 Worker 在 `/media/*` 读出，不走 Astro 图片管线**：正文图片的地址是 `https://thu.whizzzest.com/media/…`（`wrangler.jsonc` 的 `MEDIA` 绑定 + `assets.run_worker_first`），后台媒体库上传前在浏览器里转 WebP、长边 2048、剥 EXIF。代价是没有响应式 srcset / AVIF；收益是作者零心智负担、仓库永不因图片变重。想改回「图片进仓库 + Astro 优化」，得同时改 `public/admin/config.yml` 的媒体库设置与 `scripts/check-media.mjs` 的白名单，别只改一半。（Astro 确实能优化正文里的**相对路径**图片，但 Sveltia 的 `public_folder` 不支持相对路径，两者不能同时要。）
 - ⚠️ **本地 `npm run dev`（纯 Astro）看不到媒体**：`/media/*` 是 Worker 的路由，纯 Astro dev server 不实现它。要在本地看图片 / 视频，用 `npm run dev:worker`（wrangler dev，连真实 R2）。
 
 ---
@@ -417,19 +406,14 @@ CSS ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇    71.2–89.4 KB
 - **没有评论系统**（刻意不做）：依赖 `github.com` 登录才能发言，校园网内读者不会为评论去挂代理；且评论区会把「不指名评价老师」这条红线从「我们写」变成「读者写、站长兜底」。纠错入口是页脚的 GitHub Issues。
 - **站点上没有任何课程文件**：`/courses/` 只是索引，许可、存活、下架都不由本站控制。
 - **链接实测依赖联网**，所以 `check:links` 不进 CI 必跑步骤；结果过期只给警告，不阻断构建。
-- **更新日志 / 贡献者页仍统计 Git 历史**（CI 保留 `fetch-depth: 0`）。飞书正文修改不会自动成为 Git 提交，因此这两页不是完整的内容修改记录；飞书文档信息中的作者与页面更新时间另随同步进入构建。拿不到 Git 历史时页面降级显示。
+- **更新日志 / 贡献者页依赖完整 Git 历史**（CI 的 `fetch-depth: 0` 就是为它和 Starlight 的「最后更新」配的）。拿不到历史时降级成一句说明，不会构建失败。
 - **构建依赖 Node 20+**，CI 用 Node 22。
 - **课程索引页刻意不用 Astro 作用域样式**（`<style is:global>` + `cg-` 前缀）：作用域会给 2500 个元素各加一个 `astro-xxxx` 类，实测多出 40 KB；页面体积从 269 KB 降到 205.8 KB（2026-10-03 实测）。**不要「顺手」改回作用域样式** —— 除了体积，用 JS 二次渲染的组件会直接失效（见第 4 节）。
 - **JSON-LD 只在 `src/components/Head.astro` 输出**：页面里不要再写一份，否则同页两个 `@type` 互相打架（`check:jsonld` 会拦，但别故意踩）。
 
 ---
 
-## 9. 旧 Sveltia CMS 后台（历史记录）
-
-> 本节记录迁移前的登录、传图与配置方案。当前 `/admin/` 是飞书导航，不再加载编辑器；`check:admin` 已转为飞书映射检查，不再校验本节的 CMS 字段和 OAuth 配置。不要直接按本节恢复旧编辑器并编辑已迁文章，否则飞书同步仍会覆盖生成副本。R2 出口与旧 OAuth Worker 的资源配置保留。
-
-<details>
-<summary>展开旧 CMS 的实现、重建与踩坑记录</summary>
+## 9. 站内后台（改内容不用碰代码）
 
 > 2026-09-30 新增；目标是「会用浏览器就能改内容」，同时**不放松**原有质量门。
 > 方案决策记录（为什么选它、否决了哪些备选）见 [CONTENT-EDITING-PLAN.md](./CONTENT-EDITING-PLAN.md)。
@@ -547,11 +531,9 @@ npm run check:media:worker    # 端到端验证 /media/* 出口（33 项断言�
 
 ---
 
-</details>
-
 ## 10. 站内 AI 问答（2026-10-05 上线）
 
-站内问答是服务端运行时功能之一：`/ask/` 页面问一句，系统在站内文章里检索相关段落，
+站内问答是本站服务端运行时功能之一：`/ask/` 页面问一句，系统在站内文章里检索相关段落，
 交给大模型**只依据这些段落**作答，并标出每一句的出处。
 
 ### 10.1 它由五块组成
@@ -560,9 +542,9 @@ npm run check:media:worker    # 端到端验证 /media/* 出口（33 项断言�
 | --- | --- | --- |
 | 索引构建 | `scripts/build-ai-index.mjs` | **构建期**（`npm run build` 的一部分） |
 | 检索 + 生成 | `src/worker/index.js`、`retrieval.js`、`providers.js`、`turnstile.js`、`gate.js` | 请求时（只有 `/api/*` 与 `/media/*` 会进 Worker） |
-| 前端 | `src/components/AskBox.astro`，通过 `FeishuSlots.astro` 插入 `/ask/` 等页面 | 浏览器；页面说明与组件标记来自飞书 |
+| 前端 | `src/components/AskBox.astro`，由 `src/content/docs/ask.mdx` 等页面引入 | 浏览器 |
 | 密钥后台 | `public/admin/ai/index.html` | 浏览器（改模型/Key 时用） |
-| 配置 | `src/data/ai.config.yml` → `dist/ai-config.json` | 仓库维护默认值，构建期生成；部分运行时覆盖通过 `/admin/ai/` 设置 |
+| 配置 | `src/data/ai.config.yml` → `dist/ai-config.json` | 构建期生成，后台可编辑 |
 
 **请求链路**（`POST /api/ask`）：
 
@@ -625,9 +607,9 @@ curl -s https://thu.whizzzest.com/api/ai-config | head -c 300
 
 | 想做什么 | 怎么做 |
 | --- | --- |
-| 换默认模型 | 修改 `src/data/ai.config.yml` 的 `answer.provider` / `model`，自查后走 PR → 合并 → 部署 |
+| 换模型 | 后台「站点配置 → AI 问答」改 `answer.provider` / `model`，走 PR → 合并 → 部署 |
 | 临时试第三方模型 | `/admin/ai/` 页面：选预设、填 Key、点保存。**运行时覆盖立即生效，不用重新部署** |
-| 改限额 / 提示词补充 | 修改 `src/data/ai.config.yml` 的 `limits` 与 `answer.system_prompt_extra`，构建部署后生效 |
+| 改限额 / 提示词补充 | 同上，`limits` 与 `answer.system_prompt_extra` |
 | 看今天用了多少额度 | `/admin/ai/` 的「当前状态」面板 |
 | 关掉整个功能 | `ai.config.yml` 里 `enabled: false` |
 
@@ -718,8 +700,6 @@ Workers AI 面板看真实用量，和 10.3 的估算对一下，再决定 `dail
 
 ## 11. 首页（splash 版式）改版（2026-10-05）
 
-> 以下是当时的版式与测量记录。2026-10-28 迁移后，首页正文在飞书，`src/content/docs/index.md` 是生成副本；卡片转换规则在 `src/utils/feishu-directory.mjs`，问答与统计组件由 `FeishuSlots.astro` 接入。旧 MDX 路径、import 与布局说明用于理解改版历史，不作为当前编辑步骤。
-
 ### 11.1 改版前的实测问题
 
 用无头 Chrome 实拍 1440×900 与 390×844。改版前后的截图留在本地 `.review/`
@@ -785,8 +765,6 @@ Workers AI 面板看真实用量，和 10.3 的估算对一下，再决定 `dail
 
 ## 12. 「清小搭」内容页与导航分组改名（2026-10-06）
 
-> 本节为新增页面时的历史记录。当前清小搭正文在飞书，`qingxiaoda.md` 是生成副本；新增页面需维护 `feishu-manifest.json` 和站点导航，不再向旧 CMS 集合登记。平台规则与接入协议仍需按实际编辑时的官方材料复核，本节保留原调研日期。
-
 ### 12.1 做了什么
 
 - 左侧导航第一个分组 **`站内问答` → `AI 功能`**，组内两项：
@@ -832,3 +810,14 @@ Workers AI 面板看真实用量，和 10.3 的估算对一下，再决定 `dail
 该站有一个**公开可读的动态列表接口**（无 token 也能读）。**没有**用它做任何站内功能：
 用户协议 4.3 条明确禁止爬虫，抓它属于那条禁令覆盖的范围。这里只记录"知道但没做"这个决定，
 不记具体地址——仓库是 public，把可抓的接口写进交接文档等于变相教人绕过规则。
+
+
+## 13. 2026-10-28 恢复仓库维护
+
+恢复基线为 `227bdc6`，回退前版本为 `e62ae56`，完整保留标记为 `codex/before-git-restore-2026-10-28`。恢复文章、MDX 组件接入、课程数据页、CMS 编辑器与 Git 发布流程；飞书代码和映射继续保留，但不再因映射文件存在而切换 `check:admin` 的行为。
+
+正式 `deploy.yml` 仅响应 `main` 推送和手动运行，没有定时同步，不安装飞书 CLI，不读取飞书凭证，也不核对 `content-version.json`。旧版本文件移至 `docs/feishu/last-published-content-version.json` 作历史快照，不再作为公开资源发布。
+
+本次回退前只读核对全部 79 篇飞书文档，并保存快照于本地 `.review/restore-git-2026-10-28/`（不提交）。与原仓库生成副本相比，仅《如何使用本站》多出飞书自动同步维护说明；此说明已不适用于恢复后的站点。飞书云端文档、权限与目录未改动。
+
+以后直接修改仓库文章不会被自动覆盖。手动飞书导出同样只写 `.review/` 子目录；重新接通网站需单独规划和验证，不能直接运行历史迁移脚本。

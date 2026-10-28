@@ -7,14 +7,12 @@
  */
 import Default from '@astrojs/starlight/components/Footer.astro';
 import ArticleMeta from './ArticleMeta.astro';
-import FeishuChecklist from './FeishuChecklist.astro';
 
 const repo = 'https://github.com/pan-nie/TsinghuaSurvive';
 const year = new Date().getFullYear();
 ---
 
 <ArticleMeta />
-<FeishuChecklist />
 
 <Default />
 
@@ -26,7 +24,7 @@ const year = new Date().getFullYear();
   <p>
     发现内容有误、过期，或想补充一篇经验帖？欢迎到
     <a href={`${repo}/issues/new`} target="_blank" rel="noopener">GitHub Issues</a>
-    提出；维护者可通过页面下方的“编辑此页”进入对应飞书文档。
+    提出，或直接<a href={`${repo}/edit/main/`} target="_blank" rel="noopener">编辑对应页面</a>提交 PR。
   </p>
   {/*
     维护者入口：给站长一个从任意页面直达站内后台的入口，省得每次手打地址。
@@ -37,8 +35,8 @@ const year = new Date().getFullYear();
     HTML 注释会被原样发到浏览器，等于把维护者说明公开给所有读者（2026-10-12 实测踩到）。
   */}
   <p class="site-notice__admin">
-    维护者入口：<a href="/admin/" rel="nofollow">飞书内容库</a>
-    · 在飞书编辑，网站定时同步。
+    维护者入口：<a href="/admin/" rel="nofollow">站内后台</a>
+    —— GitHub 登录后可改文字 / 传图 / 嵌视频，保存会自动开 PR，合并后上线。
   </p>
   <p class="site-notice__copy">
     © {year} 清华生存指南 · 内容采用 CC BY-NC-SA 4.0 许可 · 由

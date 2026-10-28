@@ -126,7 +126,7 @@ export const SYNCED_FILES = [
   'public/robots.txt',
   'r2/cors.json',
   'src/data/ai.config.yml',
-  'src/content/docs/contribute.md',
+  'src/content/docs/contribute.mdx',
   'src/utils/media-embed.mjs',
   '.github/ISSUE_TEMPLATE/config.yml',
   '.github/pull_request_template.md',

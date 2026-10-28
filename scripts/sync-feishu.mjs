@@ -8,6 +8,20 @@ import { createSatteriMarkdownProcessor } from '@astrojs/markdown-satteri';
 import { partsFromXml, frontmatterFromDocument, bodyToMarkdown, sourceDocument, nodes, escapeHtml, markdownConverter } from './feishu/content.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+// Retained as a read-only cloud export tool. Never overwrite the Git-authored website.
+const outputIndex=process.argv.indexOf('--output');
+if(outputIndex!==-1&&(!process.argv[outputIndex+1]||process.argv[outputIndex+1].startsWith('--')))throw Error('--output 需要一个 .review/ 下的导出目录');
+const outputRoot=path.resolve(root,outputIndex===-1?'.review/feishu-export':process.argv[outputIndex+1]);
+const reviewRoot=path.join(root,'.review');
+const relativeOutput=path.relative(reviewRoot,outputRoot);
+if(!relativeOutput||relativeOutput==='..'||relativeOutput.startsWith('..'+path.sep)||path.isAbsolute(relativeOutput))throw Error('飞书导出只能写入 .review/ 的子目录，不能覆盖正式网站');
+// Reject symlinks which could redirect an otherwise safe output path into website sources.
+async function assertNoSymlinks(target){
+ for(let dir=target;dir!==root;dir=path.dirname(dir)){
+  try{if((await fs.lstat(dir)).isSymbolicLink())throw Error('飞书导出目录不能包含符号链接');}catch(error){if(error.code!=='ENOENT')throw error;}
+ }
+}
+await assertNoSymlinks(outputRoot);
 const manifest=JSON.parse(await fs.readFile(path.join(root,'src/data/feishu-manifest.json'),'utf8'));
 const cacheDir=path.join(root,'.feishu-cache');
 await fs.mkdir(cacheDir,{recursive:true});
@@ -81,7 +95,7 @@ for(const entry of manifest.documents){
 }
 
 let previous={documents:{}};
-try{previous=JSON.parse(await fs.readFile(process.env.FEISHU_COMPARE_PUBLISHED==='1'?path.join(cacheDir,'published.json'):path.join(root,'src/data/feishu-state.json'),'utf8'));}catch{}
+try{previous=JSON.parse(await fs.readFile(path.join(outputRoot,'src/data/feishu-state.json'),'utf8'));}catch{}
 const changed=manifest.documents.some(entry=>previous.documents[entry.token]?.bodyHash!==results.get(entry.token).bodyHash||previous.documents[entry.token]?.metadataHash!==results.get(entry.token).metadataHash||previous.documents[entry.token]?.revision!==results.get(entry.token).revision);
 const stage=path.join(cacheDir,'stage-'+randomUUID());await fs.mkdir(stage,{recursive:true});
 const writes=[];const custom={};
@@ -92,12 +106,15 @@ for(const entry of manifest.documents){
  const target=entry.source.replace(/\.mdx$/,'.md');const staged=path.join(stage,target);await fs.mkdir(path.dirname(staged),{recursive:true});await fs.writeFile(staged,sourceDocument(result.frontmatter,result.body));writes.push({entry,target,staged});
 }
 const state={syncedAt:new Date().toISOString(),documents:Object.fromEntries([...results.values()].map(r=>[r.entry.token,{route:r.entry.route,url:r.entry.url,revision:r.revision,bodyHash:r.bodyHash,metadataHash:r.metadataHash}]))};
+for(const target of [...writes.flatMap(({entry,target})=>[target,entry.source]),'src/data/feishu-custom.json','src/data/feishu-state.json','public/content-version.json'])await assertNoSymlinks(path.join(outputRoot,target));
 // All network reads and transformations have succeeded; apply the complete batch.
-for(const {entry,target,staged} of writes){await fs.copyFile(staged,path.join(root,target));if(target!==entry.source)await fs.rm(path.join(root,entry.source),{force:true});}
-await fs.writeFile(path.join(root,'src/data/feishu-custom.json'),JSON.stringify(custom,null,2)+'\n');
-await fs.writeFile(path.join(root,'src/data/feishu-state.json'),JSON.stringify(state,null,2)+'\n');
-await fs.writeFile(path.join(root,'public/content-version.json'),JSON.stringify(state)+'\n');
+for(const {entry,target,staged} of writes){await fs.mkdir(path.dirname(path.join(outputRoot,target)),{recursive:true});await fs.copyFile(staged,path.join(outputRoot,target));if(target!==entry.source)await fs.rm(path.join(outputRoot,entry.source),{force:true});}
+await fs.mkdir(path.join(outputRoot,'src/data'),{recursive:true});
+await fs.mkdir(path.join(outputRoot,'public'),{recursive:true});
+await fs.writeFile(path.join(outputRoot,'src/data/feishu-custom.json'),JSON.stringify(custom,null,2)+'\n');
+await fs.writeFile(path.join(outputRoot,'src/data/feishu-state.json'),JSON.stringify(state,null,2)+'\n');
+await fs.writeFile(path.join(outputRoot,'public/content-version.json'),JSON.stringify(state)+'\n');
 await fs.writeFile(path.join(cacheDir,'index.json'),JSON.stringify(nextCache,null,2)+'\n');
 await fs.rm(stage,{recursive:true,force:true});
 if(process.env.GITHUB_OUTPUT)await fs.appendFile(process.env.GITHUB_OUTPUT,`changed=${changed}\n`);
-console.log(JSON.stringify({documents:manifest.documents.length,fetched,reused:manifest.documents.length-fetched,changed,siteOrigin:manifest.siteOrigin},null,2));
+console.log(JSON.stringify({documents:manifest.documents.length,fetched,reused:manifest.documents.length-fetched,changed,siteOrigin:manifest.siteOrigin,output:outputRoot},null,2));

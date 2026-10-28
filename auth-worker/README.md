@@ -1,8 +1,8 @@
-# OAuth 中转（旧 Sveltia CMS 的 GitHub 登录）
+# OAuth 中转（内容后台的 GitHub 登录）
 
-> **最后更新：2026-10-28。** 当前 `/admin/` 已改为飞书导航，不使用这里的 OAuth 登录。此 Worker 与配置保留，以下是旧 CMS 的实现与重建记录；当前内容与代码维护流程见 [FEISHU-CONTENT.md](../FEISHU-CONTENT.md) 和 [README.md](../README.md)。
+> 2026-10-28 已恢复 Sveltia CMS，本目录重新用于网站后台登录；飞书文档独立维护，不参与该流程。下文云端与网络验证记录保留原日期。
 
-这个目录里是**内联的上游代码**，用于旧内容后台的 GitHub 登录（OAuth 授权码流程）。
+这个目录里是**内联的上游代码**，负责内容后台的 GitHub 登录（OAuth 授权码流程）。
 
 ```
 auth-worker/
@@ -14,7 +14,7 @@ auth-worker/
 ## 它解决什么问题
 
 Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret；
-当时的实现采用服务端授权码交换流程，
+当时的实现选择服务端授权码交换流程，
 所以登录时的「授权码 → 访问令牌」交换必须有个服务端来做 —— 就是这个 13KB 的 Worker。
 
 流程：
@@ -30,16 +30,16 @@ Sveltia CMS 是纯前端应用，浏览器里不能放 GitHub 的 client secret�
 后台拿到令牌（存浏览器 localStorage）→ 之后所有读写直接走 api.github.com（校园网实测可达）
 ```
 
-以上网络表现是旧方案的历史测点记录，不保证当前网络可达性或令牌长期有效。
+**所以只有第 ② 步需要代理，而且每个编辑者只需登录一次。**
 
 ## 一次性部署（需要你自己的 Cloudflare 与 GitHub 账号）
 
-> **历史状态（2026-10-12 迁移完成）**：OAuth 中转已随主站迁到账号 W 并接通 ——
+> **当前状态（2026-10-12 迁移完成）**：OAuth 中转已随主站迁到账号 W 并接通 ——
 > `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` 已写入账号 W 的 `tsinghua-guide-auth`，
 > OAuth App 的 Authorization callback 已改成 `https://auth.thu.whizzzest.com/callback`、Homepage 改成 `https://thu.whizzzest.com/`。
 > 线上实测：`GET /auth?provider=github&site_id=thu.whizzzest.com` → **302 跳到 github.com 授权页**（不再是 `MISCONFIGURED_CLIENT`），
 > 陌生 `site_id` 拿不到跳转（白名单只放 `*.whizzzest.com` 与 `localhost`）。
-> 当时后台使用 **Sign in with GitHub** 登录，令牌登录保留作备用。完整记录见根目录 `MIGRATION.md` §8 第 7 步。
+> 后台现在用 **Sign in with GitHub** 登录，令牌登录仍保留作备用。完整记录见 `MIGRATION.md` §8 第 7 步。
 > 下面的步骤是**重建配方**，适用于「换 OAuth App、密钥泄漏、或别人 fork 后重建」。
 
 ### 1. 注册 GitHub OAuth App
@@ -79,11 +79,12 @@ backend:
   auth_scope: public_repo
 ```
 
-`public/admin/config.yml` 当前只保留旧配置，页面不会加载它。根目录的 `npm run check:domain` 仍检查域名同步一致性；`npm run check:admin` 已切换为飞书映射检查，不再验证旧 CMS 字段或 OAuth 配置。
+`npm run check:admin` 会校验 `base_url` 与 `wrangler.jsonc` 的路由是否一致（防止两边漂移）。
 
 ### 4. 验证
 
-当前 `/admin/` 应显示飞书维护入口，不应出现 GitHub 登录。只验证保留的中转服务可请求 `/auth?provider=github&site_id=thu.whizzzest.com` 并检查授权跳转与域名白名单；恢复完整旧 CMS 还需另行适配编辑器和检查流程，并先处理飞书同步覆盖问题。
+用**代理**打开 <https://thu.whizzzest.com/admin/> → 点 **Sign in with GitHub** →
+授权 → 应该回到后台并显示全部 13 个集合（12 个目录集合 + 1 个单文件集合）。之后关掉代理，读写依然正常（走 `api.github.com`）。
 
 ## 安全说明
 
