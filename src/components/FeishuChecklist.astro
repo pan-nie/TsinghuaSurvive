@@ -1,0 +1,32 @@
+---
+const source = Astro.locals.starlightRoute.entry.data.feishu?.url;
+---
+{source && <span hidden data-feishu-checklist={source}></span>}
+<script>
+  function activateChecklists() {
+    const source = document.querySelector<HTMLElement>('[data-feishu-checklist]')?.dataset.feishuChecklist;
+    if (!source) return;
+    document.querySelectorAll<HTMLInputElement>('.sl-markdown-content li.task-list-item input[type="checkbox"]').forEach((input, i) => {
+      if (input.dataset.feishuReady) return;
+      input.dataset.feishuReady = 'true';
+      input.disabled = false;
+      const key = `feishu-checklist:${source}:${i}`;
+      try { input.checked = localStorage.getItem(key) === '1'; } catch {}
+      if (!input.closest('label')) {
+        const parent = input.parentElement!;
+        const label = document.createElement('label');
+        parent.insertBefore(label, input);
+        while (label.nextSibling && !(label.nextSibling instanceof HTMLUListElement) && !(label.nextSibling instanceof HTMLOListElement)) label.append(label.nextSibling);
+      }
+      input.addEventListener('change', () => { try { localStorage.setItem(key, input.checked ? '1' : '0'); } catch {} });
+    });
+  }
+  activateChecklists();
+  document.addEventListener('astro:page-load', activateChecklists);
+</script>
+<style is:global>
+  .sl-markdown-content .task-list-item { list-style: none; }
+  .sl-markdown-content .task-list-item label { cursor: pointer; }
+  .sl-markdown-content .task-list-item input { margin-inline-end: .5em; accent-color: var(--sl-color-text-accent); }
+  .sl-markdown-content .task-list-item:has(> label > input:checked) > label { opacity: .65; }
+</style>

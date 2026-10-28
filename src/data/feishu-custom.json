@@ -1,0 +1,112 @@
+{
+  "/courses/": {
+    "frontmatter": {
+      "title": "课程资料索引",
+      "description": "按课程寻找往年题、笔记与参考资料。",
+      "authors": [
+        "Nathan Penny"
+      ],
+      "stage": [
+        "全阶段"
+      ],
+      "tags": [
+        "课程",
+        "资料"
+      ],
+      "status": "stable",
+      "tableOfContents": false,
+      "summary": "按课程寻找往年题、笔记与参考资料。",
+      "sidebar": {},
+      "editUrl": "https://my.feishu.cn/docx/DqEVdNDEQoqtjyxVbnec1BGun9d",
+      "lastUpdated": "2026-10-28T10:11:38.000Z",
+      "feishu": {
+        "url": "https://my.feishu.cn/docx/DqEVdNDEQoqtjyxVbnec1BGun9d",
+        "revision": 3
+      }
+    },
+    "body": "想找某门课的往年题、笔记或作业答案，通常要在四五个资料库之间来回翻。这一页把它们的目录<b>扫成了一张表</b>：<b>一共 142 门课、185 条资料</b>， 出自 4 个公开资料库，其中 52 门课还带参考书目。\n\n142门课\n\n185条资料\n\n52门带参考书目\n\n4个资料库\n\n> <b>本站不存放任何课程文件。</b>这里只记录「某个资料库里有这门课的材料」，链接直接指向原资料库。 文件版权与许可归各自作者，请按原库的说明使用。\n> \n> 另外一个必须说清的事：<b>资料不是答案，往年题不是考纲。</b>资料库里「数据结构」那门课的 README 原话是「不要再 Naive 地背这个 Repo 里的东西了……每年 Cheatsheet 都会回收」。 它们用来复习、对照思路、查漏补缺； 用来交作业就是学术不端，用来押题通常会失望。边界见[作业、引用与 AI](/academics/academic-integrity/)。\n\n## 每个资料库是什么来头\n\n### 计算机系课程攻略\n\n计算机系同学自发维护 · 收录 89 门课\n\n按学期组织的课程目录，每门课下面放往年题、作业、笔记、速查表。同类项目里材料最全的一个。\n\n<b>强项：</b>往年题与考试资料最全，覆盖从大一到大四加研究生\n\n<b>注意：</b>库里「数据结构」那门课的 README 原话是「不要再 Naive 地背这个 Repo 里的东西了……每年 Cheatsheet 都会回收」——题目每年会变。资料用来复习和对照思路，不是用来押题或交作业。\n\n许可：贡献者编写部分采用 CC BY-SA 4.0；课程材料版权归各自作者\n\n-   [校内 GitLab 镜像](https://git.tsinghua.edu.cn/pkuanonym/REKCARC-TSC-UHT)校园网校内浏览与克隆都快得多，也不消耗国际流量\n-   [GitHub 仓库](https://github.com/PKUanonym/REKCARC-TSC-UHT)需代理国内访问时通时不通，打不开就挂代理\n-   [在线文档站](https://rekcarc-tsc-uht.readthedocs.io/en/latest/)未实测\n\n### 未央学习\n\n未央书院同学维护 · 收录 43 门课\n\n按「基础课 / 专业课」分类的课程资料与作业答案，另有选课指南、技能培训、乐学资源等板块。\n\n<b>强项：</b>作业答案与课程笔记较全，选课指南按课程类别组织\n\n<b>注意：</b>作业答案用来看思路和自查，直接抄进作业里就是学术不端。部分页面最后一次更新较早。\n\n许可：文档内容 CC BY-NC-SA 4.0；网站源码 MIT\n\n-   [站点](https://weiyangxuexi.github.io/)未实测\n-   [校内 GitLab 镜像](https://git.tsinghua.edu.cn/shenzhiy21/WeiYangXueXi-github-io/)校园网\n-   [GitHub 仓库](https://github.com/WeiYangXueXi/WeiYangXueXi.github.io)需代理\n\n### ReadMe 互助文档\n\n软件学院学生组织维护 · 收录 19 门课\n\n课程笔记与作业攻略：操作系统复习提纲、数据结构 OJ 解析、软工踩坑记录，还有写给新生的信。\n\n<b>强项：</b>复习提纲与作业思路写得细，偏「怎么学会」而不是「抄答案」\n\n<b>注意：</b>部分内容是特定年份的课程安排，换老师或改大纲后可能不再适用。\n\n许可：以项目页声明为准\n\n-   [站点](https://ssast-readme.github.io/)未实测\n-   [GitHub 仓库](https://github.com/ssast-readme/ssast-readme.github.io)需代理\n\n### SAST 技能引导文档\n\n计算机系学生科协维护 · 收录 8 门课\n\n不是课程资料，而是「上这门课需要哪些前置技能」的地图：Git、Linux、LaTeX、各语言入门、前后端与 AI。\n\n<b>强项：</b>把课程和技能对应起来，适合「上课听不懂因为不会工具」的情况\n\n<b>注意：</b>它是入门引导，不替代教材；涉及具体课程要求时以任课教师为准。\n\n许可：以站点声明为准\n\n-   [站点](https://docs.net9.org/)未实测\n-   [GitHub 仓库](https://github.com/SAST-skill-docers/sast-skill-docs)需代理\n\n## 怎么用这张表\n\n1.  <b>先看「资料类型」，再看课程名。</b>想知道考试怎么考，就筛「往年题」；想补基础，就筛「笔记」「课件」。\n2.  <b>注意「可达性」角标。</b>校园网 表示要连校园网；需代理 表示这个域名在校园网内打不开（实测结论）；未实测 表示我们还没在校园网里验过，别当保证。\n3.  <b>同一门课在不同库里各有侧重。</b>计算机系课程攻略偏往年题与考试资料，未央学习偏作业答案，ReadMe 偏复习提纲与作业思路， 技能引导文档解决的是「上这门课需要会什么工具」。\n4.  <b>资料会过期。</b>课程大纲、教材、考核方式每隔几年会变，资料库里的东西反映的是当时那一届。 以当年开课信息为准 —— 这一点没有例外。\n\n<div data-feishu-component=\"CourseExplorer\"></div>\n\n## 这一页的数据是怎么来的\n\n数据由脚本从四个公开资料库的目录结构里扫出来，不是人肉抄的，也不是猜的。 想知道某个库具体收了什么、怎么克隆到本地，见[外部资料库地图](/guides/archives/)。\n\n相关页面：[外部资料库地图](/guides/archives/) ·[各类课程怎么选](/academics/course-types/) ·[培养方案与选课](/academics/course-selection/) ·[学术规范的边界](/academics/academic-integrity/) ·[怎么贡献](/contribute/)\n",
+    "html": "<p>想找某门课的往年题、笔记或作业答案，通常要在四五个资料库之间来回翻。这一页把它们的目录<b>扫成了一张表</b>：<b>一共 142 门课、185 条资料</b>， 出自 4 个公开资料库，其中 52 门课还带参考书目。</p>\n<p>142门课</p>\n<p>185条资料</p>\n<p>52门带参考书目</p>\n<p>4个资料库</p>\n<blockquote>\n<p><b>本站不存放任何课程文件。</b>这里只记录「某个资料库里有这门课的材料」，链接直接指向原资料库。 文件版权与许可归各自作者，请按原库的说明使用。</p>\n<p>另外一个必须说清的事：<b>资料不是答案，往年题不是考纲。</b>资料库里「数据结构」那门课的 README 原话是「不要再 Naive 地背这个 Repo 里的东西了……每年 Cheatsheet 都会回收」。 它们用来复习、对照思路、查漏补缺； 用来交作业就是学术不端，用来押题通常会失望。边界见<a href=\"/academics/academic-integrity/\">作业、引用与 AI</a>。</p>\n</blockquote>\n<h2 id=\"每个资料库是什么来头\">每个资料库是什么来头</h2>\n<h3 id=\"计算机系课程攻略\">计算机系课程攻略</h3>\n<p>计算机系同学自发维护 · 收录 89 门课</p>\n<p>按学期组织的课程目录，每门课下面放往年题、作业、笔记、速查表。同类项目里材料最全的一个。</p>\n<p><b>强项：</b>往年题与考试资料最全，覆盖从大一到大四加研究生</p>\n<p><b>注意：</b>库里「数据结构」那门课的 README 原话是「不要再 Naive 地背这个 Repo 里的东西了……每年 Cheatsheet 都会回收」——题目每年会变。资料用来复习和对照思路，不是用来押题或交作业。</p>\n<p>许可：贡献者编写部分采用 CC BY-SA 4.0；课程材料版权归各自作者</p>\n<ul>\n<li><a href=\"https://git.tsinghua.edu.cn/pkuanonym/REKCARC-TSC-UHT\">校内 GitLab 镜像</a>校园网校内浏览与克隆都快得多，也不消耗国际流量</li>\n<li><a href=\"https://github.com/PKUanonym/REKCARC-TSC-UHT\">GitHub 仓库</a>需代理国内访问时通时不通，打不开就挂代理</li>\n<li><a href=\"https://rekcarc-tsc-uht.readthedocs.io/en/latest/\">在线文档站</a>未实测</li>\n</ul>\n<h3 id=\"未央学习\">未央学习</h3>\n<p>未央书院同学维护 · 收录 43 门课</p>\n<p>按「基础课 / 专业课」分类的课程资料与作业答案，另有选课指南、技能培训、乐学资源等板块。</p>\n<p><b>强项：</b>作业答案与课程笔记较全，选课指南按课程类别组织</p>\n<p><b>注意：</b>作业答案用来看思路和自查，直接抄进作业里就是学术不端。部分页面最后一次更新较早。</p>\n<p>许可：文档内容 CC BY-NC-SA 4.0；网站源码 MIT</p>\n<ul>\n<li><a href=\"https://weiyangxuexi.github.io/\">站点</a>未实测</li>\n<li><a href=\"https://git.tsinghua.edu.cn/shenzhiy21/WeiYangXueXi-github-io/\">校内 GitLab 镜像</a>校园网</li>\n<li><a href=\"https://github.com/WeiYangXueXi/WeiYangXueXi.github.io\">GitHub 仓库</a>需代理</li>\n</ul>\n<h3 id=\"readme-互助文档\">ReadMe 互助文档</h3>\n<p>软件学院学生组织维护 · 收录 19 门课</p>\n<p>课程笔记与作业攻略：操作系统复习提纲、数据结构 OJ 解析、软工踩坑记录，还有写给新生的信。</p>\n<p><b>强项：</b>复习提纲与作业思路写得细，偏「怎么学会」而不是「抄答案」</p>\n<p><b>注意：</b>部分内容是特定年份的课程安排，换老师或改大纲后可能不再适用。</p>\n<p>许可：以项目页声明为准</p>\n<ul>\n<li><a href=\"https://ssast-readme.github.io/\">站点</a>未实测</li>\n<li><a href=\"https://github.com/ssast-readme/ssast-readme.github.io\">GitHub 仓库</a>需代理</li>\n</ul>\n<h3 id=\"sast-技能引导文档\">SAST 技能引导文档</h3>\n<p>计算机系学生科协维护 · 收录 8 门课</p>\n<p>不是课程资料，而是「上这门课需要哪些前置技能」的地图：Git、Linux、LaTeX、各语言入门、前后端与 AI。</p>\n<p><b>强项：</b>把课程和技能对应起来，适合「上课听不懂因为不会工具」的情况</p>\n<p><b>注意：</b>它是入门引导，不替代教材；涉及具体课程要求时以任课教师为准。</p>\n<p>许可：以站点声明为准</p>\n<ul>\n<li><a href=\"https://docs.net9.org/\">站点</a>未实测</li>\n<li><a href=\"https://github.com/SAST-skill-docers/sast-skill-docs\">GitHub 仓库</a>需代理</li>\n</ul>\n<h2 id=\"怎么用这张表\">怎么用这张表</h2>\n<ol>\n<li><b>先看「资料类型」，再看课程名。</b>想知道考试怎么考，就筛「往年题」；想补基础，就筛「笔记」「课件」。</li>\n<li><b>注意「可达性」角标。</b>校园网 表示要连校园网；需代理 表示这个域名在校园网内打不开（实测结论）；未实测 表示我们还没在校园网里验过，别当保证。</li>\n<li><b>同一门课在不同库里各有侧重。</b>计算机系课程攻略偏往年题与考试资料，未央学习偏作业答案，ReadMe 偏复习提纲与作业思路， 技能引导文档解决的是「上这门课需要会什么工具」。</li>\n<li><b>资料会过期。</b>课程大纲、教材、考核方式每隔几年会变，资料库里的东西反映的是当时那一届。 以当年开课信息为准 —— 这一点没有例外。</li>\n</ol>\n<div data-feishu-component=\"CourseExplorer\"></div>\n<h2 id=\"这一页的数据是怎么来的\">这一页的数据是怎么来的</h2>\n<p>数据由脚本从四个公开资料库的目录结构里扫出来，不是人肉抄的，也不是猜的。 想知道某个库具体收了什么、怎么克隆到本地，见<a href=\"/guides/archives/\">外部资料库地图</a>。</p>\n<p>相关页面：<a href=\"/guides/archives/\">外部资料库地图</a> ·<a href=\"/academics/course-types/\">各类课程怎么选</a> ·<a href=\"/academics/course-selection/\">培养方案与选课</a> ·<a href=\"/academics/academic-integrity/\">学术规范的边界</a> ·<a href=\"/contribute/\">怎么贡献</a></p>\n",
+    "headings": [
+      {
+        "depth": 2,
+        "slug": "每个资料库是什么来头",
+        "text": "每个资料库是什么来头"
+      },
+      {
+        "depth": 3,
+        "slug": "计算机系课程攻略",
+        "text": "计算机系课程攻略"
+      },
+      {
+        "depth": 3,
+        "slug": "未央学习",
+        "text": "未央学习"
+      },
+      {
+        "depth": 3,
+        "slug": "readme-互助文档",
+        "text": "ReadMe 互助文档"
+      },
+      {
+        "depth": 3,
+        "slug": "sast-技能引导文档",
+        "text": "SAST 技能引导文档"
+      },
+      {
+        "depth": 2,
+        "slug": "怎么用这张表",
+        "text": "怎么用这张表"
+      },
+      {
+        "depth": 2,
+        "slug": "这一页的数据是怎么来的",
+        "text": "这一页的数据是怎么来的"
+      }
+    ]
+  },
+  "/courses/books/": {
+    "frontmatter": {
+      "title": "课程参考书目",
+      "description": "按课程浏览公开资料库收录的参考书目。",
+      "authors": [
+        "Nathan Penny"
+      ],
+      "stage": [
+        "全阶段"
+      ],
+      "tags": [
+        "课程",
+        "资料"
+      ],
+      "status": "stable",
+      "tableOfContents": false,
+      "summary": "按课程浏览公开资料库收录的参考书目。",
+      "sidebar": {},
+      "editUrl": "https://my.feishu.cn/docx/NKuWdXqfLo0ZKpx4qj1ctHLinzc",
+      "lastUpdated": "2026-10-28T10:11:39.000Z",
+      "feishu": {
+        "url": "https://my.feishu.cn/docx/NKuWdXqfLo0ZKpx4qj1ctHLinzc",
+        "revision": 3
+      }
+    },
+    "body": "这一页把课程资料索引里的 <b>参考书目</b> 单独抽出来：<b>52 门课、52 条书目</b>。 数据来自计算机系课程攻略库里的《参考书目》一节 —— 那是往届同学按学期整理的，<b>不是学校的官方教材清单</b>。\n\n> <b>怎么用：</b>预习、补基础、或者老师不讲教材只发讲义时， 至少知道这门课「通常被期望读到什么深度」。想按课程找资料（往年题、笔记、答案），去[课程资料索引](/courses/)。\n> \n> <b>注意：</b>教材版本、是否用教材、用哪一本，每个老师都可能不同。 书目里出现的 MOOC 与网址也未必还有效 —— 以当年开课信息和任课教师说明为准。\n\n## 数学\n\n-   <b>初等数论</b>大二下\n    -   H.Rosen,Elementary number theory and its applications, sixth edition,Pearson education Asia limited and China machine press,2010\n-   <b>复变函数引论</b>大二上\n    -   复变函数(西安交通大学编)\n-   <b>概率论数理统计</b>大二下\n    -   概率论与数理统计，陈希孺\n-   <b>离散数学(1)</b>大一上\n    -   数理逻辑与集合论(第2版)，石纯一等编著，清华大学出版社.\n-   <b>离散数学(2)</b>大一下\n    -   戴一奇 胡冠章 陈卫，《图论与代数结构》，清华大学出版社\n-   <b>数学实验</b>大三下\n    -   大学数学实验 姜启源等 清华大学出版社,2005.\n-   <b>数值分析</b>大三下\n    -   数值分析与算法（第2版，第3次印刷）喻文健 编著，清华大学出版社，2015年\n-   <b>随机数学方法</b>大二下\n    -   大学数学：随机数学（第二版），萧铁树主编；钱敏平、叶俊编著，高等教育出版社，2004年\n-   <b>微积分A(1)</b>大一上\n    -   高等微积分教程（上），刘智新，闫浩，章纪民编著，清华大学出版社\n-   <b>微积分A(2)</b>大一下\n    -   高等微积分教程（下），刘智新，闫浩，章纪民编著，清华大学出版社\n-   <b>线性代数(1)</b>大一上\n    -   Introduction to Linear Algebra，Gilbert Strang，清华大学出版社\n-   <b>线性代数(2)</b>大一下\n    -   俞正光，林润亮，鲁自群，《线性代数与几何(下)》\n\n## 计算机与信息\n\n-   <b>编译原理</b>大三上\n    -   Compilers:Principles, Techniques, and Tools -- Alfred V.Aho, Ravi Sethi, Jeffrey D.Ullman, Addison Wesley, 2007 (龙书)\n-   <b>操作系统</b>大三下\n    -   MOOC：[http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240243X+sp/about](<http://www.xuetangx.com/courses/course-v1:TsinghuaX 30240243X sp/about>)\n-   <b>程序设计基础</b>大一上\n    -   程序设计基础（第3版），吴文虎、徐明星 编著\n-   <b>存储技术基础</b>大三下\n    -   暂缺\n-   <b>电子学基础</b>大二上\n    -   电路原理,于歆杰、朱桂萍、陆文娟,清华大学出版社,2007 Fundamentals of Microelectronics, Behzad Razavi, Wiley, 2008\n-   <b>多媒体技术基础及应用</b>大三下\n    -   多媒体技术基础及应用，钟玉琢等，高教出版社\n-   <b>高性能计算导论</b>大二下\n    -   An Introduction to Parallel Programming，Peter Pacheco，Morgan Kaufmann Inc. (Elsevier), 2011\n-   <b>汇编语言程序设计</b>大二上\n    -   《深入理解计算机系统》(Computer Systems: A Programmer‘s Perspective),第三版\n-   <b>机器学习概论</b>大三下\n    -   Tom Mitchell, Machine Learning. McGraw-Hill (China machine press, English version)\n-   <b>计算机科学导论</b>大一上\n    -   Computer Science: An Overview\n-   <b>计算机图形学基础</b>大二下\n    -   计算机图形学基础教程，孙家广、胡事民，清华大学出版社\n-   <b>计算机网络安全技术</b>大三上\n    -   网络安全基础教程，William Stallings，清华大学出版社 影印版\n-   <b>计算机网络原理</b>大三上\n    -   A.S Tanebaum, Computer Networks,4/5nd Edition, Prentice Hall, 2003/2011\n-   <b>计算机网络专题训练</b>大三下\n    -   暂缺\n-   <b>计算机系统结构</b>大三下\n    -   计算机系统结构(第2版) 张晨曦等, 2014.8\n-   <b>计算机组成原理</b>大三上\n    -   Computer Organization & Design: the Hardware/Software Interface, 4th 5th, 6th, RISC-V Edition 机械工业出版社 《计算机硬件系统实验教程》刘卫东 李山山著 清华大学出版社\n-   <b>面向对象程序设计基础</b>大一下\n    -   Thinking in C++, 2nd Edition（英文版）, Bruce Eckel 机械工业出版社, 2010\n-   <b>嵌入式系统</b>大四上\n    -   《嵌入式计算系统设计原理》 Wayne Wolf著，孙玉芳等译\n-   <b>人工神经网络</b>大三上\n    -   Simon Haykin, Neural Networks and Learning Machines (Third Edition), 机械工业出版社\n-   <b>人工智能导论</b>大二下\n    -   林尧瑞、马少平，《人工智能导论》，清华大学出版社\n-   <b>人机交互理论与技术</b>大三上\n    -   Jef Raskin.The Humane Interface: New Directions for Designing Interactive Systems Stuart K. Card,etc. The Psychology of Human-Computer Interaction\n-   <b>软件工程</b>大三上\n    -   (1)“Software Engineering”, Ian Summerville, 2000, Addison-Wesley, ISBN 020139815X. (2)“Software Engineering: A Practitioner’s Approach”, Roger S. Pressman, McGraw-Hill, 2001，ISBN 0072496681. (3)“Software Engineering: Theory and Practice”, Shari Lawrence Pfleeger, 1998,Prentice Hall, ISBN 0130290491.\n-   <b>数据结构</b>大二上\n    -   [https://dsa.cs.tsinghua.edu.cn/~deng/ds/dsacpp/index.htm](https://dsa.cs.tsinghua.edu.cn/~deng/ds/dsacpp/index.htm) MOOC：[http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240184+sp/about](<http://www.xuetangx.com/courses/course-v1:TsinghuaX 30240184 sp/about>)[http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240184\\_2X+sp/about](<http://www.xuetangx.com/courses/course-v1:TsinghuaX 30240184_2X sp/about>)\n-   <b>数据库系统概论</b>大三上\n    -   数据库系统设计与原理，冯建华等，清华出版\n-   <b>数据库专题训练</b>大三下\n    -   PPT\n-   <b>数据挖掘</b>大三下\n    -   Data Mining: Concepts and techniques 数据挖掘：概念与技术 Han Jiawe等著 高等教育出版社\n-   <b>数字逻辑电路</b>大二下\n    -   数字逻辑与数字集成电路（第二版）\n-   <b>数字逻辑实验</b>大二下\n    -   数字逻辑设计实验教程\n-   <b>数字图像处理</b>大三下\n    -   数字图像处理（第二版）, Gonzalez, 电子工业出版社\n-   <b>搜索引擎技术基础</b>大三下\n    -   \\[1\\] Richardo Beeza-Yates，Modern Information Retrieval，机械工业出版社，2005。 \\[2\\] Search Engines: Information Retrieval in Practice, W. Bruce Croft et al. 2009.\n-   <b>网络安全工程与实践</b>大四上\n    -   Online documents or E-books assigned in class - TCP/IP protocols - [http://www.tcpipguide.com/free/t\\_toc.htm](http://www.tcpipguide.com/free/t_toc.htm) - Cryptography and secure communications - Bulletproof SSL and TLS - System Security - The art of exploitation - Web Security - The Tangled Web - The Browser Hacker’s Handbook\n-   <b>系统分析与控制</b>大三下\n    -   系统分析与控制 孙增圻 清华大学出版社1994\n-   <b>现代控制技术</b>大四上\n    -   常春馨，《现代控制理论基础》，机械工业出版社，1998年\n-   <b>现代密码学</b>大三下\n    -   密码学原理与实践（第二版）\n-   <b>信号处理原理</b>大三上\n    -   Introduction to Signal Processing – S.J. Orfanidis, Prentice-Hall, Inc.\n-   <b>形式语言与自动机</b>大二上\n    -   自动机理论、语言和计算导论，第三版，机械工业出版社\n-   <b>以智能服务为中心的软件开发设计与实现</b>大三下\n    -   Service-Oriented Computing Service-Oriented Software System Engineering: Challenges and Practices Patterns: Implementing an SOA using an Enterprise Service Bus\n-   <b>Java程序设计与训练</b>大一小学期\n    -   《Java技术及其应用(第二版)》，高等教育出版社，ISBN 978-7-04-020769-9\n-   <b>VLSI设计导论</b>大三上\n    -   《超大规模集成电路设计导论》蔡懿慈 周强 清华大学出版社\n\n## 其他\n\n-   <b>模式识别</b>大三下\n    -   Richard O. Duda, Peter E. Hart, and David G. Stork, Pattern Classification （2nd Edition）, John Wiley & Sons, Inc., New York. 机械工业出版社\n\n相关：[课程资料索引](/courses/) ·[外部资料库地图](/guides/archives/) ·[各类课程怎么选](/academics/course-types/)\n",
+    "html": "<p>这一页把课程资料索引里的 <b>参考书目</b> 单独抽出来：<b>52 门课、52 条书目</b>。 数据来自计算机系课程攻略库里的《参考书目》一节 —— 那是往届同学按学期整理的，<b>不是学校的官方教材清单</b>。</p>\n<blockquote>\n<p><b>怎么用：</b>预习、补基础、或者老师不讲教材只发讲义时， 至少知道这门课「通常被期望读到什么深度」。想按课程找资料（往年题、笔记、答案），去<a href=\"/courses/\">课程资料索引</a>。</p>\n<p><b>注意：</b>教材版本、是否用教材、用哪一本，每个老师都可能不同。 书目里出现的 MOOC 与网址也未必还有效 —— 以当年开课信息和任课教师说明为准。</p>\n</blockquote>\n<h2 id=\"数学\">数学</h2>\n<ul>\n<li><b>初等数论</b>大二下\n<ul>\n<li>H.Rosen,Elementary number theory and its applications, sixth edition,Pearson education Asia limited and China machine press,2010</li>\n</ul>\n</li>\n<li><b>复变函数引论</b>大二上\n<ul>\n<li>复变函数(西安交通大学编)</li>\n</ul>\n</li>\n<li><b>概率论数理统计</b>大二下\n<ul>\n<li>概率论与数理统计，陈希孺</li>\n</ul>\n</li>\n<li><b>离散数学(1)</b>大一上\n<ul>\n<li>数理逻辑与集合论(第2版)，石纯一等编著，清华大学出版社.</li>\n</ul>\n</li>\n<li><b>离散数学(2)</b>大一下\n<ul>\n<li>戴一奇 胡冠章 陈卫，《图论与代数结构》，清华大学出版社</li>\n</ul>\n</li>\n<li><b>数学实验</b>大三下\n<ul>\n<li>大学数学实验 姜启源等 清华大学出版社,2005.</li>\n</ul>\n</li>\n<li><b>数值分析</b>大三下\n<ul>\n<li>数值分析与算法（第2版，第3次印刷）喻文健 编著，清华大学出版社，2015年</li>\n</ul>\n</li>\n<li><b>随机数学方法</b>大二下\n<ul>\n<li>大学数学：随机数学（第二版），萧铁树主编；钱敏平、叶俊编著，高等教育出版社，2004年</li>\n</ul>\n</li>\n<li><b>微积分A(1)</b>大一上\n<ul>\n<li>高等微积分教程（上），刘智新，闫浩，章纪民编著，清华大学出版社</li>\n</ul>\n</li>\n<li><b>微积分A(2)</b>大一下\n<ul>\n<li>高等微积分教程（下），刘智新，闫浩，章纪民编著，清华大学出版社</li>\n</ul>\n</li>\n<li><b>线性代数(1)</b>大一上\n<ul>\n<li>Introduction to Linear Algebra，Gilbert Strang，清华大学出版社</li>\n</ul>\n</li>\n<li><b>线性代数(2)</b>大一下\n<ul>\n<li>俞正光，林润亮，鲁自群，《线性代数与几何(下)》</li>\n</ul>\n</li>\n</ul>\n<h2 id=\"计算机与信息\">计算机与信息</h2>\n<ul>\n<li><b>编译原理</b>大三上\n<ul>\n<li>Compilers:Principles, Techniques, and Tools – Alfred V.Aho, Ravi Sethi, Jeffrey D.Ullman, Addison Wesley, 2007 (龙书)</li>\n</ul>\n</li>\n<li><b>操作系统</b>大三下\n<ul>\n<li>MOOC：<a href=\"http://www.xuetangx.com/courses/course-v1:TsinghuaX%2030240243X%20sp/about\">http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240243X+sp/about</a></li>\n</ul>\n</li>\n<li><b>程序设计基础</b>大一上\n<ul>\n<li>程序设计基础（第3版），吴文虎、徐明星 编著</li>\n</ul>\n</li>\n<li><b>存储技术基础</b>大三下\n<ul>\n<li>暂缺</li>\n</ul>\n</li>\n<li><b>电子学基础</b>大二上\n<ul>\n<li>电路原理,于歆杰、朱桂萍、陆文娟,清华大学出版社,2007 Fundamentals of Microelectronics, Behzad Razavi, Wiley, 2008</li>\n</ul>\n</li>\n<li><b>多媒体技术基础及应用</b>大三下\n<ul>\n<li>多媒体技术基础及应用，钟玉琢等，高教出版社</li>\n</ul>\n</li>\n<li><b>高性能计算导论</b>大二下\n<ul>\n<li>An Introduction to Parallel Programming，Peter Pacheco，Morgan Kaufmann Inc. (Elsevier), 2011</li>\n</ul>\n</li>\n<li><b>汇编语言程序设计</b>大二上\n<ul>\n<li>《深入理解计算机系统》(Computer Systems: A Programmer‘s Perspective),第三版</li>\n</ul>\n</li>\n<li><b>机器学习概论</b>大三下\n<ul>\n<li>Tom Mitchell, Machine Learning. McGraw-Hill (China machine press, English version)</li>\n</ul>\n</li>\n<li><b>计算机科学导论</b>大一上\n<ul>\n<li>Computer Science: An Overview</li>\n</ul>\n</li>\n<li><b>计算机图形学基础</b>大二下\n<ul>\n<li>计算机图形学基础教程，孙家广、胡事民，清华大学出版社</li>\n</ul>\n</li>\n<li><b>计算机网络安全技术</b>大三上\n<ul>\n<li>网络安全基础教程，William Stallings，清华大学出版社 影印版</li>\n</ul>\n</li>\n<li><b>计算机网络原理</b>大三上\n<ul>\n<li>A.S Tanebaum, Computer Networks,4/5nd Edition, Prentice Hall, 2003/2011</li>\n</ul>\n</li>\n<li><b>计算机网络专题训练</b>大三下\n<ul>\n<li>暂缺</li>\n</ul>\n</li>\n<li><b>计算机系统结构</b>大三下\n<ul>\n<li>计算机系统结构(第2版) 张晨曦等, 2014.8</li>\n</ul>\n</li>\n<li><b>计算机组成原理</b>大三上\n<ul>\n<li>Computer Organization &amp; Design: the Hardware/Software Interface, 4th 5th, 6th, RISC-V Edition 机械工业出版社 《计算机硬件系统实验教程》刘卫东 李山山著 清华大学出版社</li>\n</ul>\n</li>\n<li><b>面向对象程序设计基础</b>大一下\n<ul>\n<li>Thinking in C++, 2nd Edition（英文版）, Bruce Eckel 机械工业出版社, 2010</li>\n</ul>\n</li>\n<li><b>嵌入式系统</b>大四上\n<ul>\n<li>《嵌入式计算系统设计原理》 Wayne Wolf著，孙玉芳等译</li>\n</ul>\n</li>\n<li><b>人工神经网络</b>大三上\n<ul>\n<li>Simon Haykin, Neural Networks and Learning Machines (Third Edition), 机械工业出版社</li>\n</ul>\n</li>\n<li><b>人工智能导论</b>大二下\n<ul>\n<li>林尧瑞、马少平，《人工智能导论》，清华大学出版社</li>\n</ul>\n</li>\n<li><b>人机交互理论与技术</b>大三上\n<ul>\n<li>Jef Raskin.The Humane Interface: New Directions for Designing Interactive Systems Stuart K. Card,etc. The Psychology of Human-Computer Interaction</li>\n</ul>\n</li>\n<li><b>软件工程</b>大三上\n<ul>\n<li>(1)“Software Engineering”, Ian Summerville, 2000, Addison-Wesley, ISBN 020139815X. (2)“Software Engineering: A Practitioner’s Approach”, Roger S. Pressman, McGraw-Hill, 2001，ISBN 0072496681. (3)“Software Engineering: Theory and Practice”, Shari Lawrence Pfleeger, 1998,Prentice Hall, ISBN 0130290491.</li>\n</ul>\n</li>\n<li><b>数据结构</b>大二上\n<ul>\n<li><a href=\"https://dsa.cs.tsinghua.edu.cn/~deng/ds/dsacpp/index.htm\">https://dsa.cs.tsinghua.edu.cn/~deng/ds/dsacpp/index.htm</a> MOOC：<a href=\"http://www.xuetangx.com/courses/course-v1:TsinghuaX%2030240184%20sp/about\">http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240184+sp/about</a><a href=\"http://www.xuetangx.com/courses/course-v1:TsinghuaX%2030240184_2X%20sp/about\">http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240184_2X+sp/about</a></li>\n</ul>\n</li>\n<li><b>数据库系统概论</b>大三上\n<ul>\n<li>数据库系统设计与原理，冯建华等，清华出版</li>\n</ul>\n</li>\n<li><b>数据库专题训练</b>大三下\n<ul>\n<li>PPT</li>\n</ul>\n</li>\n<li><b>数据挖掘</b>大三下\n<ul>\n<li>Data Mining: Concepts and techniques 数据挖掘：概念与技术 Han Jiawe等著 高等教育出版社</li>\n</ul>\n</li>\n<li><b>数字逻辑电路</b>大二下\n<ul>\n<li>数字逻辑与数字集成电路（第二版）</li>\n</ul>\n</li>\n<li><b>数字逻辑实验</b>大二下\n<ul>\n<li>数字逻辑设计实验教程</li>\n</ul>\n</li>\n<li><b>数字图像处理</b>大三下\n<ul>\n<li>数字图像处理（第二版）, Gonzalez, 电子工业出版社</li>\n</ul>\n</li>\n<li><b>搜索引擎技术基础</b>大三下\n<ul>\n<li>[1] Richardo Beeza-Yates，Modern Information Retrieval，机械工业出版社，2005。 [2] Search Engines: Information Retrieval in Practice, W. Bruce Croft et al. 2009.</li>\n</ul>\n</li>\n<li><b>网络安全工程与实践</b>大四上\n<ul>\n<li>Online documents or E-books assigned in class - TCP/IP protocols - <a href=\"http://www.tcpipguide.com/free/t_toc.htm\">http://www.tcpipguide.com/free/t_toc.htm</a> - Cryptography and secure communications - Bulletproof SSL and TLS - System Security - The art of exploitation - Web Security - The Tangled Web - The Browser Hacker’s Handbook</li>\n</ul>\n</li>\n<li><b>系统分析与控制</b>大三下\n<ul>\n<li>系统分析与控制 孙增圻 清华大学出版社1994</li>\n</ul>\n</li>\n<li><b>现代控制技术</b>大四上\n<ul>\n<li>常春馨，《现代控制理论基础》，机械工业出版社，1998年</li>\n</ul>\n</li>\n<li><b>现代密码学</b>大三下\n<ul>\n<li>密码学原理与实践（第二版）</li>\n</ul>\n</li>\n<li><b>信号处理原理</b>大三上\n<ul>\n<li>Introduction to Signal Processing – S.J. Orfanidis, Prentice-Hall, Inc.</li>\n</ul>\n</li>\n<li><b>形式语言与自动机</b>大二上\n<ul>\n<li>自动机理论、语言和计算导论，第三版，机械工业出版社</li>\n</ul>\n</li>\n<li><b>以智能服务为中心的软件开发设计与实现</b>大三下\n<ul>\n<li>Service-Oriented Computing Service-Oriented Software System Engineering: Challenges and Practices Patterns: Implementing an SOA using an Enterprise Service Bus</li>\n</ul>\n</li>\n<li><b>Java程序设计与训练</b>大一小学期\n<ul>\n<li>《Java技术及其应用(第二版)》，高等教育出版社，ISBN 978-7-04-020769-9</li>\n</ul>\n</li>\n<li><b>VLSI设计导论</b>大三上\n<ul>\n<li>《超大规模集成电路设计导论》蔡懿慈 周强 清华大学出版社</li>\n</ul>\n</li>\n</ul>\n<h2 id=\"其他\">其他</h2>\n<ul>\n<li><b>模式识别</b>大三下\n<ul>\n<li>Richard O. Duda, Peter E. Hart, and David G. Stork, Pattern Classification （2nd Edition）, John Wiley &amp; Sons, Inc., New York. 机械工业出版社</li>\n</ul>\n</li>\n</ul>\n<p>相关：<a href=\"/courses/\">课程资料索引</a> ·<a href=\"/guides/archives/\">外部资料库地图</a> ·<a href=\"/academics/course-types/\">各类课程怎么选</a></p>\n",
+    "headings": [
+      {
+        "depth": 2,
+        "slug": "数学",
+        "text": "数学"
+      },
+      {
+        "depth": 2,
+        "slug": "计算机与信息",
+        "text": "计算机与信息"
+      },
+      {
+        "depth": 2,
+        "slug": "其他",
+        "text": "其他"
+      }
+    ]
+  }
+}

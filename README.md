@@ -1,5 +1,7 @@
 # 清华生存指南
 
+> **2026-10-28 内容编辑入口已改为飞书。** 日常维护请看 [飞书编辑与同步说明](./FEISHU-CONTENT.md)。下文的 Sveltia CMS / GitHub 编辑步骤是历史运维记录；原网站域名与云端资源沿用。
+
 面向清华在校学生的经验分享站 —— 不是官方材料，是一群学长学姐把踩过的坑、绕过的路写下来。
 
 **线上地址** <https://thu.whizzzest.com>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-03

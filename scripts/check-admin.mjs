@@ -29,6 +29,10 @@ const CONFIG = join(ROOT, 'public/admin/config.yml');
 const ADMIN_HTML = join(ROOT, 'public/admin/index.html');
 const DOCS_DIR = join(ROOT, 'src/content/docs');
 const CMS_PACKAGE = '@sveltia/cms';
+if (existsSync(join(ROOT, 'src/data/feishu-manifest.json'))) {
+  await import('./check-feishu-config.mjs');
+  process.exit(0);
+}
 
 /**
  * 读 wrangler 的 jsonc（允许 // 与 /* *​/ 注释）。

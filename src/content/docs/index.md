@@ -1,0 +1,109 @@
+---
+title: 清华生存指南
+description: 来自学长学姐的清华生存经验：选课、绩点、科研、保研、食堂、心态，以及那些没人会主动告诉你的事。
+authors:
+  - Nathan Penny
+template: splash
+hero:
+  tagline: 没有官方口径，只有过来人踩过的坑。
+  actions:
+    - text: 从新生报到开始
+      link: /freshman/arrival-checklist/
+      icon: right-arrow
+      variant: primary
+    - text: 按阶段浏览
+      link: /stages/
+      icon: right-arrow
+      variant: minimal
+tags: []
+stage:
+  - 全阶段
+status: stable
+summary: 来自学长学姐的清华生存经验：选课、绩点、科研、保研、食堂、心态，以及那些没人会主动告诉你的事。
+sidebar: {}
+editUrl: https://my.feishu.cn/docx/W6JRdvFxKohfCjxHcDHcuJ2ynSb
+lastUpdated: 2026-10-28T13:34:51.000Z
+feishu:
+  url: https://my.feishu.cn/docx/W6JRdvFxKohfCjxHcDHcuJ2ynSb
+  revision: 5
+---
+
+不知道从哪看起？<b>直接问一句</b>——只依据站内文章回答，并给出处。
+
+<div data-feishu-component="AskBox"></div>
+
+## 三条最常走的路
+
+<table><colgroup><col><col><col></colgroup><tbody><tr><th><p><b>栏目</b></p></th><th><p><b>入口</b></p></th><th><p><b>说明</b></p></th></tr><tr><td><p>大一新生</p></td><td><p><a href="/freshman/arrival-checklist/">刚拿到录取通知书</a></p></td><td><p>报到清单、军训、宿舍与校园网、第一周要办的账号。</p></td></tr><tr><td><p>选课与绩点</p></td><td><p><a href="/tags/%E9%80%89%E8%AF%BE/">正在选课，或者对绩点发懵</a></p></td><td><p>培养方案怎么读、课怎么排、绩点是怎么算出来的。</p></td></tr><tr><td><p>科研与深造</p></td><td><p><a href="/research/finding-a-lab/">想进实验室做科研</a></p></td><td><p>什么时候找导师、第一封邮件怎么写、进组之后干什么。</p></td></tr></tbody></table>
+
+<div data-feishu-component="HomeStats"></div>
+
+## 按板块找
+
+### 学业
+
+[上课跟不上、作业不会做、考试考不出来](/academics/learning-method-transition/)这三件事通常是同一个原因：高中的学习方式到大学失效了。从课前 15 分钟到课后 24 小时闭环，给一套能当天开始改的做法。
+
+[把几门候选课摆到一起看](/academics/course-decision/)把候选课填成一张表，自动算出先修缺口、期末撞车与每周投入是否超载——不预置任何课程数据，规则公开可核对。
+
+[想知道还差多少学分](/academics/credit-planner/)把培养方案填成一张在线表，自动算每类课程的学分缺口。
+
+[奖学金怎么评、这一年该攒什么](/academics/scholarships/)大二才开始评、先评荣誉再配奖金、入围先看学业——用两个院系的真实细则讲清流程与材料。
+
+### 课程与资料
+
+[拿到了往年题和答案，不知道该怎么用](/courses/materials/)每种资料该拿来干什么、别拿来干什么，以及怎么判断它是哪一届的。
+
+[找某门课的资料](/courses/)往年题、笔记、作业答案分别在哪个公开资料库，一页筛完，附可达性与使用红线。
+
+[查资料 / 找入口](/guides/links/)校内常用网站跳转，以及可直接用的站内工具。
+
+### 科研与深造
+
+[保研需要什么条件](/research/graduate-recommendation/)推免的时间线、名额怎么排、材料要准备什么，以及哪些数字必须自己去院系核实。
+
+[想出去做一段海外科研](/research/overseas-research-internship/)导师看什么、志愿与面试怎么准备、推荐信怎么才有用，以及签证手续怎么倒排。
+
+### 校园生活
+
+[生活上的琐事](/campus/food-and-study/)食堂、自习位、出行、取快递打印、约场馆，以及看病报销这类平时不关心的事。
+
+[想参与学生组织 / 不知道怎么和人打交道](/campus/student-organizations/)社工体系一张图讲清，以及微信、邮件、见面的具体分寸。
+
+[刚来中国、中文还不熟](/international/)国际学生、港澳台学生与交换生：从两个机场怎么到学校、手机和钱怎么解决、校园卡与快递、生病和出事找谁，电话都列成了表。
+
+[被派了宣传的活](/publicity/)推送排版、平面设计、活动摄影、照片后期、活动视频——宣传岗五项手艺的判断标准与完整流程。
+
+### 心态与避坑
+
+[感觉有点撑不住](/mindset/first-year-pitfalls/)大一最容易踩的坑，和几条真的有用的应对方式。
+
+[考砸了 / 没保上研](/mindset/after-failure/)挂科、没保上、转专业被拒之后：先把事实搞清楚，再谈下一步。
+
+### 技能与工具
+
+[想学工具但不知道从哪下手](/skills/)Git、LaTeX、命令行、文献管理、数据处理——每项都从「第一次真正用到」的场景讲起。
+
+[论文与演示模板 / 资料下载](/guides/templates/)写论文、做汇报、交作业能直接改的模板，以及站内可下载的资料。
+
+## 这个站是怎么组织内容的
+
+-   <b>学业 &gt; 生活 &gt; 心态</b>：先解决“会不会挂科、能不能保研”的硬问题，再谈其他。
+-   <b>每篇都标了适用阶段和最近核对日期。</b> 如果你看到某篇写着“内容可能已过期”， 那是因为学校规则改了而我们还来不及更新——<b>以官方为准，并且欢迎你来改</b>。
+-   <b>只写有人真的做过的事。</b> 没把握的地方，我们会明写“待核对”，而不是编一个看起来很像的数字。
+
+## 你应该怎么用这个站
+
+把它当成<b>一份可以随时翻的同学笔记</b>，而不是权威手册：
+
+1.  先看目录里和你当下处境最接近的那一篇，别从头读。
+2.  涉及时间节点（报名、截止、考核）的内容，<b>一定去官方系统再确认一次</b>。
+3.  读完觉得“这不适用于我”，很正常——不同院系差异极大，`具体以你所在院系为准`。
+
+> 先看这一条
+>
+> 本站是<b>学生自发的经验分享</b>，不是清华大学官方材料。凡是涉及培养方案、选课规则、绩点计算、保研政策这类制度性内容，一律<b>以教务、院系和学校正式通知为准</b>。 这里的价值在于“怎么应对”，而不是“规定是什么”。
+
+> 想一起写？
+>
+> 如果你也有想告诉学弟学妹的经验，见[怎么贡献一篇经验帖](/contribute/)。哪怕只是“我踩过这个坑，别这么干”，也值得写下来。

@@ -1,0 +1,19 @@
+---
+import AskBox from './AskBox.astro';
+import CreditPlanner from './CreditPlanner.astro';
+import SelectionWorkbench from './SelectionWorkbench.astro';
+import HomeStats from './HomeStats.astro';
+import CourseExplorer from './CourseExplorer.astro';
+import { enhanceLinkDirectory, enhanceHomeContent } from '../utils/feishu-directory.mjs';
+const components = { AskBox, CreditPlanner, SelectionWorkbench, HomeStats, CourseExplorer };
+let html: string = Astro.props.html ?? await Astro.slots.render('default');
+if (Astro.url.pathname === '/guides/links/') html=enhanceLinkDirectory(html);
+if (Astro.url.pathname === '/') html=enhanceHomeContent(html);
+const parts = html.split(/<div\s+data-feishu-component="([A-Za-z]+)"\s*><\/div>/g);
+---
+{parts.map((part, i) => {
+  if (i % 2 === 0) return <Fragment set:html={part} />;
+  const Component = components[part as keyof typeof components];
+  if (!Component) throw new Error(`未注册的网站功能：${part}`);
+  return <Component />;
+})}

@@ -1,0 +1,6 @@
+---
+import '@astrojs/starlight/style/markdown.css';
+import FeishuSlots from './FeishuSlots.astro';
+import FeishuLinkSearch from './FeishuLinkSearch.astro';
+---
+<div class="sl-markdown-content">{Astro.url.pathname === '/guides/links/' && <FeishuLinkSearch />}<FeishuSlots><slot /></FeishuSlots></div>

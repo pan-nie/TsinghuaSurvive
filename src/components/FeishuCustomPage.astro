@@ -1,0 +1,15 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import FeishuSlots from './FeishuSlots.astro';
+import data from '../data/feishu-custom.json';
+const route: string = Astro.props.route;
+const page = data[route as keyof typeof data];
+if (!page) throw new Error(`尚未同步飞书页面：${route}`);
+const frontmatter = {
+  ...page.frontmatter,
+  ...(page.frontmatter.lastUpdated ? { lastUpdated:new Date(page.frontmatter.lastUpdated) } : {}),
+};
+---
+<StarlightPage frontmatter={frontmatter} headings={page.headings}>
+  <FeishuSlots html={page.html} />
+</StarlightPage>

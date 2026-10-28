@@ -226,6 +226,24 @@
 }
 
 /* 4) 三张「处境入口」大卡：比普通卡片高一档，这是首页唯一需要抢注意力的东西 */
+.feishu-home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,22rem),1fr));
+  gap: 1rem;
+}
+.sl-markdown-content .feishu-home-card {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: .6rem;
+  padding: 1.2rem;
+  margin: 0;
+  font-size: .9rem;
+}
+.feishu-home-card > a:first-child {
+  display: block;
+  margin-bottom: .7rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+}
 .home-featured {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
