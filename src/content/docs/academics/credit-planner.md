@@ -51,9 +51,4 @@ feishu:
 
 ## 这一类工具怎么和站内其他页面配合
 
-| 你现在的问题 | 去哪 |
-| --- | --- |
-| 不知道该修哪些类别、规则怎么读 | [培养方案与选课](/academics/course-selection/) |
-| 这门课的考核方式是什么、怎么选才不踩坑 | [各类课程怎么选](/academics/course-types/) |
-| 这门课在哪个资料库有往年题和笔记 | [课程资料索引](/courses/) |
-| 考试、退课、重修怎么算 | [考试、退课与重修](/academics/exams-and-retake/) |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>你现在的问题</p></th><th><p>去哪</p></th></tr></thead><tbody><tr><td><p>不知道该修哪些类别、规则怎么读</p></td><td><p><a href="/academics/course-selection/">培养方案与选课</a></p></td></tr><tr><td><p>这门课的考核方式是什么、怎么选才不踩坑</p></td><td><p><a href="/academics/course-types/">各类课程怎么选</a></p></td></tr><tr><td><p>这门课在哪个资料库有往年题和笔记</p></td><td><p><a href="/courses/">课程资料索引</a></p></td></tr><tr><td><p>考试、退课、重修怎么算</p></td><td><p><a href="/academics/exams-and-retake/">考试、退课与重修</a></p></td></tr></tbody></table>

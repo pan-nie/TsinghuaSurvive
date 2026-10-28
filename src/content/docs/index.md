@@ -34,11 +34,7 @@ feishu:
 
 ## 三条最常走的路
 
-| <b>栏目</b> | <b>入口</b> | <b>说明</b> |
-| --- | --- | --- |
-| 大一新生 | [刚拿到录取通知书](/freshman/arrival-checklist/) | 报到清单、军训、宿舍与校园网、第一周要办的账号。 |
-| 选课与绩点 | [正在选课，或者对绩点发懵](/tags/%E9%80%89%E8%AF%BE/) | 培养方案怎么读、课怎么排、绩点是怎么算出来的。 |
-| 科研与深造 | [想进实验室做科研](/research/finding-a-lab/) | 什么时候找导师、第一封邮件怎么写、进组之后干什么。 |
+<table><colgroup><col><col><col></colgroup><tbody><tr><th><p><b>栏目</b></p></th><th><p><b>入口</b></p></th><th><p><b>说明</b></p></th></tr><tr><td><p>大一新生</p></td><td><p><a href="/freshman/arrival-checklist/">刚拿到录取通知书</a></p></td><td><p>报到清单、军训、宿舍与校园网、第一周要办的账号。</p></td></tr><tr><td><p>选课与绩点</p></td><td><p><a href="/tags/%E9%80%89%E8%AF%BE/">正在选课，或者对绩点发懵</a></p></td><td><p>培养方案怎么读、课怎么排、绩点是怎么算出来的。</p></td></tr><tr><td><p>科研与深造</p></td><td><p><a href="/research/finding-a-lab/">想进实验室做科研</a></p></td><td><p>什么时候找导师、第一封邮件怎么写、进组之后干什么。</p></td></tr></tbody></table>
 
 <div data-feishu-component="HomeStats"></div>
 

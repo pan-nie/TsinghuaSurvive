@@ -29,14 +29,7 @@ feishu:
 
 ## 什么时候真的需要它
 
-| 你的情况 | 建议 |
-| --- | --- |
-| 实验报告里有成串的公式，还要在正文里引用“式 (3)” | 用 LaTeX，你会省下大量手动编号的时间 |
-| 课程论文、综述、毕设，有参考文献格式要求 | 用 LaTeX（配合[文献管理工具](/skills/reference-manager/)） |
-| 老师或期刊直接给了 `.tex` 模板 | 没得选，照着模板填 |
-| 两三页、以文字为主、公式零星一两个 | 用 Word，更快 |
-| 需要精确控制每一处版式（海报、简历） | 两个都不太合适，用专门的设计工具 |
-| 几个人要同时改同一份文档 | 在线协作（例如校内 Overleaf），但要先确认内容能不能上传 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>你的情况</p></th><th><p>建议</p></th></tr></thead><tbody><tr><td><p>实验报告里有成串的公式，还要在正文里引用“式 (3)”</p></td><td><p>用 LaTeX，你会省下大量手动编号的时间</p></td></tr><tr><td><p>课程论文、综述、毕设，有参考文献格式要求</p></td><td><p>用 LaTeX（配合<a href="/skills/reference-manager/">文献管理工具</a>）</p></td></tr><tr><td><p>老师或期刊直接给了 <code>.tex</code> 模板</p></td><td><p>没得选，照着模板填</p></td></tr><tr><td><p>两三页、以文字为主、公式零星一两个</p></td><td><p>用 Word，更快</p></td></tr><tr><td><p>需要精确控制每一处版式（海报、简历）</p></td><td><p>两个都不太合适，用专门的设计工具</p></td></tr><tr><td><p>几个人要同时改同一份文档</p></td><td><p>在线协作（例如校内 Overleaf），但要先确认内容能不能上传</p></td></tr></tbody></table>
 
 > 它在课程、科研、实习里分别用在哪
 >
@@ -75,14 +68,7 @@ feishu:
 
 ### 第 2 步：认识六个概念
 
-| 概念 | 长什么样 | 作用 |
-| --- | --- | --- |
-| 文档类 | `\documentclass{...}` | 决定整篇的版式，<b>模板已经给好了，不要改</b> |
-| 导言区 | `\usepackage{...}` | 引入功能宏包，模板一般也写好了 |
-| 环境 | `\begin{...} ... \end{...}` | 表格、图、公式、列表都是环境，<b>必须成对</b> |
-| 章节 | `\section{}\subsection{}` | 只管层级，编号和目录自动生成 |
-| 引用 | `\label{}` + `\ref{}` / `\cite{}` | 交叉引用和文献引用，<b>永远不要手打编号</b> |
-| 编译 | 引擎 + 跑几遍 | 见下一步 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>概念</p></th><th><p>长什么样</p></th><th><p>作用</p></th></tr></thead><tbody><tr><td><p>文档类</p></td><td><p><code>\documentclass{...}</code></p></td><td><p>决定整篇的版式，<b>模板已经给好了，不要改</b></p></td></tr><tr><td><p>导言区</p></td><td><p><code>\usepackage{...}</code></p></td><td><p>引入功能宏包，模板一般也写好了</p></td></tr><tr><td><p>环境</p></td><td><p><code>\begin{...} ... \end{...}</code></p></td><td><p>表格、图、公式、列表都是环境，<b>必须成对</b></p></td></tr><tr><td><p>章节</p></td><td><p><code>\section{}\subsection{}</code></p></td><td><p>只管层级，编号和目录自动生成</p></td></tr><tr><td><p>引用</p></td><td><p><code>\label{}</code> + <code>\ref{}</code> / <code>\cite{}</code></p></td><td><p>交叉引用和文献引用，<b>永远不要手打编号</b></p></td></tr><tr><td><p>编译</p></td><td><p>引擎 + 跑几遍</p></td><td><p>见下一步</p></td></tr></tbody></table>
 
 ### 第 3 步：接受“要编译两遍”
 

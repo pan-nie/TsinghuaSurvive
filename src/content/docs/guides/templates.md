@@ -31,11 +31,7 @@ feishu:
 
 ## 学位论文（最需要谨慎的一类）
 
-| 模板 | 用什么写 | 适合谁 | 现在在哪 |
-| --- | --- | --- | --- |
-| <b>ThuThesis</b> | LaTeX | 本科综合论文训练、硕士、博士、博士后出站报告 | [tuna/thuthesis](https://github.com/tuna/thuthesis) |
-| <b>TnTT</b> | Typst | 想用更现代语法的同学（<b>非官方</b>） | [tuna/thuthesis-typst](https://github.com/tuna/thuthesis-typst) |
-| <b>ThuWordThesis</b> | Word | 不打算学 LaTeX 的本科毕业论文 | [qbh16/ThuWordThesis](https://github.com/qbh16/ThuWordThesis) |
+<table><colgroup><col><col><col><col></colgroup><thead><tr><th><p>模板</p></th><th><p>用什么写</p></th><th><p>适合谁</p></th><th><p>现在在哪</p></th></tr></thead><tbody><tr><td><p><b>ThuThesis</b></p></td><td><p>LaTeX</p></td><td><p>本科综合论文训练、硕士、博士、博士后出站报告</p></td><td><p><a href="https://github.com/tuna/thuthesis">tuna/thuthesis</a></p></td></tr><tr><td><p><b>TnTT</b></p></td><td><p>Typst</p></td><td><p>想用更现代语法的同学（<b>非官方</b>）</p></td><td><p><a href="https://github.com/tuna/thuthesis-typst">tuna/thuthesis-typst</a></p></td></tr><tr><td><p><b>ThuWordThesis</b></p></td><td><p>Word</p></td><td><p>不打算学 LaTeX 的本科毕业论文</p></td><td><p><a href="https://github.com/qbh16/ThuWordThesis">qbh16/ThuWordThesis</a></p></td></tr></tbody></table>
 
 <b>这三个都不是学校发布的正式模板</b>，是学生/校友项目（ThuThesis 由 TUNA 社区维护多年）。所以：
 

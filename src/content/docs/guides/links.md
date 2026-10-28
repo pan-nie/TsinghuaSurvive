@@ -115,14 +115,7 @@ feishu:
 
 四个角标分别回答四个不同的问题，<b>别把它们混成一个「可信 / 不可信」的判断</b>：
 
-| 角标 | 谁测的 | 它能证明什么 |
-| --- | --- | --- |
-| <b>需校园网 / 公网可开 / 未实测</b> | 人工判断 | 这个入口要不要连校园网或 WebVPN |
-| <b>实测可访问</b> | 脚本（`npm run check:links`） | 域名活着，返回 HTTP < 400。<b>不证明内容还是你要找的那个</b> |
-| <b>实测打不开</b> | 脚本 | 最近一次实测失败。可能真的挂了，也可能只是要校园网 |
-| <b>脚本被拦</b> | 脚本 + 人 | 该站对<b>非浏览器请求</b>返回反爬状态码（如 412），脚本永远测不过；<b>浏览器里正常</b>，已由人点开确认。这一条不要当成「打不开」 |
-| <b>脚本核对 2026-09-30</b> | 脚本（`npm run verify:links`） | 把页面抓下来，比对标题与关键词，确认<b>地址还指向那个服务</b> |
-| <b>人工核对 2026-09-30</b> | 人 | 有人点开确认过「这个入口现在还是干这件事」，含登录后的实际使用 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>角标</p></th><th><p>谁测的</p></th><th><p>它能证明什么</p></th></tr></thead><tbody><tr><td><p><b>需校园网 / 公网可开 / 未实测</b></p></td><td><p>人工判断</p></td><td><p>这个入口要不要连校园网或 WebVPN</p></td></tr><tr><td><p><b>实测可访问</b></p></td><td><p>脚本（<code>npm run check:links</code>）</p></td><td><p>域名活着，返回 HTTP &lt; 400。<b>不证明内容还是你要找的那个</b></p></td></tr><tr><td><p><b>实测打不开</b></p></td><td><p>脚本</p></td><td><p>最近一次实测失败。可能真的挂了，也可能只是要校园网</p></td></tr><tr><td><p><b>脚本被拦</b></p></td><td><p>脚本 + 人</p></td><td><p>该站对<b>非浏览器请求</b>返回反爬状态码（如 412），脚本永远测不过；<b>浏览器里正常</b>，已由人点开确认。这一条不要当成「打不开」</p></td></tr><tr><td><p><b>脚本核对 2026-09-30</b></p></td><td><p>脚本（<code>npm run verify:links</code>）</p></td><td><p>把页面抓下来，比对标题与关键词，确认<b>地址还指向那个服务</b></p></td></tr><tr><td><p><b>人工核对 2026-09-30</b></p></td><td><p>人</p></td><td><p>有人点开确认过「这个入口现在还是干这件事」，含登录后的实际使用</p></td></tr></tbody></table>
 
 > 「脚本核对」和「人工核对」不是一个可信度级别
 >
@@ -138,13 +131,7 @@ feishu:
 
 国内访问 GitHub <b>时通时不通</b>：网页端延迟高、有时直接超时，要稳定访问就挂代理。 `git clone` / `git push`（SSH）与 `api.github.com` 一般没问题，所以<b>拉代码比点网页可靠</b>。
 
-| 通道 | 实测 | 说明 |
-| --- | --- | --- |
-| `git clone` / `git push`（SSH） | ✅ 通 | 拉代码走这条路 |
-| `api.github.com` | ✅ 通 | 接口能调 |
-| `github.com` 网页端 | ⚠️ 时通时不通 | 2026-09-30 超时；2026-10-03 连续 5 次 200（1.6–2.2 s） |
-| `raw.githubusercontent.com` | ⚠️ 时通时不通 | 2026-10-03 三次里两次成功 |
-| 校内系统（教学门户、网络学堂、info） | ✅ 通 | 校外需要先连 [WebVPN](https://webvpn.tsinghua.edu.cn/) |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>通道</p></th><th><p>实测</p></th><th><p>说明</p></th></tr></thead><tbody><tr><td><p><code>git clone</code> / <code>git push</code>（SSH）</p></td><td><p>✅ 通</p></td><td><p>拉代码走这条路</p></td></tr><tr><td><p><code>api.github.com</code></p></td><td><p>✅ 通</p></td><td><p>接口能调</p></td></tr><tr><td><p><code>github.com</code> 网页端</p></td><td><p>⚠️ 时通时不通</p></td><td><p>2026-09-30 超时；2026-10-03 连续 5 次 200（1.6–2.2 s）</p></td></tr><tr><td><p><code>raw.githubusercontent.com</code></p></td><td><p>⚠️ 时通时不通</p></td><td><p>2026-10-03 三次里两次成功</p></td></tr><tr><td><p>校内系统（教学门户、网络学堂、info）</p></td><td><p>✅ 通</p></td><td><p>校外需要先连 <a href="https://webvpn.tsinghua.edu.cn/">WebVPN</a></p></td></tr></tbody></table>
 
 所以链接上标的「<b>需代理</b>」读作：<b>打不开的时候就挂代理</b>，不是「必须挂代理才能访问」。 要资料优先找[校内 GitLab 镜像](/guides/archives/)；以上是一次实测，<b>你自己的实测优先于这张表</b>。
 

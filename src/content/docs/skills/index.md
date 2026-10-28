@@ -31,14 +31,7 @@ feishu:
 
 但有六件事挡在面前的概率极高，而<b>提前一两周准备的成本，比临时抱佛脚低得多</b>：
 
-| 技能 | 你第一次真的会用到它，通常是…… |
-| --- | --- |
-| [版本管理与校内 GitLab](/skills/git-and-gitlab/) | 小组大作业要合并代码；进实验室后要跑师兄师姐留下的代码 |
-| [LaTeX 与校内 Overleaf](/skills/latex-and-overleaf/) | 第一份实验报告要求公式排版；课程论文有格式要求 |
-| [Markdown 与笔记系统](/skills/markdown-and-notes/) | 开学两个月，笔记散在六个地方，期末哪个都搜不到 |
-| [命令行与 Linux 基础](/skills/command-line/) | 要连实验室的服务器；装环境的教程从头到尾都是终端命令 |
-| [文献管理与引用](/skills/reference-manager/) | 写第一篇带参考文献的论文或综述 |
-| [数据处理与画图](/skills/data-and-charts/) | 物理实验要画图；大作业要处理一份几千行的数据 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>技能</p></th><th><p>你第一次真的会用到它，通常是……</p></th></tr></thead><tbody><tr><td><p><a href="/skills/git-and-gitlab/">版本管理与校内 GitLab</a></p></td><td><p>小组大作业要合并代码；进实验室后要跑师兄师姐留下的代码</p></td></tr><tr><td><p><a href="/skills/latex-and-overleaf/">LaTeX 与校内 Overleaf</a></p></td><td><p>第一份实验报告要求公式排版；课程论文有格式要求</p></td></tr><tr><td><p><a href="/skills/markdown-and-notes/">Markdown 与笔记系统</a></p></td><td><p>开学两个月，笔记散在六个地方，期末哪个都搜不到</p></td></tr><tr><td><p><a href="/skills/command-line/">命令行与 Linux 基础</a></p></td><td><p>要连实验室的服务器；装环境的教程从头到尾都是终端命令</p></td></tr><tr><td><p><a href="/skills/reference-manager/">文献管理与引用</a></p></td><td><p>写第一篇带参考文献的论文或综述</p></td></tr><tr><td><p><a href="/skills/data-and-charts/">数据处理与画图</a></p></td><td><p>物理实验要画图；大作业要处理一份几千行的数据</p></td></tr></tbody></table>
 
 ## 这个板块怎么用
 
@@ -68,16 +61,7 @@ feishu:
 
 下面这些课，技能引导文档里给出了对应的入门章节。它的价值在于：<b>有些课听起来难，其实卡在前置工具上</b>（不会命令行、不会 Git、不会用终端跑脚本）。
 
-| 课程 | 相关的入门文档 |
-| --- | --- |
-| 操作系统 | 编程语言 / Rust 语言基础 |
-| 程序设计基础 | 基本技能 / Linux 入门基本技能 / VSCode 配置基本技能 / 如何使用搜索引擎编程语言 / C 语言基础编程语言 / 现代 C++ 语言 |
-| 程序设计训练 | 编程语言 / Python 语言基础编程语言 / Java 语言基础编程语言 / JavaScript 语言基础 |
-| 面向对象程序设计基础 | 编程语言 / C 语言基础编程语言 / 现代 C++ 语言 |
-| 人工智能导论 | 人工智能 & 机器学习 / Pytorch 入门 |
-| 软件工程 | 编程语言 / JavaScript 语言基础编程语言 / TypeScript 语言基础 |
-| 数据结构 | 外部链接 / OI-Wiki |
-| 虚拟现实技术 | 编程语言 / JavaScript 语言基础 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>课程</p></th><th><p>相关的入门文档</p></th></tr></thead><tbody><tr><td><p>操作系统</p></td><td><p>编程语言 / Rust 语言基础</p></td></tr><tr><td><p>程序设计基础</p></td><td><p>基本技能 / Linux 入门基本技能 / VSCode 配置基本技能 / 如何使用搜索引擎编程语言 / C 语言基础编程语言 / 现代 C++ 语言</p></td></tr><tr><td><p>程序设计训练</p></td><td><p>编程语言 / Python 语言基础编程语言 / Java 语言基础编程语言 / JavaScript 语言基础</p></td></tr><tr><td><p>面向对象程序设计基础</p></td><td><p>编程语言 / C 语言基础编程语言 / 现代 C++ 语言</p></td></tr><tr><td><p>人工智能导论</p></td><td><p>人工智能 &amp; 机器学习 / Pytorch 入门</p></td></tr><tr><td><p>软件工程</p></td><td><p>编程语言 / JavaScript 语言基础编程语言 / TypeScript 语言基础</p></td></tr><tr><td><p>数据结构</p></td><td><p>外部链接 / OI-Wiki</p></td></tr><tr><td><p>虚拟现实技术</p></td><td><p>编程语言 / JavaScript 语言基础</p></td></tr></tbody></table>
 
 章节标题按原文照录，点进 [技能引导文档](https://docs.net9.org/)按标题找对应页面。映射关系由脚本从对方的「课程指引」页扫出来，不是我们编的。
 
@@ -85,13 +69,7 @@ feishu:
 
 本站是经验帖，不是教程。这个分工很重要，弄错了会浪费你的时间：
 
-| 你想知道 | 该去哪 |
-| --- | --- |
-| 这东西<b>值不值得学</b>、什么时候学、学完用在哪 | 这个板块 |
-| 校内有没有现成的入口和资源 | 这个板块 + [校内常用链接](/guides/links/) |
-| 出了错<b>大概率是什么原因</b> | 这个板块的「常见坑」 |
-| 某个命令的<b>完整参数</b>、某个函数的<b>全部选项</b> | 工具的官方文档（每篇末尾都给了入口） |
-| 语法细节、边角情况、版本差异 | 官方文档或[学习资料库](/guides/links/)里的学生文档 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>你想知道</p></th><th><p>该去哪</p></th></tr></thead><tbody><tr><td><p>这东西<b>值不值得学</b>、什么时候学、学完用在哪</p></td><td><p>这个板块</p></td></tr><tr><td><p>校内有没有现成的入口和资源</p></td><td><p>这个板块 + <a href="/guides/links/">校内常用链接</a></p></td></tr><tr><td><p>出了错<b>大概率是什么原因</b></p></td><td><p>这个板块的「常见坑」</p></td></tr><tr><td><p>某个命令的<b>完整参数</b>、某个函数的<b>全部选项</b></p></td><td><p>工具的官方文档（每篇末尾都给了入口）</p></td></tr><tr><td><p>语法细节、边角情况、版本差异</p></td><td><p>官方文档或<a href="/guides/links/">学习资料库</a>里的学生文档</p></td></tr></tbody></table>
 
 > 为什么不直接写教程
 >

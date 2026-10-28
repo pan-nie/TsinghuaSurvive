@@ -30,12 +30,7 @@ feishu:
 
 ## 为什么现在就该学
 
-| 场景 | 具体会发生什么 |
-| --- | --- |
-| <b>程序设计与实验课</b> | 编译、运行、传数据、跑脚本，很多步骤只有命令行版本。 |
-| <b>科研</b> | 连实验室服务器跑实验、传数据集、看日志、挂长任务，全在终端里。 |
-| <b>实习</b> | 看服务日志、部署、排查环境问题，是研发岗的日常。 |
-| <b>日常生活</b> | 批量改文件名、批量转换格式、从一堆文件里搜关键词——这些用命令行是几秒钟的事。 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>场景</p></th><th><p>具体会发生什么</p></th></tr></thead><tbody><tr><td><p><b>程序设计与实验课</b></p></td><td><p>编译、运行、传数据、跑脚本，很多步骤只有命令行版本。</p></td></tr><tr><td><p><b>科研</b></p></td><td><p>连实验室服务器跑实验、传数据集、看日志、挂长任务，全在终端里。</p></td></tr><tr><td><p><b>实习</b></p></td><td><p>看服务日志、部署、排查环境问题，是研发岗的日常。</p></td></tr><tr><td><p><b>日常生活</b></p></td><td><p>批量改文件名、批量转换格式、从一堆文件里搜关键词——这些用命令行是几秒钟的事。</p></td></tr></tbody></table>
 
 ## 马上能做的
 
@@ -55,38 +50,15 @@ feishu:
 
 ### 看和走
 
-| 命令 | 作用 | 备注 |
-| --- | --- | --- |
-| `pwd` | 我现在在哪个目录 | 迷路时第一件事 |
-| `ls` | 这个目录里有什么 | `ls -l` 看详细信息，`ls -a` 连隐藏文件一起看 |
-| `cd <目录>` | 切换目录 | `cd ~` 回家目录，`cd ..` 上一层 |
-| `cat <文件>` | 把文件内容打到屏幕上 | 只适合小文件 |
-| `less <文件>` | 分页看大文件 | 空格翻页，`q` 退出。<b>看日志用它，不要用 cat</b> |
-| `head` / `tail` | 看文件开头 / 结尾 | `tail -f` 可以持续跟一个正在写的日志 |
-| `grep <关键词> <文件>` | 在文件里搜内容 | 加 `-r` 搜整个目录，是查报错最常用的手段 |
-| `find <目录> -name "*.csv"` | 按名字找文件 | 忘记文件放哪时用 |
-| `man <命令>` | 查这个命令的说明书 | 不用联网，比搜索引擎靠谱 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>命令</p></th><th><p>作用</p></th><th><p>备注</p></th></tr></thead><tbody><tr><td><p><code>pwd</code></p></td><td><p>我现在在哪个目录</p></td><td><p>迷路时第一件事</p></td></tr><tr><td><p><code>ls</code></p></td><td><p>这个目录里有什么</p></td><td><p><code>ls -l</code> 看详细信息，<code>ls -a</code> 连隐藏文件一起看</p></td></tr><tr><td><p><code>cd &lt;目录&gt;</code></p></td><td><p>切换目录</p></td><td><p><code>cd ~</code> 回家目录，<code>cd ..</code> 上一层</p></td></tr><tr><td><p><code>cat &lt;文件&gt;</code></p></td><td><p>把文件内容打到屏幕上</p></td><td><p>只适合小文件</p></td></tr><tr><td><p><code>less &lt;文件&gt;</code></p></td><td><p>分页看大文件</p></td><td><p>空格翻页，<code>q</code> 退出。<b>看日志用它，不要用 cat</b></p></td></tr><tr><td><p><code>head</code> / <code>tail</code></p></td><td><p>看文件开头 / 结尾</p></td><td><p><code>tail -f</code> 可以持续跟一个正在写的日志</p></td></tr><tr><td><p><code>grep &lt;关键词&gt; &lt;文件&gt;</code></p></td><td><p>在文件里搜内容</p></td><td><p>加 <code>-r</code> 搜整个目录，是查报错最常用的手段</p></td></tr><tr><td><p><code>find &lt;目录&gt; -name "*.csv"</code></p></td><td><p>按名字找文件</p></td><td><p>忘记文件放哪时用</p></td></tr><tr><td><p><code>man &lt;命令&gt;</code></p></td><td><p>查这个命令的说明书</p></td><td><p>不用联网，比搜索引擎靠谱</p></td></tr></tbody></table>
 
 ### 改和建
 
-| 命令 | 作用 | 备注 |
-| --- | --- | --- |
-| `mkdir <目录名>` | 新建目录 | 建多层加 `-p` |
-| `cp <源> <目标>` | 复制 | 复制目录加 `-r` |
-| `mv <源> <目标>` | 移动，也可以用来重命名 | 同一个目录下移动就是改名 |
-| `rm <文件>` | 删除 | <b>删目录要加 </b> <b><code>-r</code></b><b>，没有回收站</b> |
-| `chmod <权限> <文件>` | 改权限 | 常见如 `755`、`644`，含义见下文 |
-| `echo <文字>` | 输出一段文字 | 常用来测试和写进文件 |
-| `tar` | 打包 / 解包 | 解压 `.tar.gz` 用 `-xzf`，打包用 `-czf` |
-| `ps` | 看正在运行的进程 | 想知道自己刚才跑的任务还在不在 |
-| `kill <编号>` | 结束一个进程 | 从 `ps` 的输出里拿到编号 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>命令</p></th><th><p>作用</p></th><th><p>备注</p></th></tr></thead><tbody><tr><td><p><code>mkdir &lt;目录名&gt;</code></p></td><td><p>新建目录</p></td><td><p>建多层加 <code>-p</code></p></td></tr><tr><td><p><code>cp &lt;源&gt; &lt;目标&gt;</code></p></td><td><p>复制</p></td><td><p>复制目录加 <code>-r</code></p></td></tr><tr><td><p><code>mv &lt;源&gt; &lt;目标&gt;</code></p></td><td><p>移动，也可以用来重命名</p></td><td><p>同一个目录下移动就是改名</p></td></tr><tr><td><p><code>rm &lt;文件&gt;</code></p></td><td><p>删除</p></td><td><p><b>删目录要加 </b><b><code>-r</code></b><b>，没有回收站</b></p></td></tr><tr><td><p><code>chmod &lt;权限&gt; &lt;文件&gt;</code></p></td><td><p>改权限</p></td><td><p>常见如 <code>755</code>、<code>644</code>，含义见下文</p></td></tr><tr><td><p><code>echo &lt;文字&gt;</code></p></td><td><p>输出一段文字</p></td><td><p>常用来测试和写进文件</p></td></tr><tr><td><p><code>tar</code></p></td><td><p>打包 / 解包</p></td><td><p>解压 <code>.tar.gz</code> 用 <code>-xzf</code>，打包用 <code>-czf</code></p></td></tr><tr><td><p><code>ps</code></p></td><td><p>看正在运行的进程</p></td><td><p>想知道自己刚才跑的任务还在不在</p></td></tr><tr><td><p><code>kill &lt;编号&gt;</code></p></td><td><p>结束一个进程</p></td><td><p>从 <code>ps</code> 的输出里拿到编号</p></td></tr></tbody></table>
 
 ### 连远端
 
-| 命令 | 作用 | 备注 |
-| --- | --- | --- |
-| `ssh <用户>@<地址>` | 登录远程机器 | 第一次连接会问是否信任该主机 |
-| `scp <文件> <用户>@<地址>:<路径>` | 在两台机器之间传文件 | 传大文件先压缩 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>命令</p></th><th><p>作用</p></th><th><p>备注</p></th></tr></thead><tbody><tr><td><p><code>ssh &lt;用户&gt;@&lt;地址&gt;</code></p></td><td><p>登录远程机器</p></td><td><p>第一次连接会问是否信任该主机</p></td></tr><tr><td><p><code>scp &lt;文件&gt; &lt;用户&gt;@&lt;地址&gt;:&lt;路径&gt;</code></p></td><td><p>在两台机器之间传文件</p></td><td><p>传大文件先压缩</p></td></tr></tbody></table>
 
 ### 两个比命令更重要的符号
 
@@ -111,11 +83,7 @@ feishu:
 
 <b>权限</b>：用 `ls -l` 看到的那串 `rwxr-xr-x`，是三组权限：
 
-| 位置 | 管谁 | 常见含义 |
-| --- | --- | --- |
-| 第一组 `rwx` | 文件属主 | 可读、可写、可执行 |
-| 第二组 `r-x` | 同组用户 | 可读、可执行，不能改 |
-| 第三组 `r-x` | 其他人 | 同上 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>位置</p></th><th><p>管谁</p></th><th><p>常见含义</p></th></tr></thead><tbody><tr><td><p>第一组 <code>rwx</code></p></td><td><p>文件属主</p></td><td><p>可读、可写、可执行</p></td></tr><tr><td><p>第二组 <code>r-x</code></p></td><td><p>同组用户</p></td><td><p>可读、可执行，不能改</p></td></tr><tr><td><p>第三组 <code>r-x</code></p></td><td><p>其他人</p></td><td><p>同上</p></td></tr></tbody></table>
 
 `chmod` 后面的数字就是这三组的简写：`7` 是 `rwx`，`5` 是 `r-x`，`4` 是 `r--`。
 
@@ -154,16 +122,7 @@ feishu:
 
 报错的英文其实很直白，把它翻译成人话就好办了：
 
-| 报错 | 大概率原因 | 下一步 |
-| --- | --- | --- |
-| `Permission denied` | 权限不够，或文件不属于你 | 先看 `ls -l` 的权限位和属主；<b>不要先想 sudo</b> |
-| `command not found` | 没装、拼错，或不在环境变量里 | 确认拼写，查一下有没有安装，看是不是需要先激活环境 |
-| `No such file or directory` | 路径写错、大小写不对、名字里有空格 | 用 Tab 补全代替手打路径 |
-| `Connection refused` / `timed out` | 地址或端口不对、服务没开、<b>网络环境不对</b> | 先确认是不是必须在校园网 / VPN 内 |
-| `Killed` | 内存超限，被系统强制结束 | 减小数据规模、分批处理，或申请更多资源 |
-| `No space left on device` | 磁盘满了 | 看是哪个目录占了空间，清理自己的临时文件 |
-| 中文显示成乱码 | 编码不一致 | 统一用 UTF-8；注意在 Windows 上编辑过的文件 |
-| `bad interpreter` / 奇怪的语法错误 | 脚本在 Windows 上编辑过，换行符不一样 | 用专门的转换方式处理换行符，或在服务器上重新编辑 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>报错</p></th><th><p>大概率原因</p></th><th><p>下一步</p></th></tr></thead><tbody><tr><td><p><code>Permission denied</code></p></td><td><p>权限不够，或文件不属于你</p></td><td><p>先看 <code>ls -l</code> 的权限位和属主；<b>不要先想 sudo</b></p></td></tr><tr><td><p><code>command not found</code></p></td><td><p>没装、拼错，或不在环境变量里</p></td><td><p>确认拼写，查一下有没有安装，看是不是需要先激活环境</p></td></tr><tr><td><p><code>No such file or directory</code></p></td><td><p>路径写错、大小写不对、名字里有空格</p></td><td><p>用 Tab 补全代替手打路径</p></td></tr><tr><td><p><code>Connection refused</code> / <code>timed out</code></p></td><td><p>地址或端口不对、服务没开、<b>网络环境不对</b></p></td><td><p>先确认是不是必须在校园网 / VPN 内</p></td></tr><tr><td><p><code>Killed</code></p></td><td><p>内存超限，被系统强制结束</p></td><td><p>减小数据规模、分批处理，或申请更多资源</p></td></tr><tr><td><p><code>No space left on device</code></p></td><td><p>磁盘满了</p></td><td><p>看是哪个目录占了空间，清理自己的临时文件</p></td></tr><tr><td><p>中文显示成乱码</p></td><td><p>编码不一致</p></td><td><p>统一用 UTF-8；注意在 Windows 上编辑过的文件</p></td></tr><tr><td><p><code>bad interpreter</code> / 奇怪的语法错误</p></td><td><p>脚本在 Windows 上编辑过，换行符不一样</p></td><td><p>用专门的转换方式处理换行符，或在服务器上重新编辑</p></td></tr></tbody></table>
 
 > 读报错的顺序
 >

@@ -20,11 +20,11 @@ test('跨文章和章节链接回到原网址，本页片段保留正确路径',
  assert.throws(()=>bodyToMarkdown(entry,partsFromXml(xml('<p><a href="https://my.feishu.cn/docx/gpa#notMapped">错误</a></p>')),manifest),/未映射/);
 });
 test('表格中的换行、管道符、中文加粗和代码不会破坏列结构',async()=>{
- const source='<table><tr><td>列一</td><td>列二</td></tr><tr><td><b>「中文」</b><br/>下一行</td><td><code>a|b</code></td></tr></table>';
+ const source='<table><tr><td>列一</td><td>列二</td></tr><tr><td><b>「中文」</b><br/>下一行</td><td><code>a\\|b</code></td></tr></table>';
  const body=bodyToMarkdown(entry,partsFromXml(xml(source)),manifest);
  const dom=documentOf((await renderer.render(body)).code);
  assert.equal(nodes(dom,'tr').length,2);assert.equal(nodes(dom,'td').length,2);
- assert.equal(dom.querySelector('b').textContent,'「中文」');assert.equal(dom.querySelector('code').textContent,'a|b');
+ assert.equal(dom.querySelector('b').textContent,'「中文」');assert.equal(dom.querySelector('code').textContent,'a\\|b');
 });
 test('原生待办变为独立读者清单，代码块不丢转义字符',async()=>{
  const body=bodyToMarkdown(entry,partsFromXml(xml('<checkbox done="true">证件</checkbox><pre lang="python"><code>if a &lt; 2:\n  print("你好")</code></pre>')),manifest);
@@ -46,6 +46,11 @@ test('飞书元信息驱动标题、署名、时效和编辑按钮，不能伪�
  assert.deepEqual(fm.authors,['甲','乙']);assert.equal(fm.title,'新题');assert.equal(fm.editUrl,entry.url);assert.equal(fm.banner.content,'<b>原提示</b>');assert(fm.lastUpdated instanceof Date);
  parts.metadata['最近人工核对']='2099-01-01';assert.throws(()=>frontmatterFromDocument(entry,parts,4,'1793152800'),/核对日期/);
  parts.metadata['最近人工核对']='未标注';parts.metadata['适用阶段']='虚构阶段';assert.throws(()=>frontmatterFromDocument(entry,parts,4,'1793152800'),/适用阶段/);
+});
+test('首页副标题中的 HTML 作为文字显示',()=>{
+ const parts=partsFromXml(xml('<p>内容</p>'));parts.metadata['首页副标题']='<img src=x onerror=alert(1)>';
+ const fm=frontmatterFromDocument({...entry,frontmatter:{...entry.frontmatter,hero:{tagline:'原副标题'}}},parts,4,'1793152800');
+ assert.equal(fm.hero.tagline,'&lt;img src=x onerror=alert(1)&gt;');
 });
 test('Starlight 标题包装后仍能还原可搜索的链接分组',()=>{
  const html='<div class="sl-heading-wrapper level-h2"><h2>图书馆</h2></div><ul><li><a href="https://example.com">入口</a>说明</li></ul>';

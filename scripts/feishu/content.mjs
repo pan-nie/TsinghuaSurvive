@@ -22,12 +22,8 @@ export function markdownConverter() {
   converter.addRule('native-todo', { filter:'checkbox', replacement:(_, node) => '\n\n- [ ] ' + inlineXml(node) + '\n\n' });
   converter.addRule('native-formula', { filter:'latex', replacement:(_, node) => '`' + node.textContent.replace(/`/g, '') + '`' });
   converter.addRule('table', { filter:'table', replacement:(_, table) => {
-    if (nodes(table, '[colspan],[rowspan]').some((e) => Number(e.getAttribute('colspan') || 1) > 1 || Number(e.getAttribute('rowspan') || 1) > 1)) return '\n\n' + cleanHtml(table) + '\n\n';
-    const rows = nodes(table, 'tr').map((row) => Array.from(row.children).filter((cell) => ['TH','TD'].includes(cell.tagName)).map((cell) => converter.turndown(cell.innerHTML).trim().replace(/\|/g, '\\|').replace(/\n+/g, '<br/>')));
-    if (!rows.length) return '';
-    const width = Math.max(...rows.map((r) => r.length));
-    const line = (row) => '| ' + Array.from({length:width}, (_, i) => row[i] || '').join(' | ') + ' |';
-    return '\n\n' + [line(rows[0]), line(Array(width).fill('---')), ...rows.slice(1).map(line)].join('\n') + '\n\n';
+    // HTML tables preserve literal backslashes, pipes, nested paragraphs and merged cells.
+    return '\n\n' + cleanHtml(table) + '\n\n';
   }});
   converter.addRule('aside', { filter:(n) => n.tagName === 'ASIDE' || n.tagName === 'CALLOUT', replacement:(content) => '\n\n' + content.trim().split('\n').map((line) => '> ' + line).join('\n') + '\n\n' });
   return converter;
@@ -47,8 +43,15 @@ function inlineXml(parent) {
 
 export function cleanHtml(node) {
   const clone = node.cloneNode(true);
+  const allowed = new Set(['TABLE','THEAD','TBODY','TFOOT','TR','TH','TD','COLGROUP','COL','CAPTION','P','B','STRONG','EM','I','U','DEL','BR','CODE','PRE','A','UL','OL','LI','SPAN','SUB','SUP']);
   for (const item of [clone, ...nodes(clone, '*')]) {
-    for (const attr of Array.from(item.attributes || [])) if (!['href','src','alt','colspan','rowspan'].includes(attr.name)) item.removeAttribute(attr.name);
+    if (!allowed.has(item.tagName)) { item.replaceWith(item.ownerDocument.createTextNode(item.textContent)); continue; }
+    for (const attr of Array.from(item.attributes || [])) if (!['href','colspan','rowspan'].includes(attr.name)) item.removeAttribute(attr.name);
+  }
+  for (const cell of Array.from(clone.querySelector('tr')?.children || [])) if(cell.tagName==='TD'){
+    const heading=cell.ownerDocument.createElement('th');heading.innerHTML=cell.innerHTML;
+    for(const attr of Array.from(cell.attributes))heading.setAttribute(attr.name,attr.value);
+    cell.parentNode.replaceChild(heading,cell);
   }
   return clone.outerHTML;
 }
@@ -93,7 +96,7 @@ export function metadataXml(frontmatter) {
 }
 
 export function metadataMarkdown(frontmatter) {
-  return '## 文档信息\n\n| 项目 | 内容（可编辑） |\n| --- | --- |\n' + Object.entries(metadataValues(frontmatter)).map(([key, value]) => '| ' + key + ' | ' + (value || '—').replace(/\|/g,'\\|').replace(/\n/g,'<br/>') + ' |').join('\n');
+  return '## 文档信息\n\n| 项目 | 内容（可编辑） |\n| --- | --- |\n' + Object.entries(metadataValues(frontmatter)).map(([key, value]) => '| ' + key + ' | ' + (value || '—').replace(/\\/g,'\\\\').replace(/\|/g,'\\|').replace(/\n/g,'<br/>') + ' |').join('\n');
 }
 
 export function frontmatterFromDocument(entry, parts, revision, modifiedTime) {
@@ -130,7 +133,7 @@ export function frontmatterFromDocument(entry, parts, revision, modifiedTime) {
     if (!message) delete result.banner;
     else if (message !== plain(entry.frontmatter.banner?.content || '')) result.banner = {content:escapeHtml(message)};
   }
-  if (result.hero && '首页副标题' in values) result.hero.tagline = read('首页副标题');
+  if (result.hero && '首页副标题' in values) result.hero.tagline = escapeHtml(read('首页副标题'));
   result.editUrl = entry.url;
   result.lastUpdated = new Date(Number(modifiedTime) * 1000);
   result.feishu = {url:entry.url, revision};

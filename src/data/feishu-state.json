@@ -1,102 +1,102 @@
 {
-  "syncedAt": "2026-10-28T13:37:17.953Z",
+  "syncedAt": "2026-10-28T13:42:00.309Z",
   "documents": {
     "QMFDdbSmuo1Ax2xkiamcpqrvnkh": {
       "route": "/academics/academic-integrity/",
       "url": "https://my.feishu.cn/docx/QMFDdbSmuo1Ax2xkiamcpqrvnkh",
       "revision": 3,
-      "bodyHash": "4387f24a21db0e043658abd06a1f58113e14858250adb338e0278dfbe7095a8a",
+      "bodyHash": "6d699507508fd51dcbe5d8d49b52aec9d90eeed5be3ffcd0ec46564ae382a6a6",
       "metadataHash": "102fd8c39f794d8e16783f05826ea0d06f8db6b0d2c0aa254a0ddd9d89cebef1"
     },
     "FFx1dyYA3om9qkxMymCcL4awndb": {
       "route": "/academics/class-timetable-and-classrooms/",
       "url": "https://my.feishu.cn/docx/FFx1dyYA3om9qkxMymCcL4awndb",
       "revision": 3,
-      "bodyHash": "115b72f785e7f32ed0c34e3b95f8146e994683e7df1cd0745ba589000272881b",
+      "bodyHash": "c87549295ac7fc5b24ae81b7b9d92cd0d40108d570669ab173195ab475b41aa4",
       "metadataHash": "7d523b8f6727ebb190ea3ba06da8421ab1258e9ac6dadbeacc51d308ab098309"
     },
     "OXjVdWlC5otQEtx5dMfc401RnMe": {
       "route": "/academics/course-decision/",
       "url": "https://my.feishu.cn/docx/OXjVdWlC5otQEtx5dMfc401RnMe",
       "revision": 5,
-      "bodyHash": "826dcf8a7a8497407e5bdd277d5e5cfdf2e1a272529f908b0e210a013d1a539f",
+      "bodyHash": "1a79edb912f9ccfe4105691a76e33faf9b612fc6251483427bf80c31e8e51efe",
       "metadataHash": "e3f2c33490f34469fdf04cd12893829aaf12813baabe02e84571ef5826d7f257"
     },
     "BolUdjusaoxoY4xu8VTcfU6Fn6d": {
       "route": "/academics/course-selection/",
       "url": "https://my.feishu.cn/docx/BolUdjusaoxoY4xu8VTcfU6Fn6d",
       "revision": 4,
-      "bodyHash": "17f9e6383ca3635a40cca16852ea983a075e7cecfdc6e9f8f2686231aa4e3afe",
+      "bodyHash": "97fdb1b0f4df45b2b2a8eb06e0e9d0b4818fe89656e15e2aa5135512fcd57af0",
       "metadataHash": "817d025666c97ebf5fb1401e69c7ad0a5fd4255b83f4779f39d1b969de6b81de"
     },
     "Lsmadh6dBoPtGHxtF6qcmnP0nyd": {
       "route": "/academics/course-types/",
       "url": "https://my.feishu.cn/docx/Lsmadh6dBoPtGHxtF6qcmnP0nyd",
       "revision": 3,
-      "bodyHash": "e40bedc139caccf1c6a8ac1e6e626d04323e64a6aca8ad27271d9a89e7cb65f1",
+      "bodyHash": "f0d689db34ea18520ab92263ba5912103a17a2b1e30eedaaba6a0abaa22f1451",
       "metadataHash": "491ce084a3c454718861742b47671ae0e75284b02ab5b975c90f045c0438f426"
     },
     "Wv8BdznFSo3GrxxFs0ZcjLTFn4b": {
       "route": "/academics/credit-planner/",
       "url": "https://my.feishu.cn/docx/Wv8BdznFSo3GrxxFs0ZcjLTFn4b",
       "revision": 3,
-      "bodyHash": "4c5744c8b41de1a56ecf783e3010f66c9c760d6799de35e7153f0ab0052e324b",
+      "bodyHash": "41fe0ccc7314ef5e583b276f241e80bb3d8017c2946f4c8c7095a78c53a4357c",
       "metadataHash": "2042ec19df0925f174e7f30e308444968563c64b2a2b326db7fc7e3cf970a560"
     },
     "IQX6dOTABoyR7TxjsOocxPT1nqd": {
       "route": "/academics/discipline-and-appeals/",
       "url": "https://my.feishu.cn/docx/IQX6dOTABoyR7TxjsOocxPT1nqd",
       "revision": 3,
-      "bodyHash": "61f6d238db89774503ab1926d65532e2fadc67c291b13de60c0528b4878bda24",
+      "bodyHash": "93e82cf17a776c8208f00d67d96a6e40a822551851c7325b6c740d9c438459c8",
       "metadataHash": "122dcc861144bc6f36a1839d0e6deb00b25d848cbb88ccfadf1c46f8db2ab4d5"
     },
     "Q9UFdVDmOo43JzxoYuqcYvl7nb3": {
       "route": "/academics/exams-and-retake/",
       "url": "https://my.feishu.cn/docx/Q9UFdVDmOo43JzxoYuqcYvl7nb3",
       "revision": 3,
-      "bodyHash": "2b0acf7c09f7d0e2a87c92d1bbf92d435bf61c80b6685155ed181926c6fba5dd",
+      "bodyHash": "ea9f28801b81ee891c26ebdffb1c43a833fee7fdc38ba35710d2949685eb0860",
       "metadataHash": "5ba0c876534fbe87be97327cd85fe9ed357c22cb5cadd099c64b1f2cb946387c"
     },
     "Hvm7dPP8cocV7KxKz1tcDQ7FnWh": {
       "route": "/academics/gpa/",
       "url": "https://my.feishu.cn/docx/Hvm7dPP8cocV7KxKz1tcDQ7FnWh",
       "revision": 5,
-      "bodyHash": "7b3c952c5413233193dcdd65c6b67fbb8d2ed63a602e8ec0e41f41fb89158b00",
+      "bodyHash": "45938125fc98a3e67721a306762b18dfb6908e9f7849613ff97c5e81dc43deef",
       "metadataHash": "1047033af35e16b3d30ce0a622e5e7f8ebafea097f60f84b67647ffe0ca17192"
     },
     "FFvldEX1uoTlFmxfZpzcsXNCnNe": {
       "route": "/academics/learning-method-transition/",
       "url": "https://my.feishu.cn/docx/FFvldEX1uoTlFmxfZpzcsXNCnNe",
       "revision": 3,
-      "bodyHash": "b6b85355bfc2bd58d554ecb709c5c28df69366357664152b307846374b10f344",
+      "bodyHash": "db9a6b7ca579c20fa7783969d932d14ee6cf7c0cea52085877576adc92e400bc",
       "metadataHash": "182c7d33a6568f411e56847e08207186d0257007123f685c977a9b6f8d01f5c5"
     },
     "YzUEdMO20oCjcqx5DpvcbknFnVc": {
       "route": "/academics/minor-and-certificates/",
       "url": "https://my.feishu.cn/docx/YzUEdMO20oCjcqx5DpvcbknFnVc",
       "revision": 3,
-      "bodyHash": "7f9c6358100f567dcaf0dd2add5c8eed771cd0ec89e02d6a23a978544a858dd0",
+      "bodyHash": "e1978ecb43c01273c9e0e3681705f9d58b35f361a48ab11abbc151427548b2a2",
       "metadataHash": "b4e905a4ca0c1e36b10f4bee829b9333c00f9a961674557097d533e3d6404f63"
     },
     "VXXsdOPvRoRBquxEFhncpWfZnJc": {
       "route": "/academics/registration-and-status/",
       "url": "https://my.feishu.cn/docx/VXXsdOPvRoRBquxEFhncpWfZnJc",
       "revision": 3,
-      "bodyHash": "64c142ab62bb749231c5524a7315a3f4ef3bd31ee9a12cee690907113f809acf",
+      "bodyHash": "3a8803b80dd8a3714ef55c22946733109b7ec3dbc50235038e587e52ee8af051",
       "metadataHash": "1dcae383a05b6259bbc2ae6da749b489be1b13b22f199045d938bda7e9c2d2e2"
     },
     "GUxJdCMAwoWVBcx32bTclERqnRh": {
       "route": "/academics/scholarships/",
       "url": "https://my.feishu.cn/docx/GUxJdCMAwoWVBcx32bTclERqnRh",
       "revision": 3,
-      "bodyHash": "5d1ad8a9666743c02eb47a3d87d69d5cc4963b8f880682255c1f19e16d971ce1",
+      "bodyHash": "7ac98a38e5f5c1950bbb55a4c6ba10fda07036a43775de80e4b7943bfc6be709",
       "metadataHash": "81394d4a3b2cfb2606a2cba4c06d8332e38c95631d6a3f32ffa673accd87ab71"
     },
     "JpHedi70ZoSv0GxhnvKc9vKGnYm": {
       "route": "/academics/xuetang-program/",
       "url": "https://my.feishu.cn/docx/JpHedi70ZoSv0GxhnvKc9vKGnYm",
       "revision": 3,
-      "bodyHash": "9bb442dd133317fb0a5aad731af1b7d4f57f3e85bdeaa38a827dc6120e2a418d",
+      "bodyHash": "0ced74659db50fb1a101bbe352cce6f63fe1150f34c348555bc95e2ddab01e02",
       "metadataHash": "23ce867ae5f8177dc6833910bb6ae1b34c9cfda73b1ca9e87e006a3fdea8f4c2"
     },
     "ID2bdZ6pPok870xhvAEcvQlen9C": {
@@ -110,91 +110,91 @@
       "route": "/campus/cloud-services/",
       "url": "https://my.feishu.cn/docx/T6hndcKgGoRDZTxvipPcvnAlnHg",
       "revision": 3,
-      "bodyHash": "574690948aca15ec327f9c85242cc8f3732658b87d736d823d5efbd522035f83",
+      "bodyHash": "1cb45144296b0ca4d65be6e1367b71666d9acad20e4ae2817edcd663ddd71f8b",
       "metadataHash": "23f61e52f0dac692c90ccb26b208d6d681d370064672bb5c0ca234e290a37ad4"
     },
     "NCRTdudR4o0a5nxYxvDcytXinLd": {
       "route": "/campus/daily-services/",
       "url": "https://my.feishu.cn/docx/NCRTdudR4o0a5nxYxvDcytXinLd",
       "revision": 3,
-      "bodyHash": "696ae558bd109a286f1e4366a7e1c3c7a73a68c61b7d758d0600806f19853b3e",
+      "bodyHash": "7159846e9011422ddcf408d3750de1ebd394f18e1d94e6f46137ebc5dd02ed99",
       "metadataHash": "a5a2532fb7e427a7142242f112adbaf2c5c782140e0589ec3fbb5166c6561777"
     },
     "JdpbdSLAJoh6c7xBCizc15Qun2g": {
       "route": "/campus/express-and-printing/",
       "url": "https://my.feishu.cn/docx/JdpbdSLAJoh6c7xBCizc15Qun2g",
       "revision": 3,
-      "bodyHash": "511339f12a409d7c492f4711afea5afff04518b5a7932e812f733a27a9a457a2",
+      "bodyHash": "55fe096b824815d5f7c88615c1c286ae20af6cba9ea6edf7feb5e58905417e46",
       "metadataHash": "080828d8f2c77f6e71d68ab00f74fdc3db1145a153e30e15671254330b312e0a"
     },
     "YC6bdzB0Uo2h76xlOrQcBLyQn6g": {
       "route": "/campus/food-and-study/",
       "url": "https://my.feishu.cn/docx/YC6bdzB0Uo2h76xlOrQcBLyQn6g",
       "revision": 3,
-      "bodyHash": "4d9aba28a0a2e4bcb61431920b68c837b1d4522f9a3d98f7646f8aeed9e9e610",
+      "bodyHash": "a66a86d9c359a02fe0c9503ed08d8ad7b753194f1aa7618129bc4bca04c405ad",
       "metadataHash": "7b79a899a421ac71646049e34c7acf41bb3b20ecc7644a96db643877c8d26786"
     },
     "GfhWdW4wQo2o2exxO5oc30t8nGc": {
       "route": "/campus/getting-around/",
       "url": "https://my.feishu.cn/docx/GfhWdW4wQo2o2exxO5oc30t8nGc",
       "revision": 3,
-      "bodyHash": "0794279346c8477a6379a99a0fe50b441d45c2a2ee72fd262e491ea1ed8dd9ec",
+      "bodyHash": "25385b7cf10f523fc83e1ea2707227edf90cf7e97f8f12d79a720a45f14e5a94",
       "metadataHash": "66b95b2a3d4c1bf5e6ae30cd3a26d6b460ba8ca01c2f126002b6d4549748f392"
     },
     "GBKxd51jeogOLrxJj3jc5owvnoe": {
       "route": "/campus/health-and-money/",
       "url": "https://my.feishu.cn/docx/GBKxd51jeogOLrxJj3jc5owvnoe",
       "revision": 3,
-      "bodyHash": "b572987d33baa8dbc291ecfeec75d16854e8db06801d9c6c2d66163c01b1b920",
+      "bodyHash": "efc5f8ccc1335187d2228cc35f4971bc55254aee8a57ba7fb15e0662fe74c10f",
       "metadataHash": "4f5849a49c82d767eea76900a19f57792bb6f119614833df2b5b41dfeeac8255"
     },
     "WAyvdvDhFobPGbxezQ6cIWyin8c": {
       "route": "/campus/network-advanced/",
       "url": "https://my.feishu.cn/docx/WAyvdvDhFobPGbxezQ6cIWyin8c",
       "revision": 3,
-      "bodyHash": "347d3de76afd0cd8d48a44adc5b9afcd9b24138bc7346f5584ef3b33c20cccdd",
+      "bodyHash": "070568d866220d7901ead5b4391b5dc65fd5e28b65ae075764ba1f34e637d1f8",
       "metadataHash": "6aff175699a1c0c1f72b9965a39f673b8c823fd810407a09df1088907830d764"
     },
     "QirHdPQCrob8Pixvn0mc9rjInid": {
       "route": "/campus/network-and-traffic/",
       "url": "https://my.feishu.cn/docx/QirHdPQCrob8Pixvn0mc9rjInid",
       "revision": 4,
-      "bodyHash": "bfa3bdace605449e1aec98bbf8eb920265d07a9ec0b31e158f4665b6a39047d8",
+      "bodyHash": "6d4fbf9a5499f316b2c6f36829ef7ad16259cca7084da743e5bd653a1f0026a0",
       "metadataHash": "63f3548f74ae0dfcc6a108ff5df8aad021c53003c4243578dbe331b3d082d084"
     },
     "SrqidXyHjopnCHx7yBuc3IVxn1d": {
       "route": "/campus/safety/",
       "url": "https://my.feishu.cn/docx/SrqidXyHjopnCHx7yBuc3IVxn1d",
       "revision": 3,
-      "bodyHash": "299c7ed404d0ea0db9744d8439116942856ce0fce1034fcc5f9817f180357db8",
+      "bodyHash": "9c407be8bc67021437ad2f5b476bb1ba68c87c57db815e3afdafcffbc2fd261f",
       "metadataHash": "278f145f9fe6bf6302ffa3a4e1f7b0c03bea18c32f4a35801890a2c246b978b3"
     },
     "L5cjdvgAsoJ1y4xYS4vcF5Pinoc": {
       "route": "/campus/sports-and-venues/",
       "url": "https://my.feishu.cn/docx/L5cjdvgAsoJ1y4xYS4vcF5Pinoc",
       "revision": 3,
-      "bodyHash": "c7785e2feca23ed09e7bf24eb0a819333ae072bec94dfafdef08aab988aacf4c",
+      "bodyHash": "869e7f36fee59a246ddf344ecb26fea2ed762b9d6b4bd59c2c899cfcc10eb873",
       "metadataHash": "19509eeffa3cacd67c5e38d598cea3f8039a9ed412f7fa9a776af37fb77143db"
     },
     "VHOvdgjZ1otptRxlNNccAJnInwb": {
       "route": "/campus/student-organizations/",
       "url": "https://my.feishu.cn/docx/VHOvdgjZ1otptRxlNNccAJnInwb",
       "revision": 3,
-      "bodyHash": "91f3d79da60326f4c003968f8c54c5903e759a42944871d78761a21115bae8c5",
+      "bodyHash": "5289998847936b07149cb41d666283f07378b7a56e96e2c4f23e65d4fb0292fc",
       "metadataHash": "3dc118fc688578de7d2c837b79aa3f771b0403ebeba68b489bf26abc4e270b4f"
     },
     "JziBd8V5Go1V3lxmyIwclpQNnMf": {
       "route": "/campus/support-centers/",
       "url": "https://my.feishu.cn/docx/JziBd8V5Go1V3lxmyIwclpQNnMf",
       "revision": 3,
-      "bodyHash": "be6ff4eb1661c4cdeecf3cc8ee1f58f625607295c81d2097de1ffeda0224a77b",
+      "bodyHash": "35c621510541eb35b25c47491d2179d5215fc6d19a249464d5766fc5bc9e8306",
       "metadataHash": "5cfc539e9d0f614070ad4001fdc585b058419587edc7f65d5cc2cd47cd450bfa"
     },
     "GeMOdozxRo1BHixFqAacIamdnJf": {
       "route": "/contribute/",
       "url": "https://my.feishu.cn/docx/GeMOdozxRo1BHixFqAacIamdnJf",
       "revision": 6,
-      "bodyHash": "451a4e681a9329f2c6379b54c566228288190172a76c7b8c652334dbe1d69823",
+      "bodyHash": "9063f73776a6bfd0c52f744f4037748709dfb472baef1ca66ce6db96413e2455",
       "metadataHash": "1e259a864bd4b002bb723e3ae7f7dbae4f0e2e0ed0a2fee3d4376fb441f15a19"
     },
     "AdkrdoJxkoKEopxMHPecaQj9nxg": {
@@ -208,133 +208,133 @@
       "route": "/freshman/arrival-checklist/",
       "url": "https://my.feishu.cn/docx/QaJydS4sboUMKIxmm4Xc2oS7nWh",
       "revision": 19,
-      "bodyHash": "e13260a94d77291f17a8e4c2bd752f604aa4cf0dfd4fff5a31ce6263e938b15e",
+      "bodyHash": "3cf9398ad2dacb650361fb33fb2bb9a44548c8895101e2ba9632bc10bc883a08",
       "metadataHash": "cfa5e2cb41fde5e118b702e9b4dcb3952d25247dbe4c4582c0b6cf8b07cbd4a3"
     },
     "GdKodjKLJoip8ax15xpcf4o9ngb": {
       "route": "/freshman/dorm-and-network/",
       "url": "https://my.feishu.cn/docx/GdKodjKLJoip8ax15xpcf4o9ngb",
       "revision": 3,
-      "bodyHash": "efb5292340a3ee0f36a7a25d9905dfca1f156847c6a6e9d982df5156ebb0d848",
+      "bodyHash": "d2cbf08f6c7e2578ee51d9227764525dd8a2eac44b3c3ca90f0ff1b0f187caf1",
       "metadataHash": "70b8cee1313a36e2f314cdd0cdb3eec0724c524154e40da79e587e96e24a4bfe"
     },
     "G5p6dGZ10oT4Snx2UWAcPr5Znzd": {
       "route": "/freshman/military-training/",
       "url": "https://my.feishu.cn/docx/G5p6dGZ10oT4Snx2UWAcPr5Znzd",
       "revision": 3,
-      "bodyHash": "8e89019cccb880f865ca1038d3282248eaaed9016965c958b91269e68c7bda0a",
+      "bodyHash": "cc59fe2e5c74f1413123ff44efb7107115099b72ddb10330cc777cb7bb4d46c0",
       "metadataHash": "6bcefb887ec0d25a8cb90a5ff72f80ce4edbe3a162e59fc84ae1ada72e7957a1"
     },
     "U18rdtZXwoN8vTx6erTc4djanTb": {
       "route": "/guides/archives/",
       "url": "https://my.feishu.cn/docx/U18rdtZXwoN8vTx6erTc4djanTb",
       "revision": 4,
-      "bodyHash": "f8ef48be9da0107876bac737a5ce70fa624e803602511f60d576eb80c6c43a00",
+      "bodyHash": "3b2ce44ab51f115f5de8c588a2ba02f2bee1001a33db64436a97aee91d1501d0",
       "metadataHash": "9e06f649017e64389b751dd1d21b2d0bc40f15ab5a4517e0663279f23797711c"
     },
     "Q1yGdjfAUor7xUxsPKscVy7inwd": {
       "route": "/guides/course-codes-and-majors/",
       "url": "https://my.feishu.cn/docx/Q1yGdjfAUor7xUxsPKscVy7inwd",
       "revision": 3,
-      "bodyHash": "8ada9a0651ee41f37a445d64c03c5775f6847a6fbeb16242dcfd016ef27c7487",
+      "bodyHash": "9afbd4ce6f32348b0ee4361e103af003579f32568fc22c90b828d86d99e34361",
       "metadataHash": "fafb12dd48670defd83b55e4e75eb912b6a2a2bdb91d25c310724ff11e47beec"
     },
     "URc2dpb9MoPIZNxiGtBcHaQ9nId": {
       "route": "/guides/external-guides/",
       "url": "https://my.feishu.cn/docx/URc2dpb9MoPIZNxiGtBcHaQ9nId",
       "revision": 3,
-      "bodyHash": "6d2efa0b748c576f4a5ff0afd637bcc8365cc228323ea91096c236b10309708b",
+      "bodyHash": "016d393b44e3b1f4e2810a9ef02e0d4ce3f7bbafa25824976eb92f91f1c9cfb7",
       "metadataHash": "361f4d6e372f2de1d0e3135283f7a484ba3f66d8f1dbe271560a5eea441c0e52"
     },
     "LY8EdXpAioNGZJxhFJecdGPenjg": {
       "route": "/guides/frequent-questions/",
       "url": "https://my.feishu.cn/docx/LY8EdXpAioNGZJxhFJecdGPenjg",
       "revision": 3,
-      "bodyHash": "27f214cb92316f774250db59ec8fc0ac447c3e664e32887425dc3a367ff2ee2c",
+      "bodyHash": "4fb04c1eddc938137e72817baa8c71b7b45e0d900b083522d5d49b5adc74967f",
       "metadataHash": "355216658f1fb1d2cc31e22f9d0e1bdbb8d373cb1eb69449c93b116fdd588e3a"
     },
     "IcOLd38svoGuKmx089nc2pK2nrb": {
       "route": "/guides/links/",
       "url": "https://my.feishu.cn/docx/IcOLd38svoGuKmx089nc2pK2nrb",
       "revision": 5,
-      "bodyHash": "f9174f95e49196c7348136265b50be9d346892dd021a3b57c020f82e63e9d1da",
+      "bodyHash": "d9ee2756a35effbb4582d795adee40e5fe2609191379f514e3ddc6791cbd2ed2",
       "metadataHash": "9b2dfc7b24290abf8cc90391a2947f8ba360a4e792601160a07b69216e7ec111"
     },
     "V4JpdqFT6o1TvExpsR3cmoPlnff": {
       "route": "/guides/resources/",
       "url": "https://my.feishu.cn/docx/V4JpdqFT6o1TvExpsR3cmoPlnff",
       "revision": 3,
-      "bodyHash": "3f1e0f635b15b719d6a543cc819c1a8609e9411eb62db3eb222cf365a797c29d",
+      "bodyHash": "1b2304ab22ab65563f19dd6405ce34149516a8e7664d4d76c1076dbbedf02016",
       "metadataHash": "c078ab498ed10ac8ebfa32208c8616b9232576b52854eb7df0f45d12bcd4e729"
     },
     "Mg9sdnK8woyD0Dxvv1McF3IAnIb": {
       "route": "/guides/study-skill-handbooks/",
       "url": "https://my.feishu.cn/docx/Mg9sdnK8woyD0Dxvv1McF3IAnIb",
       "revision": 3,
-      "bodyHash": "c04dcd02f832e36a3b353474d68e86215f1ddfcc7795a6e32b1e95055385600a",
+      "bodyHash": "a73e4eecbee05c93b2e04e9e79933a7fa67e65f7894ef2daca2f05b1e0a450c9",
       "metadataHash": "3b5220dbcbb86dac1c8540b346afcc80eed8789d9bdda307e80fbe965d38543f"
     },
     "Mz57dlZBfonsE5xBwaOcZPlFnQg": {
       "route": "/guides/templates/",
       "url": "https://my.feishu.cn/docx/Mz57dlZBfonsE5xBwaOcZPlFnQg",
       "revision": 3,
-      "bodyHash": "5baaa3e4b5b87b46ba43ad91411a85787c0553a26d62014b5a0e14999fbf734d",
+      "bodyHash": "1a5fb72b3b76fd842d488ee83a90370107bfe1690e4a9713dd18fccd9d48b8e9",
       "metadataHash": "ca718cc007b6ac55c92c52f63e72c91e1f511ba35922e454dd517836074e3cfc"
     },
     "IVQpdLuz5oY4wJxZbr6cVhR6nIb": {
       "route": "/guides/tools/",
       "url": "https://my.feishu.cn/docx/IVQpdLuz5oY4wJxZbr6cVhR6nIb",
       "revision": 4,
-      "bodyHash": "581873b2e9a51da435a08a403d5423fea1f05f9fa09441e13d0ccfbf2f33386e",
+      "bodyHash": "3cd70b514e204d8a68427ac59ff78ad0565e042d92e5aed57b343ada860ff9a8",
       "metadataHash": "b022590b14a392908ebf7ff1009f6108c0841f1a179480be17a6152f4ba0ec81"
     },
     "W6JRdvFxKohfCjxHcDHcuJ2ynSb": {
       "route": "/",
       "url": "https://my.feishu.cn/docx/W6JRdvFxKohfCjxHcDHcuJ2ynSb",
       "revision": 5,
-      "bodyHash": "600e53412fc4edee182177b90e3cc3255232d57346d0547341556a7f0f86637f",
+      "bodyHash": "57407b1f50523b2fb2a1ff9b371247cb1b6d97c2aaa9942884da809ce605a478",
       "metadataHash": "487fb1b92082431caaecff36c9e9da094ffa83d3ad1a327856e66b758cf7e9a7"
     },
     "BHYjdd3PGo1i9sxtv7tcDnLTnte": {
       "route": "/international/arrival-and-payment/",
       "url": "https://my.feishu.cn/docx/BHYjdd3PGo1i9sxtv7tcDnLTnte",
       "revision": 4,
-      "bodyHash": "ce730a531dfd9744e83b4cca338e902ddcfbecec87b1ebd650a8bef2f5942abc",
+      "bodyHash": "0547d7c8c885f2b313981ac9d16d1f8ea2495703b1c8e898b928c17760ed9229",
       "metadataHash": "86618e562fdf4474523f2acb661132dae8545dda1e2ba7a6c697b258f1da31a0"
     },
     "Kargdn8DGotGhpxvWVIc0OLWnue": {
       "route": "/international/campus-life/",
       "url": "https://my.feishu.cn/docx/Kargdn8DGotGhpxvWVIc0OLWnue",
       "revision": 3,
-      "bodyHash": "12772a3a273b699c3e2c6151b71c657b73145c7a02af2a835a4d9290258a2a99",
+      "bodyHash": "8c19a230c7d9f010041b2c7657c440dac0f13c67a7af52ca253943fb2e27dff0",
       "metadataHash": "2a2b814e4e891aae0a04180ca7368dadc3f6cf89fb849ad71c7c4d23029519f8"
     },
     "MBUYdwGEaoiTYLxMwCTcxs9unTh": {
       "route": "/international/health-and-contacts/",
       "url": "https://my.feishu.cn/docx/MBUYdwGEaoiTYLxMwCTcxs9unTh",
       "revision": 3,
-      "bodyHash": "d9de49d03eb6fb184dac33b16248fe97fd7218a163e0a6589b0344d838c5b7fc",
+      "bodyHash": "53fd8ee7e8f617dee7d826aeb813c9b9b74565f7b63eecb78edb42a2b67d93e4",
       "metadataHash": "00314366d7d8e9d227bdcbce6f8d6a587b047307dcc2da04e15180960e9e9932"
     },
     "HHjVdG1X0oca8cxzzMPcfuAkn7e": {
       "route": "/international/",
       "url": "https://my.feishu.cn/docx/HHjVdG1X0oca8cxzzMPcfuAkn7e",
       "revision": 3,
-      "bodyHash": "c3a799ac1242ad8aa9d465a6dd9afef7b3ab069cf7e5b51d2bcef889d69c739a",
+      "bodyHash": "7caae6568cffe8e6aec3b9dbd9c9fbe7b9e096c51871bdd80df89b664eacbc60",
       "metadataHash": "c26e55e85961abb823818be8d41d2d2db569049fa93eb4407b0c08b6a4835a80"
     },
     "Tuhdd0MJho8Awhx1xi2cHi5Rnib": {
       "route": "/mindset/after-failure/",
       "url": "https://my.feishu.cn/docx/Tuhdd0MJho8Awhx1xi2cHi5Rnib",
       "revision": 3,
-      "bodyHash": "24aca359298c94e6007c9f2ded9c0379d0d967b06179b84586f4b81590ca9e3d",
+      "bodyHash": "c3240a785adc2d8ee2dbb01dd394237bc809d524621cad87b4081e63054c02a7",
       "metadataHash": "ae1fc5880e413c001bebd89e4ab9e403805b1a4a50f7478f074a9f167f9aa762"
     },
     "GFQEdPtI6oXN4yxOqwZcGG6an0b": {
       "route": "/mindset/communication/",
       "url": "https://my.feishu.cn/docx/GFQEdPtI6oXN4yxOqwZcGG6an0b",
       "revision": 3,
-      "bodyHash": "9fb86757d15a9048ebbebc8feb75266ba9d7b6d0b670591c01aab1596b6b7d4f",
+      "bodyHash": "873bcaf76ad1390faee644ba991a789b2c7225f56ea854f393ae9ab37ebc1f19",
       "metadataHash": "94726991c02aad58d560d9c3c180cce73f18f00d52a92888ea750c9bf6861fce"
     },
     "AmGod9iXDotQJmxMEaJcM8OOnsd": {
@@ -348,175 +348,175 @@
       "route": "/mindset/senior-advice/",
       "url": "https://my.feishu.cn/docx/XPa6dLmOGo8rJ5xxYEecnqdpnLh",
       "revision": 4,
-      "bodyHash": "c323bb21c6f95122d0f7a4589c0579622f8d43c1e878f61be19420c62c3fdeca",
+      "bodyHash": "b43172c61439664f529224176b618a9da0e4f3dfd875b6d136cddc4f01e88cc7",
       "metadataHash": "75d769fb2980870020d336318cb21651bd23ed2b257f2a80c72f6bb880538684"
     },
     "YQpOdrugOoxPNRxguRfcuHg6nOh": {
       "route": "/mindset/talking-to-advisors/",
       "url": "https://my.feishu.cn/docx/YQpOdrugOoxPNRxguRfcuHg6nOh",
       "revision": 3,
-      "bodyHash": "47eb442ad9fef38d6d206eea9a125ed1ee63930f8a3e4c9711e09886ecec4534",
+      "bodyHash": "4f04532335a572ce2eb1632ce7c351a16145a545da47c68a4f22fe7e40b7a26c",
       "metadataHash": "0e5df147cd8a5044f8c770ca17799c2f612ed88ce73559aa2d373cee9d6d2fd9"
     },
     "JCPfd6ITBoVVYcx4wZAcdkIAnBf": {
       "route": "/mindset/time-management/",
       "url": "https://my.feishu.cn/docx/JCPfd6ITBoVVYcx4wZAcdkIAnBf",
       "revision": 8,
-      "bodyHash": "4df068714abb72dbbcb6c1b8e2cc306a8acbb6b3c04d6a0a2c325c961b123e19",
+      "bodyHash": "cb9bfed7912fc19f92d68b5610142633ef663e7a5972f0aa6a561232fcf7eb05",
       "metadataHash": "30c6b97c18fd1f1a1129af4c18f6baed2ecf44e7bd3c3f463ffbf5cb295941a9"
     },
     "T4iFdMmxxoenRqxOTtccug8knjg": {
       "route": "/publicity/event-photography/",
       "url": "https://my.feishu.cn/docx/T4iFdMmxxoenRqxOTtccug8knjg",
       "revision": 3,
-      "bodyHash": "b5a4b056c662a9651ac982a3f9ee6eccdae76c9387f7307838a47b12fa8c4c68",
+      "bodyHash": "62968f0e8ab68e7fd562a7206f163e81c12639144b0111e9942ceacaad07a78a",
       "metadataHash": "40a8817083e309fc0d970cfc64dbc9c20c68459d2577cadfbd111c534fc5dbbc"
     },
     "My1ed5P9BocZIyxFRggc25aCnfg": {
       "route": "/publicity/graphic-design/",
       "url": "https://my.feishu.cn/docx/My1ed5P9BocZIyxFRggc25aCnfg",
       "revision": 3,
-      "bodyHash": "b098a80d8abb847c4b9eebd1746132b091426ee0c71128ce3208378e7a67e4e3",
+      "bodyHash": "945f7f7dcc7d0d556e85208c8a79ecc290d88f2318b7c58550f264fbf5dfd804",
       "metadataHash": "19d88275c916a09feb45b1bedb5daffa47243e757493f47dd6da59c0319b5d47"
     },
     "H3wKd0BvdogYiixbCZUckBWgnze": {
       "route": "/publicity/",
       "url": "https://my.feishu.cn/docx/H3wKd0BvdogYiixbCZUckBWgnze",
       "revision": 3,
-      "bodyHash": "e3a6cda3ce251c0dfcd0213f516a326d3b6995de5716f329013e2977e2997135",
+      "bodyHash": "bfa1fc600a93e40c118e0ded05e93a9efe82ecd033622dab5b1997da80d1f381",
       "metadataHash": "4734a8c721205b4de04a2729744de0258119540e83a231eff1059f0257c53870"
     },
     "RRvWd51ZNo6GU1xa6udcqds1nme": {
       "route": "/publicity/photo-postprocessing/",
       "url": "https://my.feishu.cn/docx/RRvWd51ZNo6GU1xa6udcqds1nme",
       "revision": 3,
-      "bodyHash": "42353eee9ed1db74c7fa15d59fc3e98d01d3a361f9c6b1bb7dc16adfeb07cd5a",
+      "bodyHash": "b67307954de5966492b5d938224379b24f6e97a3588e90568614316e1adc7664",
       "metadataHash": "567d376657c5c9eec190881889e998b2f99b88a83af7f9ad5de7d4edde6d2dd0"
     },
     "WAaPdj3cpod5UwxBmEtcaYXSnxR": {
       "route": "/publicity/video-basics/",
       "url": "https://my.feishu.cn/docx/WAaPdj3cpod5UwxBmEtcaYXSnxR",
       "revision": 3,
-      "bodyHash": "3f765e0ac531c10f954b52762b787468778e5fd74bfb9cc46f76d64ad1182613",
+      "bodyHash": "ea1b5823eb4a41b60a27a3e87e0db8abd80f70b75d5519e6cef3247f21cf5c01",
       "metadataHash": "5d3b9415bc37ce2be7b4620563d6602ef0a929faad5ec9024c851f02d40019f8"
     },
     "XlOVdDKd5oKA8sxIydTcbUK0nuf": {
       "route": "/publicity/wechat-article/",
       "url": "https://my.feishu.cn/docx/XlOVdDKd5oKA8sxIydTcbUK0nuf",
       "revision": 4,
-      "bodyHash": "ceb21a32c57a64ab0f7c6cc9ba67fe9820ba9fdc834833c35e24e22174ca7eb6",
+      "bodyHash": "1761bdafa0b5786a131151b9488aee677744bdac9debf98b3a2ace0684909de0",
       "metadataHash": "6093e50ec80bd06e0b7300bcb8216be9df14e338642fa7388f7715790684376e"
     },
     "KGxUdJko3ofCRvxnNnOcxvNpngf": {
       "route": "/qingxiaoda/",
       "url": "https://my.feishu.cn/docx/KGxUdJko3ofCRvxnNnOcxvNpngf",
       "revision": 3,
-      "bodyHash": "81d4b6fbc77da94789768f574fadc41660c0fd657cb620be4ec6a0b962f67e65",
+      "bodyHash": "be8cc79950f0fc2fbe3d339bd1166328f63f4bb3565c328398d9c3fc74723eba",
       "metadataHash": "77763468e267de69a57df9eb75e7bc3bb5e7badfa4561f2520fb7e75dab0d58b"
     },
     "QQr4dXx1UojcsQxJbVbcxFn8nTb": {
       "route": "/research/finding-a-lab/",
       "url": "https://my.feishu.cn/docx/QQr4dXx1UojcsQxJbVbcxFn8nTb",
       "revision": 3,
-      "bodyHash": "8bb06a7ce7599f2f22fbbb3a9940dab36575f70168da4ac83344aa2e819f0c57",
+      "bodyHash": "9cf0232c547c80ab74f92de830ebea1fa302b7a6a70a19b81cfe6e10ec61fedf",
       "metadataHash": "3883336a9188963e368adc2a38fe5a2925c95d1f415aeed5cf3efdf7d42e8c8f"
     },
     "TRqydqfA6o6mXZxQjHkcWHuCned": {
       "route": "/research/graduate-recommendation/",
       "url": "https://my.feishu.cn/docx/TRqydqfA6o6mXZxQjHkcWHuCned",
       "revision": 3,
-      "bodyHash": "bf7558ac39503dcb8832de2a83684617ab8ed7288c4a6e9b3beafcffa4768adf",
+      "bodyHash": "78d849e988902a8f1d704ba0a9cdc20cbca52223c801445e2e553fc3e333fa6f",
       "metadataHash": "40fa54c8ad222ac33ca032b36ae31134ada8f470268a5187d9b860fe02b5d139"
     },
     "BNd6dlRDioMQ3CxhIvecVcnLnZc": {
       "route": "/research/international-programs/",
       "url": "https://my.feishu.cn/docx/BNd6dlRDioMQ3CxhIvecVcnLnZc",
       "revision": 3,
-      "bodyHash": "748f0aea518547b4798bd7b2231a8bab85a0d1a9884703cbb2c538d9f1bce881",
+      "bodyHash": "d1ab2b12093ffb9a9ddbe47f0c0a7bd61f6c18580bbe69a9420f126c0d9f0abf",
       "metadataHash": "cfac6fa467d9d33c4d78c907c68c813b0e9f7139524c5f6422c5c6d0493b88b6"
     },
     "CNtNdqAO7ogI6XxrCq7cWfvbndd": {
       "route": "/research/overseas-research-internship/",
       "url": "https://my.feishu.cn/docx/CNtNdqAO7ogI6XxrCq7cWfvbndd",
       "revision": 3,
-      "bodyHash": "faceef723941593c7947e345471ef0b7b7a5a191406fbd90a52cc4f0c9d75f68",
+      "bodyHash": "2aceefc550506a527798b6448ef851661aee9bb2ff544ddbdc151a49730efc49",
       "metadataHash": "ee93ac29b421302707bb28b8e51c18ca9148f7a140d5aabc351fa53ba28c6fea"
     },
     "RjMZd14VkoCgUGxR1bacpIYfnRf": {
       "route": "/research/postgraduate-exam/",
       "url": "https://my.feishu.cn/docx/RjMZd14VkoCgUGxR1bacpIYfnRf",
       "revision": 3,
-      "bodyHash": "d78d98fc7b2d13cc1850a4d458ba9236aeb88e042f0f289f40215ae21485c182",
+      "bodyHash": "4ddcd0066c16a33b80b78557d8157d5b9ded07379d1e1a99cadc2c9b0bbeb401",
       "metadataHash": "0b4c5427da5567e7fe1716b4a09c267cd78224a5f7d9f31026785d1581cbf735"
     },
     "TBzKdh375oFYDlx7f5Lc2qGunNg": {
       "route": "/research/reading-and-first-paper/",
       "url": "https://my.feishu.cn/docx/TBzKdh375oFYDlx7f5Lc2qGunNg",
       "revision": 3,
-      "bodyHash": "8e05742655df5dacd38e77de69aea139d538ac9bb30f3f9d5758908cec0b6c18",
+      "bodyHash": "4f7b8eac5afb3d17b4f0d72d06f484de038637853701a0faa99dbce64a493698",
       "metadataHash": "4e089028117ca40fef55f3d785a647d55aa6dbc29f2e6248a62cccbc824d8806"
     },
     "V4yjdDbHvojGZTxmBSNcWjhhnsc": {
       "route": "/research/study-abroad/",
       "url": "https://my.feishu.cn/docx/V4yjdDbHvojGZTxmBSNcWjhhnsc",
       "revision": 4,
-      "bodyHash": "63f63d5285adba731036321e04d8182cc6dc4939a2214e967277599afadb3631",
+      "bodyHash": "f65d206cf5c4fbec9d10e69f844d15c9d211a483a5ee097a0a94223a1f72fd12",
       "metadataHash": "71054d9e6b09dca1f72a57288de86ca231acd752bd3193e3d2ec67d364787fe7"
     },
     "JJ1WdpUJOo1yU1xTgGNcq8VcnvS": {
       "route": "/research/undergrad-research-program/",
       "url": "https://my.feishu.cn/docx/JJ1WdpUJOo1yU1xTgGNcq8VcnvS",
       "revision": 3,
-      "bodyHash": "23127d987180e42e020009028cad2683b19f80646005fc1472d14e882477ac63",
+      "bodyHash": "2266dcf8c126c267cf96a16c43debf0739c44971760f13f5783cf1d15a91a0ca",
       "metadataHash": "409b8955587f4ad227fd3c08c320b45c2323f8f821742a411bfa85cbc03b7443"
     },
     "PDqLdJ5IxokUMhxWIyCczKvpndf": {
       "route": "/skills/command-line/",
       "url": "https://my.feishu.cn/docx/PDqLdJ5IxokUMhxWIyCczKvpndf",
       "revision": 4,
-      "bodyHash": "7cee934ef020193a5186866d6c10e2109d3a18277a02201e86b0481787d5ee42",
+      "bodyHash": "f93d6115e588bad7377c90ae8b925c65d3ed754c9333eee546966681b94ce4f2",
       "metadataHash": "8c98dbfcab85b202b3068836f6ea13483b463b33fca30c796fe05976f31ec1e2"
     },
     "Ygq0dfe1bo6MK4xaWRNcgDW2nOc": {
       "route": "/skills/data-and-charts/",
       "url": "https://my.feishu.cn/docx/Ygq0dfe1bo6MK4xaWRNcgDW2nOc",
       "revision": 3,
-      "bodyHash": "d1e12bebc10cf8cbf05de3e8a5d5087c6a7732655abfed9fe8746e90c35355e3",
+      "bodyHash": "a3267ee5a8a2b5f2c37efa5643bd83512edc1224584540a455c765de4bb133a6",
       "metadataHash": "e7de68674ed5610c6a2c428aa4bf1ef075965a357c9c7723fa22da5a7193fb17"
     },
     "ZVTBdyNyKopM6lxTfuRcuiclnub": {
       "route": "/skills/git-and-gitlab/",
       "url": "https://my.feishu.cn/docx/ZVTBdyNyKopM6lxTfuRcuiclnub",
       "revision": 3,
-      "bodyHash": "871a3c272f3a1a47cbb72b6047f7ea7ac74f8e805f74b4ceeda4b22c1cb7676b",
+      "bodyHash": "b0da75103d507d946de73bdf9808cdb3eb8b0d4c5dacc7cdb89fae7193b8cb7b",
       "metadataHash": "49c958270d4082b1922eaa770f0185ddcc1a49e03424cc69be3f7372f83ca8d0"
     },
     "ZBlVd1QsjoGAk8xtqqzcc6tRnWg": {
       "route": "/skills/",
       "url": "https://my.feishu.cn/docx/ZBlVd1QsjoGAk8xtqqzcc6tRnWg",
       "revision": 3,
-      "bodyHash": "ce7bb77f9f40eaca2709252d1abff8d890c69dc8ec2dceef3493d36453a2a2d6",
+      "bodyHash": "ff06396a10ab753a3ce818f1d84e760d7dbaad0419f16132de633c5b5a05be7c",
       "metadataHash": "2625fd978315f457cde4baf108c38d979d6aa00b7a9f2eca31c0da4d0e570e8d"
     },
     "Bm1Vdq3MUoUsHxxWgXvcW8r0nVh": {
       "route": "/skills/latex-and-overleaf/",
       "url": "https://my.feishu.cn/docx/Bm1Vdq3MUoUsHxxWgXvcW8r0nVh",
       "revision": 3,
-      "bodyHash": "4c2bb70b32a1c4b907b7346a96c7a711a144aac066938e640c4eac1373057d87",
+      "bodyHash": "52d299a4bc386df60990d78b98a6fefbeb4a098e6c8e3943bae8f62229f8c416",
       "metadataHash": "ebdba63d02216f7db72cb12440dd5dfcca0f30e4bfcef4052b51c04438baa5bd"
     },
     "ZYGLdGLlFo5oxNxKWDXcbqbantb": {
       "route": "/skills/markdown-and-notes/",
       "url": "https://my.feishu.cn/docx/ZYGLdGLlFo5oxNxKWDXcbqbantb",
       "revision": 3,
-      "bodyHash": "7a319c2f8eb81573d420535e0b62cee13822aa94ab1316b50af2d9cd01254faf",
+      "bodyHash": "6ef1ba8c57307e6a69da1175285eb913d7de9c7e78c9d2cbe126830d2553a1f0",
       "metadataHash": "25ed9dcb099f0d234b4a8af4c246a0853ee86eab1a27bdba2c1d3cffc66d7ceb"
     },
     "MNmmdS27MoCKKUxgYzmcWsBinpg": {
       "route": "/skills/reference-manager/",
       "url": "https://my.feishu.cn/docx/MNmmdS27MoCKKUxgYzmcWsBinpg",
       "revision": 3,
-      "bodyHash": "37494c14e5a7d46e46765b653afbd26f749477d259342147008291ed299200d2",
+      "bodyHash": "58faa4297e072ca925af9b6e9ec687e04b9e41f8360db14397897f18d79cd1eb",
       "metadataHash": "6fb90b7c6e1fba2293f510d517a65609cd325c25e4d87bba6bc4bf2f232d61c2"
     },
     "OPOqdrfkJo8LM2xtmwacYAOHndr": {
@@ -530,14 +530,14 @@
       "route": "/start/how-to-use/",
       "url": "https://my.feishu.cn/docx/GulLdWaM7ovM9CxeSClcjNT5nJd",
       "revision": 4,
-      "bodyHash": "f0a192c530281aa0ceabcee82e3e940c4c50c12196f882f100ceb6f87c12757b",
+      "bodyHash": "e0e994100c0f419e365bb04f7efe2b1d05b384a906042ecd145d359d689f0e45",
       "metadataHash": "7b4c3d3bab4a718b2fa8839c565891f7bb70c4d0221844ad7d14be92615df96e"
     },
     "VRYNd7rY3otZffxrYsIc3NMxnMg": {
       "route": "/start/tsinghua-slang/",
       "url": "https://my.feishu.cn/docx/VRYNd7rY3otZffxrYsIc3NMxnMg",
       "revision": 3,
-      "bodyHash": "5bf925db8a0518f9b0c59596aab24acc88dd6b3ab486ad59694c42c5055890af",
+      "bodyHash": "62d5a1f3857bfd12aa656d963d624fab949e4955d6079cece067a7378e2531fc",
       "metadataHash": "5c53531017db454820b0666cb45fcca04da27350dea859ce7d2b4ced1deb4bf1"
     },
     "DqEVdNDEQoqtjyxVbnec1BGun9d": {

@@ -49,11 +49,7 @@ feishu:
 
 登不进去、账号有问题、密码要重置，都找<b>信息化技术中心</b>：
 
-| 事项 | 地点与联系方式 |
-| --- | --- |
-| <b>用户服务室</b> | <b>李兆基科技大楼东门一层 B104 室</b>；电话 <b>010-62784859</b>；邮箱 [its@tsinghua.edu.cn](mailto:its@tsinghua.edu.cn)；工作日 <b>8:00–12:00、13:00–17:00</b> |
-| <b>密码重置窗口</b> | 同一地点；工作日 <b>8:00–12:00、13:00–17:00</b> |
-| <b>缴费窗口</b> | 同一地点；工作日 <b>13:00–16:00</b>（注意只有下午） |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>事项</p></th><th><p>地点与联系方式</p></th></tr></thead><tbody><tr><td><p><b>用户服务室</b></p></td><td><p><b>李兆基科技大楼东门一层 B104 室</b>；电话 <b>010-62784859</b>；邮箱 <a href="mailto:its@tsinghua.edu.cn">its@tsinghua.edu.cn</a>；工作日 <b>8:00–12:00、13:00–17:00</b></p></td></tr><tr><td><p><b>密码重置窗口</b></p></td><td><p>同一地点；工作日 <b>8:00–12:00、13:00–17:00</b></p></td></tr><tr><td><p><b>缴费窗口</b></p></td><td><p>同一地点；工作日 <b>13:00–16:00</b>（注意只有下午）</p></td></tr></tbody></table>
 
 > 先分清「登不上」还是「连不上」
 >
@@ -61,17 +57,7 @@ feishu:
 
 ## 常用系统一览
 
-| 系统 | 地址 | 干什么 |
-| --- | --- | --- |
-| <b>信息门户</b> | [https://info.tsinghua.edu.cn](https://info.tsinghua.edu.cn/) | 校内事务的总入口：通知、成绩、财务、教务通知等 |
-| <b>网络学堂</b> | [https://learn.tsinghua.edu.cn](https://learn.tsinghua.edu.cn/) | 课程资料、作业提交与课程通知 |
-| <b>信息化用户服务平台</b> | [https://its.tsinghua.edu.cn](https://its.tsinghua.edu.cn/) | 网络服务、正版软件、账号相关事务 |
-| <b>学生邮箱</b> | [https://mails.tsinghua.edu.cn](https://mails.tsinghua.edu.cn/) | 学生邮箱，容量 <b>50GB</b>；教师邮箱为 mail.tsinghua.edu.cn |
-| <b>云盘</b> | [https://cloud.tsinghua.edu.cn](https://cloud.tsinghua.edu.cn/) | 校内云盘，容量 <b>1TB</b> |
-| <b>图书馆</b> | [https://lib.tsinghua.edu.cn](https://lib.tsinghua.edu.cn/) | 图书馆主页：借阅、数据库与空间预约的入口 |
-| <b>学生清华</b> | [https://student.tsinghua.edu.cn](https://student.tsinghua.edu.cn/) | 学生活动空间与教室借用 |
-| <b>校园网自助服务</b> | [https://usereg.tsinghua.edu.cn](https://usereg.tsinghua.edu.cn/) | 校园网账号相关的自助服务 |
-| <b>网络登录页</b> | [http://login.tsinghua.edu.cn](http://login.tsinghua.edu.cn/) | 网络登录页面 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>系统</p></th><th><p>地址</p></th><th><p>干什么</p></th></tr></thead><tbody><tr><td><p><b>信息门户</b></p></td><td><p><a href="https://info.tsinghua.edu.cn/">https://info.tsinghua.edu.cn</a></p></td><td><p>校内事务的总入口：通知、成绩、财务、教务通知等</p></td></tr><tr><td><p><b>网络学堂</b></p></td><td><p><a href="https://learn.tsinghua.edu.cn/">https://learn.tsinghua.edu.cn</a></p></td><td><p>课程资料、作业提交与课程通知</p></td></tr><tr><td><p><b>信息化用户服务平台</b></p></td><td><p><a href="https://its.tsinghua.edu.cn/">https://its.tsinghua.edu.cn</a></p></td><td><p>网络服务、正版软件、账号相关事务</p></td></tr><tr><td><p><b>学生邮箱</b></p></td><td><p><a href="https://mails.tsinghua.edu.cn/">https://mails.tsinghua.edu.cn</a></p></td><td><p>学生邮箱，容量 <b>50GB</b>；教师邮箱为 mail.tsinghua.edu.cn</p></td></tr><tr><td><p><b>云盘</b></p></td><td><p><a href="https://cloud.tsinghua.edu.cn/">https://cloud.tsinghua.edu.cn</a></p></td><td><p>校内云盘，容量 <b>1TB</b></p></td></tr><tr><td><p><b>图书馆</b></p></td><td><p><a href="https://lib.tsinghua.edu.cn/">https://lib.tsinghua.edu.cn</a></p></td><td><p>图书馆主页：借阅、数据库与空间预约的入口</p></td></tr><tr><td><p><b>学生清华</b></p></td><td><p><a href="https://student.tsinghua.edu.cn/">https://student.tsinghua.edu.cn</a></p></td><td><p>学生活动空间与教室借用</p></td></tr><tr><td><p><b>校园网自助服务</b></p></td><td><p><a href="https://usereg.tsinghua.edu.cn/">https://usereg.tsinghua.edu.cn</a></p></td><td><p>校园网账号相关的自助服务</p></td></tr><tr><td><p><b>网络登录页</b></p></td><td><p><a href="http://login.tsinghua.edu.cn/">http://login.tsinghua.edu.cn</a></p></td><td><p>网络登录页面</p></td></tr></tbody></table>
 
 这张表的用法不是「都打开一遍」，而是<b>先认门牌</b>：遇到一件事，先判断它属于哪一类，再去对应的那一个。几条经验：
 
@@ -103,11 +89,7 @@ feishu:
 
 这是校内最容易被「找错入口」耽误的事。<b>教室、研读间、体育场馆是三套完全独立的系统</b>，规则也不一样：
 
-| 要借什么 | 入口 | 规则（2026 年口径） |
-| --- | --- | --- |
-| <b>教室、学生活动室</b> | [https://student.tsinghua.edu.cn](https://student.tsinghua.edu.cn/)（资源手册：[https://student.tsinghua.edu.cn/post/site-resources](https://student.tsinghua.edu.cn/post/site-resources)） | <b>至少提前 5 天</b>申请，<b>最多提前 2 周</b>；逾期或距活动 3 天以内的，改用《清华大学教室（学生）借用审批表》走线下流程 |
-| <b>图书馆研读间 / 研讨间</b> | [https://lib.tsinghua.edu.cn](https://lib.tsinghua.edu.cn/)（路径：空间 – 研讨） | 刷卡签到，违约会被停权；<b>清小搭口径是 5 次停用 3 天</b>，[吃饭、自习与出门](/campus/food-and-study/)里有更细的违约算法 |
-| <b>体育场馆</b> | [https://www.sports.tsinghua.edu.cn/venue](https://www.sports.tsinghua.edu.cn/venue) | 有<b>诚信记录</b>，需网上缴费；<b>爽约有代价</b> |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>要借什么</p></th><th><p>入口</p></th><th><p>规则（2026 年口径）</p></th></tr></thead><tbody><tr><td><p><b>教室、学生活动室</b></p></td><td><p><a href="https://student.tsinghua.edu.cn/">https://student.tsinghua.edu.cn</a>（资源手册：<a href="https://student.tsinghua.edu.cn/post/site-resources">https://student.tsinghua.edu.cn/post/site-resources</a>）</p></td><td><p><b>至少提前 5 天</b>申请，<b>最多提前 2 周</b>；逾期或距活动 3 天以内的，改用《清华大学教室（学生）借用审批表》走线下流程</p></td></tr><tr><td><p><b>图书馆研读间 / 研讨间</b></p></td><td><p><a href="https://lib.tsinghua.edu.cn/">https://lib.tsinghua.edu.cn</a>（路径：空间 – 研讨）</p></td><td><p>刷卡签到，违约会被停权；<b>清小搭口径是 5 次停用 3 天</b>，<a href="/campus/food-and-study/">吃饭、自习与出门</a>里有更细的违约算法</p></td></tr><tr><td><p><b>体育场馆</b></p></td><td><p><a href="https://www.sports.tsinghua.edu.cn/venue">https://www.sports.tsinghua.edu.cn/venue</a></p></td><td><p>有<b>诚信记录</b>，需网上缴费；<b>爽约有代价</b></p></td></tr></tbody></table>
 
 三张表背后是同一个道理：<b>这三类场地归不同的单位管</b>，所以规则、时间窗、违约代价都不一样。找错入口不只是白点几下，而是<b>可能在错误的系统里等一个永远不会放出来的场</b>。
 
@@ -167,23 +149,11 @@ feishu:
 
 <b>二、教室里的禁止项与使用规则</b>
 
-| 类别 | 规则 |
-| --- | --- |
-| <b>设备设施</b> | 教室内设备设施属学校公共财产，<b>不得随意拆卸、搬离或带离</b>，不慎带离须及时归还；临时借用其他教室桌椅须经本楼教学管理员同意，用毕恢复原位；<b>非课堂教学时间进行设备维护检修时，室内其他人员应配合</b> |
-| <b>信息化设备</b> | 使用应遵守操作规程并建议参加培训。<b>禁止在多媒体机柜（讲台）、电动幕布、触控大屏上随意写画</b>；不得随意改动教学设备连线、不得擅自更改设备软硬件设置；<b>严禁使用功率不匹配的外接电子设备</b>；严禁将液体洒落在机柜表面、内部和设备上 |
-| <b>环境卫生</b> | 楼内实施<b>垃圾分类</b>，禁止乱丢废弃物；<b>禁止在教学楼内吸烟</b>；<b>禁止带宠物进入教学楼</b>；未经许可不得悬挂、张贴、摆放或发放各类广告及宣传品 |
-| <b>安静秩序</b> | <b>禁止在教学楼内踢球或高声喧哗、唱歌、跳舞、播放音乐、叫卖</b>等；未经许可<b>禁止在教学楼内及教室内举行各种形式的聚会、棋牌等活动</b> |
-| <b>安全</b> | <b>严禁携带易燃、易爆等危险品进入教学楼</b>；<b>严禁使用明火</b>；<b>严禁移动和毁坏防火器材及防火标志</b>；<b>严禁在教学楼内给电动车电池充电</b> |
-| <b>自习相关</b> | <b>不能任意占用教室或教室座位</b>；<b>不能在教室就餐</b>；<b>不能反锁教室门自习</b> |
-| <b>节约</b> | 注意节约用水、电、纸张，<b>离开教室时自觉关灯</b> |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>类别</p></th><th><p>规则</p></th></tr></thead><tbody><tr><td><p><b>设备设施</b></p></td><td><p>教室内设备设施属学校公共财产，<b>不得随意拆卸、搬离或带离</b>，不慎带离须及时归还；临时借用其他教室桌椅须经本楼教学管理员同意，用毕恢复原位；<b>非课堂教学时间进行设备维护检修时，室内其他人员应配合</b></p></td></tr><tr><td><p><b>信息化设备</b></p></td><td><p>使用应遵守操作规程并建议参加培训。<b>禁止在多媒体机柜（讲台）、电动幕布、触控大屏上随意写画</b>；不得随意改动教学设备连线、不得擅自更改设备软硬件设置；<b>严禁使用功率不匹配的外接电子设备</b>；严禁将液体洒落在机柜表面、内部和设备上</p></td></tr><tr><td><p><b>环境卫生</b></p></td><td><p>楼内实施<b>垃圾分类</b>，禁止乱丢废弃物；<b>禁止在教学楼内吸烟</b>；<b>禁止带宠物进入教学楼</b>；未经许可不得悬挂、张贴、摆放或发放各类广告及宣传品</p></td></tr><tr><td><p><b>安静秩序</b></p></td><td><p><b>禁止在教学楼内踢球或高声喧哗、唱歌、跳舞、播放音乐、叫卖</b>等；未经许可<b>禁止在教学楼内及教室内举行各种形式的聚会、棋牌等活动</b></p></td></tr><tr><td><p><b>安全</b></p></td><td><p><b>严禁携带易燃、易爆等危险品进入教学楼</b>；<b>严禁使用明火</b>；<b>严禁移动和毁坏防火器材及防火标志</b>；<b>严禁在教学楼内给电动车电池充电</b></p></td></tr><tr><td><p><b>自习相关</b></p></td><td><p><b>不能任意占用教室或教室座位</b>；<b>不能在教室就餐</b>；<b>不能反锁教室门自习</b></p></td></tr><tr><td><p><b>节约</b></p></td><td><p>注意节约用水、电、纸张，<b>离开教室时自觉关灯</b></p></td></tr></tbody></table>
 
 <b>三、开放时间（2020 年修订版口径）</b>
 
-| 区域 | 开放时间 |
-| --- | --- |
-| 教学楼 | <b>7:00–22:30</b>（<b>多媒体设备使用时间 7:45–22:00</b>） |
-| 清华学堂 | <b>开放至 23:30</b> |
-| 寒暑假期间 | <b>7:00–21:00</b> |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>区域</p></th><th><p>开放时间</p></th></tr></thead><tbody><tr><td><p>教学楼</p></td><td><p><b>7:00–22:30</b>（<b>多媒体设备使用时间 7:45–22:00</b>）</p></td></tr><tr><td><p>清华学堂</p></td><td><p><b>开放至 23:30</b></p></td></tr><tr><td><p>寒暑假期间</p></td><td><p><b>7:00–21:00</b></p></td></tr></tbody></table>
 
 <b>来源</b>：《清华大学学生手册（2024）》所收《清华大学教室管理规定》（2015 年 7 月修订、2020 年 7 月修订，2024 年口径）。<b>教室借用收费标准的具体金额随教室类型与时段变化，本文不转述，以当年《教室借用收费标准》为准。</b>
 
@@ -196,10 +166,7 @@ feishu:
 
 两个具体流程，记住「从哪进去、点哪一项」就够了：
 
-| 要办的事 | 怎么走 |
-| --- | --- |
-| <b>网上报修</b> | 在平台里走「<b>社区服务</b>」下拉 → 「<b>添加报修记录</b>」 |
-| <b>电费充值</b> | 先登录（<b>学号 + info 密码</b>），再走「<b>快速通道 – 电费充值</b>」，用<b>支付宝</b>支付 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>要办的事</p></th><th><p>怎么走</p></th></tr></thead><tbody><tr><td><p><b>网上报修</b></p></td><td><p>在平台里走「<b>社区服务</b>」下拉 → 「<b>添加报修记录</b>」</p></td></tr><tr><td><p><b>电费充值</b></p></td><td><p>先登录（<b>学号 + info 密码</b>），再走「<b>快速通道 – 电费充值</b>」，用<b>支付宝</b>支付</p></td></tr></tbody></table>
 
 > 报修写清楚，比催进度有用
 >
@@ -227,13 +194,7 @@ feishu:
 
 学校的官方公众号数量很多，各部门、各院系都有自己的号。按用途大致分成这几类：
 
-| 类别 | 大致包含什么 |
-| --- | --- |
-| <b>校园综合服务</b> | 如「<b>清华大学信息服务</b>」——绑定后可接收通知，并办理学习教务、财务、网络、图书馆等事项 |
-| <b>学业类</b> | 与课程、教务、图书馆等相关的官方号 |
-| <b>生活类</b> | 后勤、宿舍、餐饮、场馆等生活服务相关的官方号 |
-| <b>学生组织类</b> | 校团委、学生会及各学生组织的号 |
-| <b>宣传类</b> | 学校层面与各部门的宣传号 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>类别</p></th><th><p>大致包含什么</p></th></tr></thead><tbody><tr><td><p><b>校园综合服务</b></p></td><td><p>如「<b>清华大学信息服务</b>」——绑定后可接收通知，并办理学习教务、财务、网络、图书馆等事项</p></td></tr><tr><td><p><b>学业类</b></p></td><td><p>与课程、教务、图书馆等相关的官方号</p></td></tr><tr><td><p><b>生活类</b></p></td><td><p>后勤、宿舍、餐饮、场馆等生活服务相关的官方号</p></td></tr><tr><td><p><b>学生组织类</b></p></td><td><p>校团委、学生会及各学生组织的号</p></td></tr><tr><td><p><b>宣传类</b></p></td><td><p>学校层面与各部门的宣传号</p></td></tr></tbody></table>
 
 <b>怎么挑：按你的用途选，不要一次性全关注。</b>
 

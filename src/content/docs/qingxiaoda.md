@@ -35,14 +35,7 @@ feishu:
 
 ### 官方列出的能力
 
-| 能力 | 具体是什么 |
-| --- | --- |
-| 大模型智能问答 | 校园生活、课程学习、入学手续这类问题；相当于「清华百事通」 |
-| 智能伴学工具箱 | 文档解读、数据分析、PPT 辅助制作、学业智能提醒、课程答疑资源匹配、智慧日历 |
-| 个人成长云盘 | 记录学习成果与成长轨迹，结合清华云盘做成个人成长档案 |
-| 学业志趣自测 | 填一份问卷，从六个维度给选课建议 |
-| 智能体广场 | 别人搭好的各种智能体，直接拿来用；也是你想自己搭东西的地方 |
-| 具体功能的更新 | 例如「模拟卷助手」（2026-06 上线，覆盖 11 门课程）、图书馆座位预约快捷入口（2026-06 上线） |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>能力</p></th><th><p>具体是什么</p></th></tr></thead><tbody><tr><td><p>大模型智能问答</p></td><td><p>校园生活、课程学习、入学手续这类问题；相当于「清华百事通」</p></td></tr><tr><td><p>智能伴学工具箱</p></td><td><p>文档解读、数据分析、PPT 辅助制作、学业智能提醒、课程答疑资源匹配、智慧日历</p></td></tr><tr><td><p>个人成长云盘</p></td><td><p>记录学习成果与成长轨迹，结合清华云盘做成个人成长档案</p></td></tr><tr><td><p>学业志趣自测</p></td><td><p>填一份问卷，从六个维度给选课建议</p></td></tr><tr><td><p>智能体广场</p></td><td><p>别人搭好的各种智能体，直接拿来用；也是你想自己搭东西的地方</p></td></tr><tr><td><p>具体功能的更新</p></td><td><p>例如「模拟卷助手」（2026-06 上线，覆盖 11 门课程）、图书馆座位预约快捷入口（2026-06 上线）</p></td></tr></tbody></table>
 
 来源分开看：智能问答、智能伴学工具箱、个人成长云盘、智能体广场四项来自 [学生学习与发展指导中心页面](https://learning.tsinghua.edu.cn/xxyfzxm/aitown/qxd.htm)； 「学业志趣自测」来自[清华官网的上线报道](https://www.tsinghua.edu.cn/info/1176/114345.htm)； 最后一行来自[官方动态页](https://www.xiaoda.tsinghua.edu.cn/news)的更新记录。
 
@@ -50,12 +43,7 @@ feishu:
 >
 > 不同来源、不同时间的数字对不上，这里照实列，<b>不要把它们当成同一个口径</b>：
 
-| 时间 | 数字 | 来源 |
-| --- | --- | --- |
-| 2024-09-20 | 注册 2893 人，提问 4.1 万个，准确率 90% 以上 | 清华官网新闻 |
-| 2026-04-10 | 440 门课程 AI 赋能、构建 <b>415 个</b>「清小搭」智能体 | 教育部发布会（校长李路明介绍） |
-| 2026-05-26 | 注册用户 <b>2.4 万人</b>，累计提问超 <b>72 万条</b>，准确率 98% 以上 | 教育部新闻办推介 |
-| 2026-07-29 | 知识库 <b>5.8 万余份</b>文档，智能体 <b>400 余个</b> | 第三方公众号拆解 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>时间</p></th><th><p>数字</p></th><th><p>来源</p></th></tr></thead><tbody><tr><td><p>2024-09-20</p></td><td><p>注册 2893 人，提问 4.1 万个，准确率 90% 以上</p></td><td><p>清华官网新闻</p></td></tr><tr><td><p>2026-04-10</p></td><td><p>440 门课程 AI 赋能、构建 <b>415 个</b>「清小搭」智能体</p></td><td><p>教育部发布会（校长李路明介绍）</p></td></tr><tr><td><p>2026-05-26</p></td><td><p>注册用户 <b>2.4 万人</b>，累计提问超 <b>72 万条</b>，准确率 98% 以上</p></td><td><p>教育部新闻办推介</p></td></tr><tr><td><p>2026-07-29</p></td><td><p>知识库 <b>5.8 万余份</b>文档，智能体 <b>400 余个</b></p></td><td><p>第三方公众号拆解</p></td></tr></tbody></table>
 
 「智能体数量」尤其容易混：有 400+ 的口径，也有 415 个的口径，还有 2025 年首届大赛时 「44 个院系部处搭建的 100 余个智能体」这种<b>校内自建</b>的口径。看数字先看它是哪一年、谁统计的。
 
@@ -71,14 +59,7 @@ feishu:
 
 ## 怎么开始用
 
-| 入口 | 地址 / 怎么找 |
-| --- | --- |
-| 网页版 | [www.xiaoda.tsinghua.edu.cn](https://www.xiaoda.tsinghua.edu.cn/) |
-| 智能体广场（需登录） | [xiaoda.tsinghua.edu.cn/login?redirect=/square](https://www.xiaoda.tsinghua.edu.cn/login?redirect=/square) |
-| 微信小程序 | 微信里搜「清华大学学生成长助手清小搭」，或搜「清小搭」 |
-| Pro 桌面端 | [官网首页](https://www.xiaoda.tsinghua.edu.cn/)提供 macOS（Apple 芯片 / Intel 通用）与 Windows 10/11 下载 |
-| 官方 CLI（终端 / IDE） | [xiaoda.tsinghua.edu.cn/cli](https://www.xiaoda.tsinghua.edu.cn/cli) —— 在终端和主流 AI 编程工具里调用清小搭 |
-| 官方动态 | [www.xiaoda.tsinghua.edu.cn/news](https://www.xiaoda.tsinghua.edu.cn/news) |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>入口</p></th><th><p>地址 / 怎么找</p></th></tr></thead><tbody><tr><td><p>网页版</p></td><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/">www.xiaoda.tsinghua.edu.cn</a></p></td></tr><tr><td><p>智能体广场（需登录）</p></td><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/login?redirect=/square">xiaoda.tsinghua.edu.cn/login?redirect=/square</a></p></td></tr><tr><td><p>微信小程序</p></td><td><p>微信里搜「清华大学学生成长助手清小搭」，或搜「清小搭」</p></td></tr><tr><td><p>Pro 桌面端</p></td><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/">官网首页</a>提供 macOS（Apple 芯片 / Intel 通用）与 Windows 10/11 下载</p></td></tr><tr><td><p>官方 CLI（终端 / IDE）</p></td><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/cli">xiaoda.tsinghua.edu.cn/cli</a> —— 在终端和主流 AI 编程工具里调用清小搭</p></td></tr><tr><td><p>官方动态</p></td><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/news">www.xiaoda.tsinghua.edu.cn/news</a></p></td></tr></tbody></table>
 
 <b>登录用的是清华统一身份认证</b>，也就是说它面向的是清华在校师生，不是你转发给校外朋友就能用的东西。 登录方式、反馈邮箱这类操作细节，[云上清华](/campus/cloud-services/)的「1911 星球与清小搭」一节写得更细，这里不重复。
 
@@ -102,14 +83,7 @@ feishu:
 
 两边都是「问一句答一段」，但<b>依据完全不同，用错地方会拿到错的答案</b>。
 
-|  | [站内问答](/ask/)（本站） | 清小搭（学校） |
-| --- | --- | --- |
-| 谁做的 | 本站维护者 | 清华大学 |
-| 依据什么 | 站内 60 多篇经验帖 | 学校知识库（官方文档、常用域名、校内公众号） |
-| 答的是 | 学长学姐踩过的坑 | 学校的官方口径与事务办理 |
-| 站里没写的 | 直接拒答，不编 | 不适用（它答的是学校的事） |
-| 给出处吗 | 每句标到具体文章与章节 | 不标到本站 |
-| 入口 | 就在本站 | 要登录，自己过去 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p></p></th><th><p><a href="/ask/">站内问答</a>（本站）</p></th><th><p>清小搭（学校）</p></th></tr></thead><tbody><tr><td><p>谁做的</p></td><td><p>本站维护者</p></td><td><p>清华大学</p></td></tr><tr><td><p>依据什么</p></td><td><p>站内 60 多篇经验帖</p></td><td><p>学校知识库（官方文档、常用域名、校内公众号）</p></td></tr><tr><td><p>答的是</p></td><td><p>学长学姐踩过的坑</p></td><td><p>学校的官方口径与事务办理</p></td></tr><tr><td><p>站里没写的</p></td><td><p>直接拒答，不编</p></td><td><p>不适用（它答的是学校的事）</p></td></tr><tr><td><p>给出处吗</p></td><td><p>每句标到具体文章与章节</p></td><td><p>不标到本站</p></td></tr><tr><td><p>入口</p></td><td><p>就在本站</p></td><td><p>要登录，自己过去</p></td></tr></tbody></table>
 
 <b>简单说：想知道「规定是什么、手续去哪办」，去清小搭；想知道「实际会踩什么坑、别人怎么过来的」，留在本站。</b> 两边的结论冲突时，<b>以学校官方为准</b>——这也是本站[免责声明](/start/disclaimer/)里的原则。
 
@@ -123,11 +97,7 @@ feishu:
 
 清小搭在本站不是新面孔，下面这些页面已经在用它，<b>别重复找</b>：
 
-| 页面 | 那里有什么 |
-| --- | --- |
-| [常见问题速查：清小搭问答精选](/guides/frequent-questions/) | 把清小搭导出的 197 条常见问答筛成约 90 条「一句一答」。办事前扫一眼最实用，但<b>整页标注为待核对</b> |
-| [云上清华](/campus/cloud-services/) §1911 星球与清小搭 | 登录方式（统一身份认证）与反馈邮箱 |
-| [报到第一周清单](/freshman/arrival-checklist/)、[军训](/freshman/military-training/) | 2026 年新生入学教育安排的日期，来源是清小搭的通知汇总 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>页面</p></th><th><p>那里有什么</p></th></tr></thead><tbody><tr><td><p><a href="/guides/frequent-questions/">常见问题速查：清小搭问答精选</a></p></td><td><p>把清小搭导出的 197 条常见问答筛成约 90 条「一句一答」。办事前扫一眼最实用，但<b>整页标注为待核对</b></p></td></tr><tr><td><p><a href="/campus/cloud-services/">云上清华</a> §1911 星球与清小搭</p></td><td><p>登录方式（统一身份认证）与反馈邮箱</p></td></tr><tr><td><p><a href="/freshman/arrival-checklist/">报到第一周清单</a>、<a href="/freshman/military-training/">军训</a></p></td><td><p>2026 年新生入学教育安排的日期，来源是清小搭的通知汇总</p></td></tr></tbody></table>
 
 ## 想自己搭一个智能体
 
@@ -147,10 +117,7 @@ feishu:
 
 必须实现两个端点：
 
-| 端点 | 必须 | 用途 |
-| --- | --- | --- |
-| `POST {baseUrl}/chat/completions` | ✅ 必须 | 对话（流式 SSE + 非流式 JSON 都要） |
-| `GET {baseUrl}/models` | 🟡 强烈建议 | 连通性与凭证校验（不实现也行，平台会用最小对话兜底） |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>端点</p></th><th><p>必须</p></th><th><p>用途</p></th></tr></thead><tbody><tr><td><p><code>POST {baseUrl}/chat/completions</code></p></td><td><p>✅ 必须</p></td><td><p>对话（流式 SSE + 非流式 JSON 都要）</p></td></tr><tr><td><p><code>GET {baseUrl}/models</code></p></td><td><p>🟡 强烈建议</p></td><td><p>连通性与凭证校验（不实现也行，平台会用最小对话兜底）</p></td></tr></tbody></table>
 
 硬性要求（任何一条不满足，平台的探测就不通过）：
 
@@ -186,24 +153,7 @@ feishu:
 
 ## 官方文档与参考链接
 
-| 链接 | 讲什么 | 适合谁 |
-| --- | --- | --- |
-| [清小搭官网](https://www.xiaoda.tsinghua.edu.cn/) | 入口、Pro 桌面端下载 | 想用的人 |
-| [官方动态](https://www.xiaoda.tsinghua.edu.cn/news) | 功能更新、活动、外部报道汇总 | 所有人 |
-| [智能体广场](https://www.xiaoda.tsinghua.edu.cn/login?redirect=/square) | 找别人搭好的智能体 | 使用者 |
-| [自研 Agent 接入指南（官方）](https://www.xiaoda.tsinghua.edu.cn/qingxiaoda/openai-compatible-agent-integration-guide.md) | 标准协议接入的完整契约、探测规则、音频/文件能力 | 要写代码接入的人 |
-| [SkillHub 安装指导手册（官方）](https://www.xiaoda.tsinghua.edu.cn/qingxiaoda/skills/INSTALL_GUIDE.md) | 技能包的目录结构（`SKILL.md`）与三种安装方式 | 要打包或安装 Skill 的人 |
-| [智能体社区接入指南（官方）](https://www.xiaoda.tsinghua.edu.cn/qingxiaoda/community/SKILL.md) | 让 AI 编程工具接入清小搭社区的规则（默认只读、发言主体边界） | 用 Claude Code / Cursor 这类工具的人 |
-| [清小搭技术团队文档站](https://qingxiaoda.github.io/docs/index.html) | <b>算法原理</b>：知识问答、检索模型、智能摘录、评测框架 | 想懂它背后怎么做的 |
-| ↳ [知识问答（RAG）](https://qingxiaoda.github.io/docs/arch/rag.html) | 检索增强生成的流程 | 同上 |
-| ↳ [检索模型](https://qingxiaoda.github.io/docs/arch/embedding.html) | 检索用的向量模型 | 同上 |
-| ↳ [智能摘录](https://qingxiaoda.github.io/docs/arch/webnote.html) | 网页/文档摘录能力 | 同上 |
-| ↳ [评测框架](https://qingxiaoda.github.io/docs/arch/rag_eval.html) | 怎么评的准确率 | 同上 |
-| ↳ [学术论文](https://qingxiaoda.github.io/docs/papers.html) · [开源项目](https://qingxiaoda.github.io/docs/projects.html) | 团队论文与开源 | 同上 |
-| [清华官网新闻：清小搭上线](https://www.tsinghua.edu.cn/info/1176/114345.htm) | 2024 年上线时的官方报道与早期数据 | 想了解来龙去脉的 |
-| [学生学习与发展指导中心 · 清小搭](https://learning.tsinghua.edu.cn/xxyfzxm/aitown/qxd.htm) | 服务内容与使用方式（<b>开放范围那句偏旧，见上文</b>） | 使用者 |
-| [人工智能创新大赛](https://www.xiaoda.tsinghua.edu.cn/m/competition) | 赛事信息、三类接入途径 | 想参赛的 |
-| [大赛常见问题（飞书）](https://tsinghuanlp.feishu.cn/wiki/LWxAwQc4oie8rckp3g6ccapSnib) | 接入途径、Skill 要求、数据红线、报销 | 想参赛/搭智能体的 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>链接</p></th><th><p>讲什么</p></th><th><p>适合谁</p></th></tr></thead><tbody><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/">清小搭官网</a></p></td><td><p>入口、Pro 桌面端下载</p></td><td><p>想用的人</p></td></tr><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/news">官方动态</a></p></td><td><p>功能更新、活动、外部报道汇总</p></td><td><p>所有人</p></td></tr><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/login?redirect=/square">智能体广场</a></p></td><td><p>找别人搭好的智能体</p></td><td><p>使用者</p></td></tr><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/qingxiaoda/openai-compatible-agent-integration-guide.md">自研 Agent 接入指南（官方）</a></p></td><td><p>标准协议接入的完整契约、探测规则、音频/文件能力</p></td><td><p>要写代码接入的人</p></td></tr><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/qingxiaoda/skills/INSTALL_GUIDE.md">SkillHub 安装指导手册（官方）</a></p></td><td><p>技能包的目录结构（<code>SKILL.md</code>）与三种安装方式</p></td><td><p>要打包或安装 Skill 的人</p></td></tr><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/qingxiaoda/community/SKILL.md">智能体社区接入指南（官方）</a></p></td><td><p>让 AI 编程工具接入清小搭社区的规则（默认只读、发言主体边界）</p></td><td><p>用 Claude Code / Cursor 这类工具的人</p></td></tr><tr><td><p><a href="https://qingxiaoda.github.io/docs/index.html">清小搭技术团队文档站</a></p></td><td><p><b>算法原理</b>：知识问答、检索模型、智能摘录、评测框架</p></td><td><p>想懂它背后怎么做的</p></td></tr><tr><td><p>↳ <a href="https://qingxiaoda.github.io/docs/arch/rag.html">知识问答（RAG）</a></p></td><td><p>检索增强生成的流程</p></td><td><p>同上</p></td></tr><tr><td><p>↳ <a href="https://qingxiaoda.github.io/docs/arch/embedding.html">检索模型</a></p></td><td><p>检索用的向量模型</p></td><td><p>同上</p></td></tr><tr><td><p>↳ <a href="https://qingxiaoda.github.io/docs/arch/webnote.html">智能摘录</a></p></td><td><p>网页/文档摘录能力</p></td><td><p>同上</p></td></tr><tr><td><p>↳ <a href="https://qingxiaoda.github.io/docs/arch/rag_eval.html">评测框架</a></p></td><td><p>怎么评的准确率</p></td><td><p>同上</p></td></tr><tr><td><p>↳ <a href="https://qingxiaoda.github.io/docs/papers.html">学术论文</a> · <a href="https://qingxiaoda.github.io/docs/projects.html">开源项目</a></p></td><td><p>团队论文与开源</p></td><td><p>同上</p></td></tr><tr><td><p><a href="https://www.tsinghua.edu.cn/info/1176/114345.htm">清华官网新闻：清小搭上线</a></p></td><td><p>2024 年上线时的官方报道与早期数据</p></td><td><p>想了解来龙去脉的</p></td></tr><tr><td><p><a href="https://learning.tsinghua.edu.cn/xxyfzxm/aitown/qxd.htm">学生学习与发展指导中心 · 清小搭</a></p></td><td><p>服务内容与使用方式（<b>开放范围那句偏旧，见上文</b>）</p></td><td><p>使用者</p></td></tr><tr><td><p><a href="https://www.xiaoda.tsinghua.edu.cn/m/competition">人工智能创新大赛</a></p></td><td><p>赛事信息、三类接入途径</p></td><td><p>想参赛的</p></td></tr><tr><td><p><a href="https://tsinghuanlp.feishu.cn/wiki/LWxAwQc4oie8rckp3g6ccapSnib">大赛常见问题（飞书）</a></p></td><td><p>接入途径、Skill 要求、数据红线、报销</p></td><td><p>想参赛/搭智能体的</p></td></tr></tbody></table>
 
 > 两个容易误会的点
 >

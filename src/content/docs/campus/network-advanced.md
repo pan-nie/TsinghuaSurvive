@@ -33,11 +33,7 @@ feishu:
 
 校园网把「能上网」拆成两步，很多“连上了却上不了外网”的问题都出在这里：
 
-| 状态 | IPv4 能做什么 | IPv6 能做什么 |
-| --- | --- | --- |
-| 都没有 | 只能 ping 通 `166.111.8.28` 和 `2402:f000:1:801::8:28`（校园 DNS） | 同左 |
-| <b>只有准入</b> | 校内机器可达，<b>不能上外网</b> | <b>能上外网</b> |
-| <b>准入 + 准出</b> | 外网可达 | 能上外网 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>状态</p></th><th><p>IPv4 能做什么</p></th><th><p>IPv6 能做什么</p></th></tr></thead><tbody><tr><td><p>都没有</p></td><td><p>只能 ping 通 <code>166.111.8.28</code> 和 <code>2402:f000:1:801::8:28</code>（校园 DNS）</p></td><td><p>同左</p></td></tr><tr><td><p><b>只有准入</b></p></td><td><p>校内机器可达，<b>不能上外网</b></p></td><td><p><b>能上外网</b></p></td></tr><tr><td><p><b>准入 + 准出</b></p></td><td><p>外网可达</p></td><td><p>能上外网</p></td></tr></tbody></table>
 
 几条容易踩的规则：
 
@@ -78,14 +74,7 @@ sudo systemctl enable --now goauthing.service
 
 2024 年末准入认证系统升级过一轮，<b>升级前停更的工具基本不能再指望</b>。社区汇总表（thuservices 的《一些脚本和工具》）里的结论大致是：
 
-| 工具 | 形态 | 升级后状态 |
-| --- | --- | --- |
-| [GoAuthing](https://github.com/z4yx/GoAuthing) | CLI，全平台全架构 | 可用；有 systemd 服务与 TUNA 镜像 |
-| [tunet-rust](https://github.com/Berrysoft/tunet-rust) | CLI / GUI / 服务 | 可用；带流量与余额监控 |
-| [tunet\_bash](https://github.com/adamanteye/tunet_bash) | Bash 脚本 | 可用；轻量 |
-| 官方 Tunet-2025 | Windows GUI / Linux CLI | 可用；入口见[校内常用链接](/guides/links/) |
-| tunet-python / tunet-c / TsinghuaTunet | Python / C | 上游标注为「未测试」，最后提交都在升级之前（很可能没适配），别在服务器上用 |
-| auth-tsinghua、TsinghuaNet | JS / C# | 已停止维护，项目已重定向到上面的替代品 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>工具</p></th><th><p>形态</p></th><th><p>升级后状态</p></th></tr></thead><tbody><tr><td><p><a href="https://github.com/z4yx/GoAuthing">GoAuthing</a></p></td><td><p>CLI，全平台全架构</p></td><td><p>可用；有 systemd 服务与 TUNA 镜像</p></td></tr><tr><td><p><a href="https://github.com/Berrysoft/tunet-rust">tunet-rust</a></p></td><td><p>CLI / GUI / 服务</p></td><td><p>可用；带流量与余额监控</p></td></tr><tr><td><p><a href="https://github.com/adamanteye/tunet_bash">tunet_bash</a></p></td><td><p>Bash 脚本</p></td><td><p>可用；轻量</p></td></tr><tr><td><p>官方 Tunet-2025</p></td><td><p>Windows GUI / Linux CLI</p></td><td><p>可用；入口见<a href="/guides/links/">校内常用链接</a></p></td></tr><tr><td><p>tunet-python / tunet-c / TsinghuaTunet</p></td><td><p>Python / C</p></td><td><p>上游标注为「未测试」，最后提交都在升级之前（很可能没适配），别在服务器上用</p></td></tr><tr><td><p>auth-tsinghua、TsinghuaNet</p></td><td><p>JS / C#</p></td><td><p>已停止维护，项目已重定向到上面的替代品</p></td></tr></tbody></table>
 
 > 别在服务器上跑停更的工具
 >
@@ -151,15 +140,7 @@ Linux 上没有官方的 PULSE SECURE 图形客户端，可以用 `openconnect` 
 
 这些现象看着像玄学，其实都有明确机制。知道成因，就不用反复重装系统了。
 
-| 现象 | 成因 | 常见处理 |
-| --- | --- | --- |
-| 同一个 `/24` 里的两台机器互相 ping 不通 | 接入交换机的二层隔离（v4）/ 邻居发现隔离（v6），ARP 或 NDP 不生效 | 给两端加一条指向网关的静态路由（`ip r a ...`），v6 用网关的 `fe80::` 地址 |
-| 自建服务在外面连不上，但校内正常 | IPv4 对低端口（0–1024、8000–8100、3389、9100 等）有阻断，常用代理端口也在列；2022 秋季起 v6 也有部分阻断 | 换高位端口，或把服务放到反代后面 |
-| IP 每天变，写不进配置文件 | 动态分配（DHCP / SLAAC） | 用 DDNS，或在 SLAAC 下设置 IPv6 静态后缀（`ip token set`） |
-| `systemd-networkd` 有线拿不到 IPv4 | 学校 DHCP 不接受非 MAC 的 Client ID，而 systemd-networkd 默认发 DUID | 在网络配置里加 `[DHCP]ClientIdentifier=mac` |
-| 有线拿不到 IPv6 地址 | 学校 DHCPv6 只认部分 DUID（DUID-LLT） | 在配置里指定 `DUIDType=link-layer-time`（dhcpcd 则用 DUID-LLT） |
-| v6 准入过一段时间就掉 | IPv6 隐私扩展让地址不断变化，而准入是按地址记的 | 关掉临时 IPv6 地址，或用自动认证客户端保活 |
-| 机器能被 ping 通，但 ssh 不上 | 未准入时的放行策略只允许 ICMP 回包 | 先完成准入，别怀疑防火墙 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>现象</p></th><th><p>成因</p></th><th><p>常见处理</p></th></tr></thead><tbody><tr><td><p>同一个 <code>/24</code> 里的两台机器互相 ping 不通</p></td><td><p>接入交换机的二层隔离（v4）/ 邻居发现隔离（v6），ARP 或 NDP 不生效</p></td><td><p>给两端加一条指向网关的静态路由（<code>ip r a ...</code>），v6 用网关的 <code>fe80::</code> 地址</p></td></tr><tr><td><p>自建服务在外面连不上，但校内正常</p></td><td><p>IPv4 对低端口（0–1024、8000–8100、3389、9100 等）有阻断，常用代理端口也在列；2022 秋季起 v6 也有部分阻断</p></td><td><p>换高位端口，或把服务放到反代后面</p></td></tr><tr><td><p>IP 每天变，写不进配置文件</p></td><td><p>动态分配（DHCP / SLAAC）</p></td><td><p>用 DDNS，或在 SLAAC 下设置 IPv6 静态后缀（<code>ip token set</code>）</p></td></tr><tr><td><p><code>systemd-networkd</code> 有线拿不到 IPv4</p></td><td><p>学校 DHCP 不接受非 MAC 的 Client ID，而 systemd-networkd 默认发 DUID</p></td><td><p>在网络配置里加 <code>[DHCP]ClientIdentifier=mac</code></p></td></tr><tr><td><p>有线拿不到 IPv6 地址</p></td><td><p>学校 DHCPv6 只认部分 DUID（DUID-LLT）</p></td><td><p>在配置里指定 <code>DUIDType=link-layer-time</code>（dhcpcd 则用 DUID-LLT）</p></td></tr><tr><td><p>v6 准入过一段时间就掉</p></td><td><p>IPv6 隐私扩展让地址不断变化，而准入是按地址记的</p></td><td><p>关掉临时 IPv6 地址，或用自动认证客户端保活</p></td></tr><tr><td><p>机器能被 ping 通，但 ssh 不上</p></td><td><p>未准入时的放行策略只允许 ICMP 回包</p></td><td><p>先完成准入，别怀疑防火墙</p></td></tr></tbody></table>
 
 > 哪一条最常被误判
 >

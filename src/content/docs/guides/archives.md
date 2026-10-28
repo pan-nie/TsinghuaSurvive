@@ -240,11 +240,7 @@ feishu:
 
 上面这些是<b>课程级资料库</b>（往年题、笔记、课件）。另外还有两类资源，用途完全不同，别混着用：
 
-| 想解决什么 | 去哪 | 注意 |
-| --- | --- | --- |
-| 「我该看哪一本」学习方法手册 | [官方学习手册与学习咨询](/guides/study-skill-handbooks/) | 学校官方机构发布，<b>只链接不镜像</b> |
-| 「这条路真实长什么样」经验帖 | [校外经验站怎么用](/guides/external-guides/) | 许可差别很大，有的只能纯外链 |
-| 「我这门课的资料在哪」 | 本页 + [课程资料索引](/courses/) | 你正在看的这一页 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>想解决什么</p></th><th><p>去哪</p></th><th><p>注意</p></th></tr></thead><tbody><tr><td><p>「我该看哪一本」学习方法手册</p></td><td><p><a href="/guides/study-skill-handbooks/">官方学习手册与学习咨询</a></p></td><td><p>学校官方机构发布，<b>只链接不镜像</b></p></td></tr><tr><td><p>「这条路真实长什么样」经验帖</p></td><td><p><a href="/guides/external-guides/">校外经验站怎么用</a></p></td><td><p>许可差别很大，有的只能纯外链</p></td></tr><tr><td><p>「我这门课的资料在哪」</p></td><td><p>本页 + <a href="/courses/">课程资料索引</a></p></td><td><p>你正在看的这一页</p></td></tr></tbody></table>
 
 ## 想补充一个新资料库
 

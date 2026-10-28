@@ -25,11 +25,7 @@ feishu:
 
 先给结论：
 
-| 站点 | 内容 | 许可状况 | 本站的使用方式 |
-| --- | --- | --- | --- |
-| [thubook.help](https://thubook.help/thubook/newstudent.html) | 校内生活 + 学习百科 | <b>无任何许可证</b>（默认保留全部权利）；robots.txt 写明 `ai-train=no, use=reference` | <b>纯外链，一个字都不搬</b> |
-| [feiyue.online](https://feiyue.online/main/about/) | 出国（境）深造申请指南 | <b>CC BY-NC 4.0</b>，可非商业转载 / 改编，需署名 | 可改写，但必须署名 + 回链 + 注明已改写 |
-| [mathloveyou.github.io](https://mathloveyou.github.io/main/about/) | 数学公共基础课学习指南 | 无正式许可证，但作者明示「不删改作者信息即可转载」 | 可链接 + 署名引用，改写保留作者信息 |
+<table><colgroup><col><col><col><col></colgroup><thead><tr><th><p>站点</p></th><th><p>内容</p></th><th><p>许可状况</p></th><th><p>本站的使用方式</p></th></tr></thead><tbody><tr><td><p><a href="https://thubook.help/thubook/newstudent.html">thubook.help</a></p></td><td><p>校内生活 + 学习百科</p></td><td><p><b>无任何许可证</b>（默认保留全部权利）；robots.txt 写明 <code>ai-train=no, use=reference</code></p></td><td><p><b>纯外链，一个字都不搬</b></p></td></tr><tr><td><p><a href="https://feiyue.online/main/about/">feiyue.online</a></p></td><td><p>出国（境）深造申请指南</p></td><td><p><b>CC BY-NC 4.0</b>，可非商业转载 / 改编，需署名</p></td><td><p>可改写，但必须署名 + 回链 + 注明已改写</p></td></tr><tr><td><p><a href="https://mathloveyou.github.io/main/about/">mathloveyou.github.io</a></p></td><td><p>数学公共基础课学习指南</p></td><td><p>无正式许可证，但作者明示「不删改作者信息即可转载」</p></td><td><p>可链接 + 署名引用，改写保留作者信息</p></td></tr></tbody></table>
 
 > 事实来源与时效
 >

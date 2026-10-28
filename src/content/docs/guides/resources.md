@@ -43,12 +43,7 @@ feishu:
 
 因为发过，然后发现没人用：
 
-| 做成站内页面 | 做成模板文件 |
-| --- | --- |
-| 清单能直接勾，下次打开还记得勾到哪 | 下载一个 PDF，打印出来，勾完不知道丢哪了 |
-| 表格改了数字立刻看到结果 | 下载一个 xlsx，公式被人改坏也没人知道 |
-| 永远不会「链接失效」 | 网盘清一次，链接就死了 |
-| 手机能直接用 | 手机上打开 xlsx 是一团糟 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>做成站内页面</p></th><th><p>做成模板文件</p></th></tr></thead><tbody><tr><td><p>清单能直接勾，下次打开还记得勾到哪</p></td><td><p>下载一个 PDF，打印出来，勾完不知道丢哪了</p></td></tr><tr><td><p>表格改了数字立刻看到结果</p></td><td><p>下载一个 xlsx，公式被人改坏也没人知道</p></td></tr><tr><td><p>永远不会「链接失效」</p></td><td><p>网盘清一次，链接就死了</p></td></tr><tr><td><p>手机能直接用</p></td><td><p>手机上打开 xlsx 是一团糟</p></td></tr></tbody></table>
 
 所以<b>能站内做的就不发文件</b>。真需要文件（要打印、要交给老师）的时候再说。
 
@@ -63,13 +58,7 @@ feishu:
 
 ## 暂时没有的几样东西，以及为什么
 
-| 曾经打算做的 | 现在的结论 |
-| --- | --- |
-| 「选课时间线与决策表」 | <b>拆成两半处理</b>。「时间线」<b>不做</b>：时间节点每年变，站内放一份没人维护的表只会误导人，以教务通知为准。「决策」做成了[选课决策工作台](/academics/course-decision/)——它只整理你自己填的判断，不含任何日期或制度数字；决策顺序写在[各类课程怎么选](/academics/course-types/) |
-| 「简历模板（docx）」 | <b>不做</b>。简历模板版本极多，求职季学校和院系通常会发官方版本；用来源不明的模板反而容易踩格式坑 |
-| 「培养方案阅读笔记模板」 | <b>改做在线表格</b>：[学分缺口拆解表](/academics/credit-planner/) |
-| 「新生报到物品清单（PDF）」 | <b>改做在线清单</b>：[报到第一周清单](/freshman/arrival-checklist/) |
-| 「套磁信模板」 | <b>改成站内说明</b>：[怎么和老师、导师、辅导员沟通](/mindset/talking-to-advisors/)（结构比模板重要） |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>曾经打算做的</p></th><th><p>现在的结论</p></th></tr></thead><tbody><tr><td><p>「选课时间线与决策表」</p></td><td><p><b>拆成两半处理</b>。「时间线」<b>不做</b>：时间节点每年变，站内放一份没人维护的表只会误导人，以教务通知为准。「决策」做成了<a href="/academics/course-decision/">选课决策工作台</a>——它只整理你自己填的判断，不含任何日期或制度数字；决策顺序写在<a href="/academics/course-types/">各类课程怎么选</a></p></td></tr><tr><td><p>「简历模板（docx）」</p></td><td><p><b>不做</b>。简历模板版本极多，求职季学校和院系通常会发官方版本；用来源不明的模板反而容易踩格式坑</p></td></tr><tr><td><p>「培养方案阅读笔记模板」</p></td><td><p><b>改做在线表格</b>：<a href="/academics/credit-planner/">学分缺口拆解表</a></p></td></tr><tr><td><p>「新生报到物品清单（PDF）」</p></td><td><p><b>改做在线清单</b>：<a href="/freshman/arrival-checklist/">报到第一周清单</a></p></td></tr><tr><td><p>「套磁信模板」</p></td><td><p><b>改成站内说明</b>：<a href="/mindset/talking-to-advisors/">怎么和老师、导师、辅导员沟通</a>（结构比模板重要）</p></td></tr></tbody></table>
 
 ## 手上有现成的资料？
 

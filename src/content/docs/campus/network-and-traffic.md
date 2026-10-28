@@ -51,10 +51,7 @@ feishu:
 
 <b>要连的无线网叫什么</b>（2026 年的口径）：
 
-| 区域 | SSID |
-| --- | --- |
-| 宿舍区 | `Tsinghua`、`Tsinghua-IPv4`、`Tsinghua-5G`、`Tsinghua-Secure` |
-| 办公区 | `Tsinghua-IPv4`、`Tsinghua-IPv6`、`Tsinghua-Secure` |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>区域</p></th><th><p>SSID</p></th></tr></thead><tbody><tr><td><p>宿舍区</p></td><td><p><code>Tsinghua</code>、<code>Tsinghua-IPv4</code>、<code>Tsinghua-5G</code>、<code>Tsinghua-Secure</code></p></td></tr><tr><td><p>办公区</p></td><td><p><code>Tsinghua-IPv4</code>、<code>Tsinghua-IPv6</code>、<code>Tsinghua-Secure</code></p></td></tr></tbody></table>
 
 <b>优先用 </b> <b><code>Tsinghua-Secure</code></b>：它是 802.1X 认证，只要第一次登录成功，之后会自动连上，不用每次开浏览器认证。网页认证入口是 [http://login.tsinghua.edu.cn](http://login.tsinghua.edu.cn/)。
 
@@ -119,15 +116,7 @@ npm config set registry https://registry.npmmirror.com# 想改回官方源npm co
 
 按这个顺序走，能解决九成问题：
 
-| 顺序 | 检查什么 | 常见结论 |
-| --- | --- | --- |
-| 1 | <b>代理/加速器是否开着</b> | 关掉再试。校内系统最容易被它挡住 |
-| 2 | <b>账号与 802.1X 密码</b> | 提示密码错误就去 [https://usereg.tsinghua.edu.cn](https://usereg.tsinghua.edu.cn/) 重设 |
-| 3 | <b>换个设备/换个位置</b> | 手机能连、电脑不能连 → 是设备配置问题；都连不上 → 是账号或区域覆盖问题 |
-| 4 | <b>忘记网络后重连</b> | 系统里存了旧密码时，表现就是「一直转圈」 |
-| 5 | <b>访问的是不是校内系统</b> | 校外访问校内系统必须先连 WebVPN |
-| 6 | <b>DNS 解析</b> | 校内 DNS 会缓存解析失败的结果，新绑定的域名可能要等一段时间才生效 |
-| 7 | <b>还是不行</b> | 带着「什么设备、在哪、报什么错、什么时候开始」去找信息化用户服务平台，比说「上不了网」有效得多 |
+<table><colgroup><col><col><col></colgroup><thead><tr><th><p>顺序</p></th><th><p>检查什么</p></th><th><p>常见结论</p></th></tr></thead><tbody><tr><td><p>1</p></td><td><p><b>代理/加速器是否开着</b></p></td><td><p>关掉再试。校内系统最容易被它挡住</p></td></tr><tr><td><p>2</p></td><td><p><b>账号与 802.1X 密码</b></p></td><td><p>提示密码错误就去 <a href="https://usereg.tsinghua.edu.cn/">https://usereg.tsinghua.edu.cn</a> 重设</p></td></tr><tr><td><p>3</p></td><td><p><b>换个设备/换个位置</b></p></td><td><p>手机能连、电脑不能连 → 是设备配置问题；都连不上 → 是账号或区域覆盖问题</p></td></tr><tr><td><p>4</p></td><td><p><b>忘记网络后重连</b></p></td><td><p>系统里存了旧密码时，表现就是「一直转圈」</p></td></tr><tr><td><p>5</p></td><td><p><b>访问的是不是校内系统</b></p></td><td><p>校外访问校内系统必须先连 WebVPN</p></td></tr><tr><td><p>6</p></td><td><p><b>DNS 解析</b></p></td><td><p>校内 DNS 会缓存解析失败的结果，新绑定的域名可能要等一段时间才生效</p></td></tr><tr><td><p>7</p></td><td><p><b>还是不行</b></p></td><td><p>带着「什么设备、在哪、报什么错、什么时候开始」去找信息化用户服务平台，比说「上不了网」有效得多</p></td></tr></tbody></table>
 
 > 报修时说什么
 >
@@ -137,11 +126,7 @@ npm config set registry https://registry.npmmirror.com# 想改回官方源npm co
 
 有些事线上办不了，要去<b>李兆基科技大楼东门一层 B104 室</b>（信息化技术中心用户服务室）：
 
-| 事项 | 时间 |
-| --- | --- |
-| 密码重置 | 工作日 8:00–12:00、13:00–17:00 |
-| 缴费 | 工作日 13:00–16:00 |
-| 咨询（电话 010-62784859，邮箱 [its@tsinghua.edu.cn](mailto:its@tsinghua.edu.cn)） | 工作日 8:00–12:00、13:00–17:00 |
+<table><colgroup><col><col></colgroup><thead><tr><th><p>事项</p></th><th><p>时间</p></th></tr></thead><tbody><tr><td><p>密码重置</p></td><td><p>工作日 8:00–12:00、13:00–17:00</p></td></tr><tr><td><p>缴费</p></td><td><p>工作日 13:00–16:00</p></td></tr><tr><td><p>咨询（电话 010-62784859，邮箱 <a href="mailto:its@tsinghua.edu.cn">its@tsinghua.edu.cn</a>）</p></td><td><p>工作日 8:00–12:00、13:00–17:00</p></td></tr></tbody></table>
 
 另外记住一个上限：<b>账号可在线设备数是 1–8 台</b>。到了上限会出现「明明密码没错却登不上」的情况，这时要去自助服务系统里踢掉不用的设备。
 
