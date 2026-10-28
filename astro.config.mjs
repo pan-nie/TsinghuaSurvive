@@ -66,6 +66,7 @@ export default defineConfig({
         Footer: './src/components/Footer.astro',
         Banner: './src/components/Banner.astro',
         Head: './src/components/Head.astro',
+        MarkdownContent: './src/components/MarkdownContent.astro',
       },
       sidebar: [
         {
@@ -154,7 +155,7 @@ export default defineConfig({
             // 维护者入口：从左侧导航直达站内后台（站长要求「加一个后台」时加的）。
             // 用 link 而不是 slug —— 后台是 public/admin/index.html 这个静态资源，不是 Astro 路由。
             // rel=nofollow 与后台自身的三重 noindex 一个意思：它是给维护者的工具，不需要被搜索引擎收录。
-            { label: '站内后台（维护者）', link: '/admin/', attrs: { rel: 'nofollow' } },
+            { label: '飞书内容库（维护者）', link: '/admin/', attrs: { rel: 'nofollow' } },
             { label: '贡献者', link: '/contributors/' },
             { label: '更新日志', link: '/changelog/' },
           ],

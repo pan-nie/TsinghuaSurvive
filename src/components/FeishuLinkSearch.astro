@@ -1,0 +1,31 @@
+<div data-link-toolbar hidden class="feishu-link-toolbar">
+  <label>搜索常用链接 <input type="search" data-link-search placeholder="选课、邮箱、图书馆、报销……" /></label>
+  <span data-link-count aria-live="polite"></span>
+</div>
+<p data-link-empty hidden>没有匹配的链接。</p>
+<script>
+  const toolbar=document.querySelector<HTMLElement>('[data-link-toolbar]');
+  const input=toolbar?.querySelector<HTMLInputElement>('[data-link-search]');
+  if(toolbar && input){
+    toolbar.hidden=false;
+    const cards=Array.from(document.querySelectorAll<HTMLElement>('[data-link-card]'));
+    const sections=Array.from(document.querySelectorAll<HTMLElement>('[data-link-section]'));
+    const filter=()=>{
+      const q=input.value.trim().toLocaleLowerCase();
+      for(const card of cards)card.hidden=!(card.textContent||'').toLocaleLowerCase().includes(q);
+      for(const section of sections){const items=Array.from(section.querySelectorAll<HTMLElement>('[data-link-card]'));section.hidden=items.length>0&&items.every(item=>item.hidden);}
+      const visible=cards.filter(card=>!card.hidden).length;
+      const count=toolbar.querySelector('[data-link-count]');if(count)count.textContent=`${visible} / ${cards.length} 条`;
+      const empty=document.querySelector<HTMLElement>('[data-link-empty]');if(empty)empty.hidden=visible>0;
+    };
+    input.addEventListener('input',filter);filter();
+  }
+</script>
+<style is:global>
+  .feishu-link-toolbar { margin-block: 1.2rem; }
+  .feishu-link-toolbar input { display: block; width: 100%; padding: .7rem; color: var(--sl-color-text); background: var(--sl-color-bg); border: 1px solid var(--sl-color-gray-4); border-radius: .5rem; }
+  .sl-markdown-content .feishu-link-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,18rem),1fr)); padding:0; gap:1rem; }
+  .sl-markdown-content .feishu-link-grid > li { list-style:none; padding:1rem; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; margin:0; }
+  .sl-markdown-content .feishu-link-grid > li > a:first-child { display:block; margin-bottom:.6rem; font-weight:600; }
+  .sl-markdown-content [hidden] { display:none !important; }
+</style>
