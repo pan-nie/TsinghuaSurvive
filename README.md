@@ -1,13 +1,13 @@
 # 清华生存指南
 
-> **2026-10-28 内容编辑入口已改为飞书。** 日常维护请看 [飞书编辑与同步说明](./FEISHU-CONTENT.md)。下文的 Sveltia CMS / GitHub 编辑步骤是历史运维记录；原网站域名与云端资源沿用。
+> **2026-10-28 起，正文与文章信息在飞书维护，网站功能与发布流程仍由 GitHub 仓库维护。** 飞书替代日常内容编辑入口；JavaScript / TypeScript、Astro 组件、样式、数据生成与部署配置仍需修改代码。内容操作见 [飞书编辑与同步说明](./FEISHU-CONTENT.md)。
 
 面向清华在校学生的经验分享站 —— 不是官方材料，是一群学长学姐把踩过的坑、绕过的路写下来。
 
-**线上地址** <https://thu.whizzzest.com>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-03
+**线上地址** <https://thu.whizzzest.com>　｜　**仓库** <https://github.com/pan-nie/TsinghuaSurvive>　｜　**最后更新** 2026-10-28
 
-> ✅ **状态：迁移完成（2026-10-12）** —— 站点在 `thu.whizzzest.com`（持有 `whizzzest.com` 的 Cloudflare 账号）上运行：
-> 页面、`/api/*` 问答、`/media/*` 媒体出口、`auth.thu.whizzzest.com` 后台登录、CI 自动部署 + 部署后线上冒烟全部打通。
+> ✅ **域名迁移记录（2026-10-12）** —— 站点迁至 `thu.whizzzest.com`（持有 `whizzzest.com` 的 Cloudflare 账号）：
+> 当时已打通页面、`/api/*` 问答、`/media/*` 媒体出口、旧后台登录、CI 自动部署与线上冒烟。2026-10-28 的飞书内容迁移沿用这些云端资源，当前内容维护入口见下文。
 >
 > 两处**刻意不做**（维护者决定，不是遗漏）：① 旧域名不做 301，旧链接在域名到期后直接 404；
 > ② 未开启 Always Use HTTPS（`http://` 仍可访问，canonical 已是 https，影响有限）。
@@ -24,18 +24,18 @@
 
 ## 一、30 秒上手
 
-| 我会 | 走哪条路 | 代价 |
+| 我想做什么 | 走哪条路 | 发布方式 |
 | --- | --- | --- |
-| **用浏览器** | 站内后台 <https://thu.whizzzest.com/admin/>，改文字 / 拖图 / 嵌视频，保存自动开 PR | 登录那一下要能打开 `github.com`（开一次代理），之后全在校园网内完成 |
-| **会 Git** | `npm install && npm run dev` → 改 `src/content/docs/` → push | 装一次 Node 20+ |
-| **只想给素材** | 提 [Issue](https://github.com/pan-nie/TsinghuaSurvive/issues/new/choose) | 同样要能打开 `github.com` |
-| **改代码 / 批量改** | 见下一节的三张表 | — |
+| **改正文 / 标题 / 作者 / 标签 / 摘要** | 从 [飞书总导航](https://my.feishu.cn/docx/S2FVdp173oWkY4x0v2dcKCcIn0f) 找到文章；站内 `/admin/` 和「编辑此页」也指向飞书 | 自动同步、检查后发布，详见 [FEISHU-CONTENT.md](./FEISHU-CONTENT.md) |
+| **改互动工具 / JavaScript / 页面样式 / AI / 同步逻辑** | 本地 `npm ci && npm run dev` → 修改仓库代码 → 自查 → PR | 合并到 `main` 后自动同步飞书内容、构建部署 |
+| **新增文章 / 调整栏目 / 改网址** | 维护者创建飞书文档并更新仓库映射与导航 | 不能只在飞书新建文档，见下一节 |
+| **只想给素材 / 报问题** | 提 [Issue](https://github.com/pan-nie/TsinghuaSurvive/issues/new/choose) | 维护者核对后更新内容或代码 |
 
-推送到 `main` 会**自动构建部署**，不需要手动做任何部署动作。
+**两条路径在构建时汇合：飞书提供最新正文，GitHub 提供网站代码。** 定时同步计划在每小时第 7、22、37、52 分钟运行，GitHub 调度可能延迟；也可手动运行 [部署工作流](https://github.com/pan-nie/TsinghuaSurvive/actions/workflows/deploy.yml)。
 
-> ⚠️ **校园网里 `github.com` 网页端时通时不通**（2026-09-30 超时、2026-10-03 复测 200 / 1.6–2.2 s）。
-> `git clone` / `git push`（SSH）、`api.github.com`、站内后台读写**都通**；只有「点开网页」和 OAuth 授权页需要代理。
-> 结论要带日期，别当永久事实。站点上的「编辑此页 / 纠错」指向 `github.com`，校内点开可能超时 —— **链接没写错**。
+> ⚠️ **不要直接修改已迁移文章的生成副本**：`src/content/docs/` 中的已迁文章、`src/data/feishu-custom.json`、`src/data/feishu-state.json`、`public/content-version.json` 会在同步时重新生成。修改这些副本不会反向写入飞书，下次同步会覆盖它们。CI 在构建副本中同步，不把每次飞书编辑自动提交回 GitHub，因此仓库中的文章不一定是线上最新正文。
+>
+> 旧 Sveltia CMS 编辑流程已停用，历史背景见 Git 历史与 [CONTENT-EDITING-PLAN.md](./CONTENT-EDITING-PLAN.md)。
 
 ---
 
@@ -45,45 +45,45 @@
 
 | 我想…… | 改哪里 | 怎么做 |
 | --- | --- | --- |
-| **写一篇新经验帖** | `src/content/docs/<分类>/` 新建 `.md` | 复制 [`_template.md`](./src/content/docs/_template.md)；**文件名用英文小写加连字符**（中文网址在微信里会变成一长串 `%E5%AD%A6…`），中文标题写在 `title` |
-| **改一篇已有文章** | 对应 `.md` / `.mdx` | 后台改（推荐）→ 本地改后 push → 网页端点「编辑此页」（需代理） |
-| **插图 / 嵌视频** | 同上（后台媒体库） | 图片拖进去自动压成 WebP 传到 R2（**不进 Git**）；视频写 `::bilibili[BV号]` 或 `::video[地址]`，各占一行 |
-| **加一篇骨架（结构就位、事实留空）** | `src/content/docs/<分类>/` | `status: draft` + `banner` 写明「未核实」，**不要填 `reviewedAt`** |
-| **标一篇内容过期** | frontmatter | `status: outdated`（红色警告）或更新 `reviewedAt`（超过 6 个月自动橙色提醒） |
-| **加一个新分类** | `astro.config.mjs` 的 `sidebar` | 建目录 → `sidebar` 加一项 `{ autogenerate: { directory: '目录名' } }` |
-| **加一个根目录独立页**（`/ask/`、`/qingxiaoda/` 这类） | `src/content/docs/` + **`public/admin/config.yml`** | ⚠️ **两处都要改**：正文照常写，但**后台不会自动发现根目录的单文件页**，必须在 `config.yml` 里手工加一条单文件集合（`file:` + `fields: *doc-fields`）。**漏了构建照样绿、页面照样上线**，只是后台看不到它、以后只能改代码 —— 加完**必须跑 `npm run check:admin`**（见 HANDOVER §12） |
-| **调侧边栏顺序** | 文章的 `sidebar.order` | 数字小的在前；**同目录内不要重复**，否则内容检查报错 |
-| **改站点标题 / 描述 / 联系方式** | `astro.config.mjs` | 顶部有 `SITE`、`REPO` 等常量 |
-| **改分享卡片图** | `scripts/generate-og.mjs` 顶部文案 | 改完跑 `npm run og`，生成 4 张（全站 + 课程 / 技能 / 链接），**记得一起提交** |
+| **改已有文章 / 首页说明 / 问答页说明** | 对应飞书文档 | 标题改文档标题；正文改「正文」与「迁移信息」之间的部分，保留 `【网站组件：…】` 标记 |
+| **改作者 / 阶段 / 标签 / 摘要 / 页首提示** | 飞书「文档信息」表格 | 修改相应字段；支持范围见 [FEISHU-CONTENT.md](./FEISHU-CONTENT.md) |
+| **标待核对 / 过期 / 人工复核日期** | 同一表格 | 内容状态填「待核对 / 已定稿 / 已过期」；最近人工核对只填实际日期，未核实不填 |
+| **调文章导航名称 / 同栏目顺序** | 同一表格的「导航名称 / 导航顺序」 | 数字小的在前；同目录内不要重复。固定写在 `astro.config.mjs` 里的导航名称仍需改代码 |
+| **写一篇新经验帖 / 新增独立页** | 新飞书文档 + `src/data/feishu-manifest.json` | 维护者按现有格式建文档，登记文档 ID、固定路径、栏目及元信息；需要时更新 `astro.config.mjs`。文件名用英文小写加连字符，完成后同步并跑 `npm run check:admin` |
+| **加一个新分类 / 调整栏目 / 改网址** | `astro.config.mjs` + 飞书映射 | 同时核对侧边栏、目录、映射和已有链接；不会从飞书文件夹自动发现新栏目或文章 |
+| **插图 / 附件 / 画板 / 嵌入电子表格** | 暂未接入飞书发布 | 目前遇到这些资源会停止同步；先由维护者适配同步与展示。不要沿用旧后台「拖图自动发布」的步骤 |
+| **改站点标题 / 描述 / 联系方式** | `astro.config.mjs` 等站点配置 | 与文章标题、摘要不同，仍由仓库维护 |
+| **改分享卡片图** | `scripts/generate-og.mjs` 顶部文案 | 改完跑 `npm run og`，生成图一起提交 |
 | **改「多久算过期」** | `content-policy.json` | 改 `staleAfterMonths`；站点看门狗与 CI 检查读同一份 |
 
-### 2. 链接与数据
+### 2. 网站功能与数据（仍需改代码）
 
 | 我想…… | 改哪里 | 怎么做 |
 | --- | --- | --- |
-| **加一个校内网址** | `src/data/links.ts` | 加一条记录，带 `reach` 可达性与 `origin` 来源。**网址活着是机器测的，入口有没有写错只有人能判断**：`reviewedAt` 记日期、`verifiedBy` 记 `'human'`（人工点开）或 `'auto'`（脚本比对标题），两个都填才显示「已核对」 |
-| **加一份可下载资料** | `src/data/resources.ts` | `url` 填网盘链接、`code` 填提取码；**文件本体不要进仓库**，只放外链 |
-| **加一个第三方工具** | `src/data/tools.ts` | `status`（活跃 / 不活跃 / 已停止 / 未核实）+ `access`（公网 / 校园网 / 需代理 / 未实测）。**状态栏抄上游项目页**，别凭印象写「活跃」——那一个字会被读成「可以放心用」 |
-| **加一门课 / 一个资料库** | `scripts/build-course-index.mjs` | 资料库目录变了就 `npm run courses` 重新生成并提交 `course-index.json` |
-| **改站内互动工具** | `src/components/` 的 `Checklist` / `CreditPlanner` / `SelectionWorkbench` | 数据只存浏览器 localStorage，**不上传**（站上唯一的后端是 AI 问答的 `/api/*`，与这些工具无关）。用 JS 二次渲染的组件**必须用 `is:global` 样式 + 前缀**，否则样式静默失效（见 HANDOVER §4） |
-| **课程书目 / 课程↔技能映射** | 自动派生 | `/courses/books/` 与技能页映射表都从 `course-index.json` 读，不用手写 |
+| **改学分计算 / 选课工作台 / 课程筛选** | `src/components/CreditPlanner.astro` / `SelectionWorkbench.astro` / `CourseExplorer.astro` | 这些文件包含浏览器端 JavaScript / TypeScript；飞书只保留工具说明与组件标记，不能修改计算、筛选、导入导出等逻辑。学分表和选课工作台的个人数据存于浏览器 localStorage |
+| **改待办勾选保存 / 校内链接搜索** | `src/components/FeishuChecklist.astro` / `FeishuLinkSearch.astro` | 飞书维护清单文字与链接；网站代码负责个人进度保存和搜索交互 |
+| **加新互动组件 / 改组件插入方式** | `src/components/FeishuSlots.astro` + `scripts/feishu/content.mjs` + 页面映射 | 先实现组件，注册名称并适配同步校验，再在飞书放对应标记；飞书代码块只展示代码，不会执行其中的 JavaScript |
+| **改首页卡片 / 链接目录的排版** | `src/utils/feishu-directory.mjs`、相关组件与样式 | 内容在飞书，转换规则与展示效果在仓库；组件用 JS 生成元素时注意全局样式与独立前缀（见 HANDOVER §4） |
+| **加校内网址 / 下载资料外链 / 第三方工具介绍** | 对应飞书目录文档 | 当前页面正文以飞书为准；`src/data/links.ts` / `resources.ts` / `tools.ts` / `archives.ts` 仍保留旧结构化数据，不能只改这些文件就认为展示页已更新。文件本体不要进仓库；核对日期与可用状态按实填写 |
+| **更新课程资料索引 / 筛选数据** | `scripts/build-course-index.mjs` → `src/data/course-index.json` | 本地资料库变化后跑 `npm run courses` 并提交；课程筛选组件读取这些数据 |
+| **更新课程书目页 / 技能页的映射表** | 对应飞书文档 + 必要的数据核对 | 迁移后正文已在飞书，不会仅因重建 `course-index.json` 自动重写这些正文表格；数据变化时需核对两处 |
 
-### 3. AI 功能（站内问答 / 清小搭）与首页
+### 3. AI 功能与内容同步（仍需改代码或配置）
 
 | 我想…… | 改哪里 | 怎么做 |
 | --- | --- | --- |
-| **换 AI 模型 / 改限额** | `src/data/ai.config.yml` | 后台「站点配置 → AI 问答」也能直接改。默认用 Workers AI（免费额度，不需要 Key）；改用第三方要先在 `/admin/ai/` 填 Key |
+| **换 AI 模型 / 改限额** | `src/data/ai.config.yml` | 默认用 Workers AI；旧 Sveltia CMS 配置入口已停用 |
 | **临时试第三方模型** | `/admin/ai/` | 选预设、填 Key、保存——运行时覆盖**立即生效，不用重新部署**。口令是 Worker Secret `ADMIN_TOKEN` |
-| **改首页的入口卡片** | `src/content/docs/index.mdx` | 首屏是「三张处境大卡」+「按板块找」六组；信任条的数字是实时算的，不用手改 |
-| **改问答页的说明文字** | `src/content/docs/ask.mdx` | 正文里的 `<AskBox />` 是问答组件本身，**别删掉 import 那一行**（删了不报错，只是问答框消失） |
-| **改「清小搭」那一页** | `src/content/docs/qingxiaoda.md` | **纯内容页，没有运行时依赖**（是介绍 + 外链，不代清小搭提供入口，原因见页内）。左侧导航的分组名与条目在 `astro.config.mjs` 的 `sidebar` 里，分组名是 `AI 功能` |
-| **调检索/提示词** | `src/worker/retrieval.js`、`ai-tokenize.mjs` | 改完**必须跑 `npm run check:ai`**：里面固化了 19 个真实提问的期望排序与拒答行为 |
+| **改问答框交互 / 后端检索与提示词** | `src/components/AskBox.astro`、`src/worker/`、`src/utils/ai-tokenize.mjs` | 飞书只改问答页说明；功能修改后跑 `npm run check:ai` 和 `npm run check:ai:worker` |
+| **改「清小搭」介绍** | 对应飞书文档 | 仍是介绍与外链；侧边栏固定分组名与条目在 `astro.config.mjs` |
+| **改飞书转换 / 组件标记 / 文档映射** | `scripts/sync-feishu.mjs`、`scripts/feishu/`、`src/data/feishu-manifest.json` | 改完跑 `npm run check:feishu`、`npm run check:admin`，并同步预览 |
+| **改同步频率 / 构建与发布流程** | `.github/workflows/deploy.yml` | 定时运行仅在内容变化时发布；推送 `main` 和手动触发会同步内容并构建发布 |
 
 ### 4. 检查与运维
 
 | 我想…… | 跑什么 | 说明 |
 | --- | --- | --- |
-| **提 PR 前自查** | `npm run verify` | 一条命令跑完类型 + 内容 + 后台 + 媒体 + 构建 + 结构化数据 + 资源 + 订阅 + 产物比对 |
+| **提 PR 前自查** | `npm run check:feishu` → `npm run verify` | 前者检查飞书转换；后者检查类型、内容、映射、媒体、构建与产物 |
 | **看还欠着什么** | `npm run check:content` | 输出「债务总账」；当前快照见 [OUTLINE.md](./OUTLINE.md) |
 | **测网址还活着吗** | `npm run check:links` | 写 `src/data/link-status.json`。**校园网里跑要标测点**：`LINK_CHECK_NETWORK='清华校园网（无线，DNS 166.111.8.28）'` |
 | **核对入口还是干那件事吗** | `npm run verify:links` → 人工 `npm run review:links` | 脚本抓页面比对标题；人工核对清单是离线 HTML，导出后 `review:links:apply` 写回日期 |
@@ -95,15 +95,16 @@
 
 | 分组 | 命令 | 什么时候用 |
 | --- | --- | --- |
-| **日常开发** | `npm run dev` ｜ `npm run dev:worker` ｜ `npm run build` ｜ `npm run preview` ｜ `npm run check` | 本地写内容；`check` 是 `astro check`。**`dev` 是纯 Astro，看不到媒体**（`/media/*` 由 Worker 从 R2 读）；要看媒体用 `dev:worker` |
-| **最全自查** | `npm run verify` | **提 PR 前跑这个**（等于 `check:all` + 构建 + 四项产物校验） |
+| **日常开发** | `npm run dev` ｜ `npm run dev:worker` ｜ `npm run build` ｜ `npm run preview` ｜ `npm run check` | 本地开发功能与预览；`check` 是 `astro check`。**`dev` 是纯 Astro，看不到媒体**（`/media/*` 由 Worker 从 R2 读）；要看媒体用 `dev:worker` |
+| **飞书同步与转换检查** | `npm run sync:feishu` ｜ `npm run check:feishu` | 同步需要本机配置官方 lark-cli；离线复核完整缓存用 `node scripts/sync-feishu.mjs --cached`。同步会刷新生成副本，见 FEISHU-CONTENT |
+| **提 PR 前自查** | `npm run check:feishu` → `npm run verify` | `check:feishu` 单独运行；`verify` 包含类型、内容、映射、构建与产物检查，不会主动拉取飞书 |
 | **内容检查** | `npm run check:content` ｜ `check:content:strict` | `strict` 连债务警告也当错误（发布前用） |
 | **AI 问答** | `npm run check:ai` ｜ `check:ai:worker` | 索引体积 / 覆盖度 / 锚点 + 19 个真实提问的排序自测；后者直接跑 Worker 入口（闸门、鉴权、流式、fail-closed，43 项） |
-| **后台与媒体** | `npm run check:admin` ｜ `check:media` ｜ `check:media:dist` ｜ `check:markup` | 字段漏声明、视频语法糖、产物与源码容器数是否一致、`**加粗**` 有没有被原样印到页面上 |
+| **内容映射与媒体** | `npm run check:admin` ｜ `check:media` ｜ `check:media:dist` ｜ `check:markup` | 飞书固定路径与编辑入口、媒体语法及产物、加粗标记是否泄漏 |
 | **课程索引** | `npm run courses` ｜ `courses:check` | 前者扫本地资料库（`materials/`，取不到回落 `reference/`）重新生成，后者只校验（CI 用） |
 | **链接** | `check:links` ｜ `verify:links [-- --apply]` ｜ `review:links [-- --open]` ｜ `review:links:apply -- <文件> [--write]` | 实测 → 语义核对 → 人工核对 |
 | **本地自检** | `npm run check:e2e -- --base http://localhost:4321` ｜ `npm run measure:perf -- --base http://127.0.0.1:4322` | 无头 Chrome；**`--base` 写 `localhost`**，`astro preview` 在 macOS 上只绑 IPv6 回环 |
-| **后台与云资源** | `admin:vendor` ｜ `auth:dry` ｜ `auth:deploy` ｜ `r2:setup [-- --check]` | 后台编辑器兜底、OAuth 中转、R2 桶 |
+| **保留的旧后台与云资源命令** | `admin:vendor` ｜ `auth:dry` ｜ `auth:deploy` ｜ `r2:setup [-- --check]` | 用于历史运维，不是当前内容编辑入口；旧流程见 HANDOVER 与 Git 历史 |
 | **域名与媒体出口** | `npm run domain:sync` ｜ `check:domain` ｜ `check:media:worker` ｜ `check:live` | 域名唯一来源是根目录 `site.config.json`：`domain:sync` 写入、`check:domain` 校验一致并扫旧标识残留、`check:media:worker` 端到端验证 `/media/*` 出口、`check:live` 部署后验线上真实站点（见 HANDOVER §5） |
 | **部署** | `npm run deploy` ｜ `deploy:dry` | 平时不用跑：推 `main` 会自动部署 |
 
@@ -122,24 +123,24 @@ Tsinghua-guide/
 ├─ content-policy.json     ★ 时效阈值（看门狗与检查脚本共用，避免两边漂移）
 ├─ src/
 │  ├─ content.config.ts    ★ 内容模型（frontmatter 校验规则）
-│  ├─ content/docs/        ★ 全部文章，一个文件一页（start / freshman / academics / courses / research / campus / mindset / skills / publicity / guides）
+│  ├─ content/docs/        ★ 已迁文章的生成副本；正文与元信息在飞书编辑
 │  ├─ pages/               自定义路由：stages、tags、courses（索引 + 书目）、changelog、contributors、rss.xml
 │  ├─ components/          ★ Banner（时效看门狗）、Head（JSON-LD）、LinkGrid、ToolDirectory、CourseExplorer、Checklist、CreditPlanner、SelectionWorkbench…
-│  ├─ data/                ★ 手改的数据：links.ts、resources.ts、tools.ts、archives.ts；脚本产物：link-status.json、course-index.json
+│  ├─ data/                ★ feishu-manifest.json（手改映射）；feishu-custom/state.json（同步产物）；课程索引与保留的旧目录数据
 │  ├─ worker/              ★ 唯一的后端：/api/ask（检索+生成+流式）、/api/ai-config、/api/admin/*
-│  ├─ utils/               media-embed.mjs（`::bilibili` / `::video`）、card-text.ts（`**加粗**` → `<strong>`）、ai-tokenize.mjs（构建期与运行时共用的分词）
+│  ├─ utils/               feishu-directory.mjs（首页与目录展示适配）、media-embed.mjs、card-text.ts、ai-tokenize.mjs
 │  └─ styles/custom.css    清华紫主题 + 中文排版
-├─ scripts/                检查与生成脚本（见上一节；每个脚本头部都写了「为什么存在」）
-├─ public/admin/           ★ 站内后台（Sveltia CMS，纯静态；`config.yml` 是公开配置，不放任何密钥）
+├─ scripts/                sync-feishu.mjs 与 feishu/（同步与转换）；其余检查与生成脚本见上一节
+├─ public/admin/           ★ 当前内容维护导航（指向飞书）；config.yml 是保留的旧 CMS 配置
 │  └─ ai/                  ★ 第三方 API Key 的填写页（密钥不进 git，加密后存 Durable Object）
 ├─ materials/              ⚠️ 本地资料库：6 个公开资料库整理后的分类版本（约 13 GB，已删各库 .git），**已在 .gitignore 里，不进仓库**
 ├─ reference/              ⚠️ 整理前的旧位置（现已清空；脚本仍认它作兜底）
-├─ auth-worker/            OAuth 中转（独立 Worker，不随主站 CI 部署）
-└─ 文档：HANDOVER / OUTLINE / REFERENCE-NOTES / CONTENT-EDITING-PLAN（见文末地图）
+├─ auth-worker/            旧 CMS 的 OAuth 中转（独立 Worker，不随主站 CI 部署）
+└─ 文档：FEISHU-CONTENT / HANDOVER / OUTLINE / REFERENCE-NOTES / CONTENT-EDITING-PLAN（见文末地图）
                              AI 问答与首页改版的细节都在 HANDOVER 第 10、11 节
 ```
 
-日常写作只需要碰 `src/content/docs/`，加链接只碰 `src/data/`。
+日常写作与目录文字在飞书；代码开发主要看 `src/components/`、`src/worker/`、`src/utils/`、配置与脚本。生成副本可用于本地预览，不作为内容主稿。
 
 ---
 
@@ -147,21 +148,25 @@ Tsinghua-guide/
 
 ```mermaid
 flowchart LR
-  A["后台 / 本地 / 网页"] --> B["提交到分支 → PR"]
-  B --> C{"CI 校验<br/>check → domain → content → admin<br/>→ media → courses:check → build<br/>→ ai → ai:worker<br/>→ jsonld → assets → markup<br/>→ feeds/media → media:worker"}
-  C -- "失败" --> D["PR 上留下注解：哪个文件、哪一行"]
-  C -- "通过" --> E["本地 npm run dev 自查效果<br/>（PR 预览环境已取消）"]
-  E --> F["合并到 main"]
-  F --> G["CI 再跑一遍 → wrangler deploy"]
-  G --> H["thu.whizzzest.com"]
+  A["飞书修改正文与元信息"] --> B["定时检查 / 手动运行"]
+  C["本地改网站代码 → 自查 → PR"] --> D["合并到 main"]
+  B --> E["Actions 取仓库代码 + 拉取最新飞书内容"]
+  D --> E
+  E --> F["转换与映射校验 → 构建 → 功能与产物检查"]
+  F -- "失败" --> G["查看 Actions 错误；不发布本次构建"]
+  F -- "通过且需要发布" --> H["部署 → 线上检查 → 核对内容版本"]
+  H --> I["thu.whizzzest.com"]
 ```
 
-| CI 步骤 | 拦什么（都是「错了不会报错、只会静默失效」的东西） |
+定时运行无内容变化时跳过发布；代码推送与手动运行仍会构建发布。同步生成的是本次构建使用的副本，不自动提交回仓库。当前只有部署工作流，**代码 PR 在合并前由开发者本地检查与预览**；合并后的构建检查才由该工作流运行。
+
+| 发布与本地自查步骤 | 检查什么 |
 | --- | --- |
+| `sync:feishu` / `check:feishu` | 文档不可访问、表格或待办转换不完整、未知组件标记、未支持资源；转换回归检查单独运行 |
 | `check` | 类型错误 |
 | `check:domain` | 全仓旧域名残留、同步文件与 `site.config.json` 不一致（域名唯一来源，换域名时漏改一处就静默失效） |
 | `check:content` | 站内死链、中文文件名、`reviewedAt` 写在未来、同目录 `sidebar.order` 冲突、`links.ts` 重名或非法网址、资料有提取码却没链接、课程索引引用了未定义的资料库 |
-| `check:admin` | 后台配置漏字段（漏一个字段，作者保存一次就丢一个字段）、OAuth 三处地址漂移、R2 占位符 |
+| `check:admin` | 当前检查飞书文档的固定路径、栏目、来源元信息与维护入口；不再走旧 CMS 字段检查 |
 | `check:media` | 视频语法糖写错、外链图床、空 alt |
 | `courses:check` | `course-index.json` 与 `materials/`（或旧的 `reference/`）里的资料库不一致（两处都没有时自动跳过） |
 | `build` | frontmatter 字段错误（报错会指出文件名） |
@@ -170,13 +175,11 @@ flowchart LR
 | `check:jsonld` | JSON-LD 语法、同页重复 `@type`、面包屑 position 不连续、署名是占位符 |
 | `check:assets` | 分享卡片尺寸不是 1200×630、文件为空、页面引用的图不存在 |
 | `check:markup` | `**加粗**` 紧贴全角标点（`**「图库」**`）导致标记不生效、星号被原样印在页面上；banner 里写 Markdown 加粗；卡片文案漏调 `descHtml()` |
-| `check:feeds` / `check:media:dist` | sitemap 指向不存在的页面、RSS 缺字段、robots 把整站屏蔽；产物里的视频容器与源码对不上 |
+| `check:feeds`（本地 `verify`） / `check:media:dist` | sitemap 指向不存在的页面、RSS 缺字段、robots 把整站屏蔽；产物里的视频容器与源码对不上。当前部署工作流未单独运行 `check:feeds` |
 | `check:media:worker` | `/media/*` 出口的 33 项断言：路径穿越、Range（含越界 416）、304、桶未绑定返回 503 而不是 404 |
 | `check:live` | **线上真实站点**的 18 项冒烟：canonical / robots / sitemap / RSS 的域名、`/api/ai-config` 的 sitekey 与仓库配置是否一致、无 token 时 fail-closed、媒体 404、后台 noindex、404 页面与尾斜杠重定向、auth 白名单、http 是否跳 https。部署后自动跑（`deploy.yml`），也可手动 `npm run check:live -- --base <url>` |
 
-> ✅ 错误级检测都做过**注入测试**验证会真的触发，不是写着好看。
-> 💡 来自 fork 的 PR **拿不到 Secrets**、也没有预览环境（预览环境已取消）—— 有意的安全取舍（工作流用 `pull_request`，不用 `pull_request_target`）。
-> 看渲染效果用本地 `npm run dev`；要看媒体（图片 / 视频）用 `npm run dev:worker`，纯 Astro 的 `dev` 读不到 R2。
+> 看最新正文的渲染效果，先同步飞书，再用本地 `npm run dev`；要看已有 R2 媒体用 `npm run dev:worker`。飞书新增图片等资源的发布支持仍受前述限制。
 
 ---
 
@@ -198,13 +201,13 @@ flowchart LR
 - **课程名会归一化**：上游目录里带老师姓名/昵称的（`面向对象程序设计基础-刘知远老师`）合并回课程名，规则在 `scripts/build-course-index.mjs` 的 `NAME_OVERRIDES`。
 - **可达性优先**：校内 GitLab 镜像排在 GitHub 前面（原因见下一节）。
 
-资料库换了目录结构就跑一次 `npm run courses`，然后提交 `course-index.json`。
+资料库换了目录结构就跑一次 `npm run courses`，然后提交 `course-index.json`。课程筛选组件继续读取此索引；已迁入飞书的书目页与正文表格需要另行核对更新。
 
 ---
 
 ## 七、链接为什么会变「打不开」
 
-每条链接的可信度分三层，页面上分三个角标显示，**别混成一个「可信 / 不可信」**：
+保留的结构化链接数据与检查脚本将可信度分为三层，**别混成一个「可信 / 不可信」**。当前链接目录正文在飞书，脚本写回旧数据文件不会自动更新飞书中的文字、日期或状态：
 
 | 层 | 谁产生 | 能证明什么 |
 | --- | --- | --- |
@@ -241,10 +244,11 @@ flowchart LR
 | 文档 | 回答什么 | 不回答什么 |
 | --- | --- | --- |
 | [README.md](./README.md)（本文） | 我想做 X 改哪里、跑哪条命令 | 运维细节、内容缺口、设计史 |
-| [HANDOVER.md](./HANDOVER.md) | 接手运维：资源 ID、部署、后台、故障排查、性能基线 | 日常写作 |
+| [FEISHU-CONTENT.md](./FEISHU-CONTENT.md) | 当前飞书编辑、同步、支持范围与恢复 | 网站功能开发 |
+| [HANDOVER.md](./HANDOVER.md) | 接手运维：资源 ID、部署、故障排查、性能基线；旧后台部分为历史记录 | 当前飞书日常写作 |
 | [OUTLINE.md](./OUTLINE.md) | 内容路线图、每篇缺什么、债务总账 | 怎么做、为什么 |
 | [REFERENCE-NOTES.md](./REFERENCE-NOTES.md) | 参考项目借鉴了什么、没借鉴什么、为什么 | 操作步骤 |
-| [CONTENT-EDITING-PLAN.md](./CONTENT-EDITING-PLAN.md) | 站内后台方案的决策记录（已落地） | 后台的使用与部署（在 HANDOVER §9） |
+| [CONTENT-EDITING-PLAN.md](./CONTENT-EDITING-PLAN.md) | 旧 Sveltia CMS 方案的历史决策记录 | 当前飞书编辑操作（见 FEISHU-CONTENT） |
 
 给后来写文档的人（本仓库根目录的 `.md` 统一遵守）：
 

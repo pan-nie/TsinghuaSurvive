@@ -11,13 +11,21 @@
 > 本文档是执行手册 + 决策记录。事实已并进 `HANDOVER.md`；本文档保留为历史记录，
 > 并被 `check:domain` 列入残留白名单（只有它和 `site.config.json` 可以出现旧标识）。
 >
-> 最后更新：2026-10-12
+> 文档维护更新：2026-10-28；迁移执行与云端验证记录仍截至 2026-10-12。
 >
 > 分支与 PR：`migrate/thu-whizzzest`；PR <https://github.com/pan-nie/TsinghuaSurvive/pull/6>。
 > 分支上跑过一次完整 CI（run [38211678042](https://github.com/pan-nie/TsinghuaSurvive/actions/runs/38211678042)）：
 > **21 步全绿**，含「检查部署凭证」（token 能看到账号 W）、「部署到 Cloudflare Workers」与「线上冒烟检查（部署后）」。
 
 ---
+
+## 当前维护补充（2026-10-28）
+
+本站随后已迁为飞书维护正文、仓库维护代码，见 [FEISHU-CONTENT.md](./FEISHU-CONTENT.md)。域名、Worker 与 R2 配置沿用本次域名迁移；`/admin/` 当前为飞书导航，旧 OAuth 与 CMS 配置仅保留。本节之外的登录、传图、MDX 路径及旧站回退示例描述当时的迁移过程，不是现行写作流程。
+
+当前发布工作流需要额外配置仓库变量 `FEISHU_APP_ID` 与 Secret `FEISHU_APP_SECRET`；`check:admin` 已改为飞书映射检查。换域名时除 `site.config.json` 和 `domain:sync` 外，还应核对 `feishu-manifest.json` 的 `siteOrigin`、飞书主稿中的站内链接和维护入口；不要只改生成的文章副本。
+
+当前回滚见 [HANDOVER.md](./HANDOVER.md) §4 与 FEISHU-CONTENT：先暂停定时同步，再选择已验证版本。下文 §10 的「换回旧账号」仅是迁移期方案，不能直接套用于当前配置。
 
 ## 1. 决策记录
 
@@ -28,7 +36,7 @@
 | 媒体 | **不申请独立媒体域名**：由主 Worker 提供 `https://thu.whizzzest.com/media/*`，从 R2 读 |
 | OAuth 中转 | `auth.thu.whizzzest.com` |
 | PR 预览 | **取消**：删除预览 Worker、预览域名与 `preview.yml`（作者要看效果用本地 `npm run dev`，或合并后看线上） |
-| 旧域名 | **不续费**：301 只做到期为止，到期后旧链接必然 404 |
+| 旧域名 | **不续费、不做 301**（最终决定，2026-10-12）：旧链接在域名到期后失效；下文的 301 配方只作历史备选 |
 | GitHub OAuth App | 改现有的（callback + Homepage URL） |
 | 账号 W 权限 | Super Admin（已确认）；**账号 W 里还有别的 Worker 在跑**，免费额度是账号级共享的 |
 | R2 数据 | 空桶，不搬 |
@@ -94,7 +102,7 @@ Worker Custom Domain 会自动签发多级子域证书（不需要 ACM），但 
 
 ## 5. 阶段 0（已完成）：域名单一来源
 
-### 5.1 事实来源：`site.config.json`（当前内容）
+### 5.1 事实来源：`site.config.json`（迁移时快照）
 
 ```json
 {
@@ -285,7 +293,7 @@ curl -sI https://media.nathanpenny.fun/uploads/example.webp | head -3
 - [~] **http 未强制跳 https** ⚠️ 这是真实待办，见 §8 第 10 步
 - [ ] 人眼确认项（脚本验不了）：`/ask/` 走**真实挂件**拿到回答；后台 GitHub 一键登录；后台上传一张图；微信内置浏览器打开正常
 
-## 10. 回滚
+## 10. 迁移期回滚方案（历史备选）
 
 | 出问题的位置 | 回滚动作 |
 |---|---|

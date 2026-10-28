@@ -2,6 +2,8 @@
 
 [总导航与编辑说明](https://my.feishu.cn/docx/S2FVdp173oWkY4x0v2dcKCcIn0f) · [原栏目文件夹](https://my.feishu.cn/drive/folder/HgRZffnUjlF0End3geYclLCznWG) · [同步运行](https://github.com/pan-nie/TsinghuaSurvive/actions/workflows/deploy.yml)
 
+最后更新：2026-10-28（本次按仓库实现复核维护说明）。
+
 79 篇内容页面已迁到飞书的 14 个原栏目。飞书是正文、标题和文章元信息的编辑来源；网站继续使用 `site.config.json` 中的原域名和固定页面路径。
 
 ## 日常编辑
@@ -16,6 +18,21 @@
 
 图片、附件、画板和嵌入的电子表格尚未接入发布，遇到这些资源会停止同步，避免丢失。新增文章、调整栏目或变更网址需要维护者先更新映射；普通内容修改无需打开代码仓库。
 
+## 内容与代码的维护边界
+
+| 修改对象 | 维护位置 |
+| --- | --- |
+| 正文、标题、作者、标签、摘要、状态、人工核对日期 | 飞书文档与「文档信息」表格 |
+| 学分计算、选课工作台、课程筛选、问答交互 | `src/components/` 中的 Astro / JavaScript / TypeScript；后端问答在 `src/worker/` |
+| 待办保存、链接搜索、首页与目录展示 | `FeishuChecklist.astro`、`FeishuLinkSearch.astro`、`src/utils/feishu-directory.mjs` 等 |
+| 新增文章、固定路径、栏目、组件接入 | `src/data/feishu-manifest.json`、`astro.config.mjs`、`FeishuSlots.astro` 与同步转换规则 |
+| 课程筛选数据 | `scripts/build-course-index.mjs` 生成 `src/data/course-index.json`；已迁飞书的书目与正文表格需要另行核对 |
+| 同步、校验、部署 | `scripts/sync-feishu.mjs`、`scripts/feishu/`、`.github/workflows/deploy.yml` |
+
+飞书的 `【网站组件：…】` 是网站组件插入标记，代码块只是展示文字，不会执行其中的 JavaScript。飞书清单和网站个人勾选互不修改；网站按文档 URL 与项序号保存进度，重排待办后应检查旧进度是否错位。
+
+普通飞书修改不经过 GitHub PR，自动检查也不代替人工核实事实。代码修改仍需本地检查与 PR 审阅，合并 `main` 后自动发布；当前没有独立的 PR 检查或预览工作流。旧 Sveltia CMS 的 OAuth、媒体库与 `public/admin/config.yml` 保留作历史配置，不是当前写作入口。`check:admin` 现在检查飞书映射与编辑入口。
+
 ## 同步与恢复
 
 `src/data/feishu-manifest.json` 保存固定栏目、网址和文档 ID；`scripts/sync-feishu.mjs` 使用官方飞书 CLI 的应用身份只读拉取内容。先批量读修改时间，只重新读取变化文档；全量转换、表格与待办结构比对通过后才替换本次构建副本。页面内容、搜索、AI 索引与 RSS 在同一次构建中更新。
@@ -29,8 +46,12 @@ npm ci
 npm run sync:feishu       # 需要本机已配置官方 lark-cli；默认应用身份
 npm run check:feishu
 npm run verify
-npm run preview
+npm run dev             # 开发预览；构建后的预览可用 npm run preview
 ```
+
+`npm run verify` 不会主动同步飞书，也不包含 `check:feishu`，上面的两项检查需要分别运行。`npm run deploy` / `deploy:dry` 同样不会主动同步；本地手动发布前先拉取最新正文并检查，避免发布仓库中的旧副本。
+
+CI 只在本次构建副本中更新正文，不会自动提交回 GitHub；因此 GitHub 的文章副本、更新日志和提交统计不代表完整的飞书编辑记录。
 
 离线复核已有缓存可用 `node scripts/sync-feishu.mjs --cached`。`src/content/docs/` 中迁移后的 Markdown、`feishu-custom.json`、`feishu-state.json` 和 `public/content-version.json` 是生成副本，不应作为日常编辑源。
 
